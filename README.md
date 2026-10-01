@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Finalyzer
 
 Upload tabular data (CSV or Excel), check how it was read, and get a private interactive
@@ -112,3 +113,6 @@ reports/   generated reports (planted patterns, evaluation, performance)
 
 Read `KNOWN_LIMITATIONS.md` before relying on the output and `ASSUMPTIONS.md` for the
 decisions made while building.
+=======
+# Finalyzer
+>>>>>>> 113ba5e61a032fb1159699159563d4b7f00601ef
