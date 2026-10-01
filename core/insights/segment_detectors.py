@@ -21,6 +21,8 @@ from core.insights.text import assessment, humanize, pct
 from core.models import Finding, Metric
 
 MIN_CATEGORIES = 5
+MIN_CATEGORIES_STRONG = 3  # with so few categories, only a dominant one is notable
+STRONG_TOP1_SHARE = 0.50
 TOP1_SHARE = 0.30
 TOP3_SHARE = 0.60
 DRIVER_SHARE = 0.40
@@ -53,12 +55,16 @@ def detect_concentration(ctx: InsightContext) -> list[Finding]:
     findings = []
     for dimension in dimensions(ctx):
         values = {k: v for k, (v, _) in grouped(ctx, metric, dimension).items() if v and v > 0}
-        if len(values) < MIN_CATEGORIES:
+        if len(values) < MIN_CATEGORIES_STRONG:
             continue
         ranked = sorted(values.items(), key=lambda item: -item[1])
         total = sum(values.values())
         top1, top3 = ranked[0][1] / total, sum(v for _, v in ranked[:3]) / total
-        if top1 < TOP1_SHARE and top3 < TOP3_SHARE:
+        if len(values) < MIN_CATEGORIES:
+            if top1 < STRONG_TOP1_SHARE:
+                continue
+            top3 = top1  # three categories always hold 100%; that says nothing
+        elif top1 < TOP1_SHARE and top3 < TOP3_SHARE:
             continue
         findings.append(build_concentration(ctx, metric, dimension, ranked, total, top1, top3))
     return findings

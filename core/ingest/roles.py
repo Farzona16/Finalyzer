@@ -84,4 +84,8 @@ def detect_roles(columns: list[ColumnInfo]) -> dict[str, str]:
         column = pick_column(role, free) or pick_by_language(role, free)
         if column:
             roles[role] = column
+    if "date" not in roles:
+        only_date = [c.name for c in candidates if c.dtype == "date"]
+        if len(only_date) == 1:  # an unusual name (``measured_at``) but nothing to confuse it with
+            roles["date"] = only_date[0]
     return roles

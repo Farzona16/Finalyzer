@@ -102,8 +102,11 @@ def daily_series(ctx: InsightContext, metric: Metric) -> list[tuple[date, float]
 
 def dimensions(ctx: InsightContext) -> list[str]:
     """Low-cardinality text columns worth splitting by (the status column is excluded)."""
-    status = ctx.roles.get("status")
-    return [d for d in dimension_options(ctx.model) if d != status]
+    outcome = {ctx.roles.get(r) for r in ("status", "stage")}  # they describe the outcome itself
+    return [
+        d for d in dimension_options(ctx.model)
+        if d not in outcome and "reason" not in d.lower()
+    ]
 
 
 def grouped(

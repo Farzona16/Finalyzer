@@ -527,10 +527,14 @@ def owner_win_factors() -> np.ndarray:
 
 
 def sales_win_probability(
-    created: pd.DatetimeIndex, owner: np.ndarray, source: np.ndarray, product: np.ndarray
+    closed: pd.DatetimeIndex, owner: np.ndarray, source: np.ndarray, product: np.ndarray
 ) -> np.ndarray:
-    """Chance that a deal is won, from month, owner, source and product (S1, S2, S3)."""
-    september = np.asarray((created.year == 2026) & (created.month == 9))
+    """Chance that a deal is won, from its close month, owner, source and product (S1, S2, S3).
+
+    The win rate is a property of the month the deals were decided in: by creation month the
+    newest deals are still open, and a rate over them would rest on a handful of closed deals.
+    """
+    september = np.asarray((closed.year == 2026) & (closed.month == 9))
     base = np.where(september, SEPTEMBER_WIN_RATE, BASE_WIN_RATE)
     owner_f = owner_win_factors()[owner]
     source_f = np.array([SALES_SOURCE_WIN[v] for v in source])
@@ -548,12 +552,13 @@ def build_sales_deals(rng: np.random.Generator) -> pd.DataFrame:
     owner = rng.integers(0, SALES_OWNERS, size=SALES_DEALS)
     source = rng.choice(SALES_SOURCES, size=SALES_DEALS, p=SALES_SOURCE_WEIGHTS)
     product = rng.choice(SALES_PRODUCTS, size=SALES_DEALS, p=SALES_PRODUCT_WEIGHTS)
-    won = rng.random(SALES_DEALS) < sales_win_probability(created, owner, source, product)
+    chance = rng.random(SALES_DEALS)
     cycle = np.maximum(3, rng.lognormal(mean=np.log(34), sigma=0.45, size=SALES_DEALS)).round()
     close = created + pd.to_timedelta(cycle, unit="D")
     slow = np.asarray(close >= pd.Timestamp("2026-07-01"))
     cycle = np.where(slow, (cycle * LATE_CYCLE_FACTOR).round(), cycle)
     close = created + pd.to_timedelta(cycle, unit="D")
+    won = chance < sales_win_probability(close, owner, source, product)
     status = np.where(won, "won", "lost").astype(object)
     status[np.asarray(close > pd.Timestamp(END))] = "open"
     amount = rng.lognormal(0, 0.35, size=SALES_DEALS) * np.array(

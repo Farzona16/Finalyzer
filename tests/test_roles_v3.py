@@ -62,3 +62,19 @@ def test_english_names_win_over_the_fallback() -> None:
 def test_pii_columns_are_never_roles() -> None:
     pii = ColumnInfo(name="owner", dtype="text", is_pii=True)
     assert "owner" not in detect_roles([pii])
+
+
+def test_a_single_date_column_is_the_date_even_with_an_unknown_name() -> None:
+    roles = detect_roles([col("sample_id"), col("measured_at", "date"), col("pressure", "float")])
+    assert roles["date"] == "measured_at"
+
+
+def test_two_unknown_date_columns_are_not_guessed() -> None:
+    roles = detect_roles([col("opened", "date"), col("closed", "date")])
+    assert "date" not in roles
+
+
+def test_the_single_date_rule_does_not_override_a_named_date() -> None:
+    roles = detect_roles([col("order_date", "date"), col("x", "float")])
+    assert roles["date"] == "order_date"
+
