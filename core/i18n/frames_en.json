@@ -1,0 +1,552 @@
+{
+ "locale": "en",
+ "version": 1,
+ "frames": {
+  "trend.up.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" rose {pct}% {compare}.",
+   "meaning": "Results are moving the right way. Knowing why helps you keep it going.",
+   "next_step": "Check which group or day drove the growth.",
+   "details": ""
+  },
+  "trend.up.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" rose {pct}% {compare}.",
+   "meaning": "Results are moving the right way. Knowing why helps you keep it going.",
+   "next_step": "Check which group or day drove the growth.",
+   "details": "Latest period: {current}. Previous period: {previous}."
+  },
+  "trend.up.simpler": {
+   "reviewed": false,
+   "headline": "\"{metric}\" rose {pct}%.",
+   "meaning": "That is good.",
+   "next_step": "Find out why.",
+   "details": ""
+  },
+  "trend.down.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell {pct}% {compare}.",
+   "meaning": "If this continues, the overall result will go down.",
+   "next_step": "Find the group that fell most and learn why.",
+   "details": ""
+  },
+  "trend.down.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell {pct}% {compare}.",
+   "meaning": "If this continues, the overall result will go down.",
+   "next_step": "Find the group that fell most and learn why.",
+   "details": "Latest period: {current}. Previous period: {previous}."
+  },
+  "trend.down.simpler": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell {pct}%.",
+   "meaning": "This is a warning.",
+   "next_step": "Find out why.",
+   "details": ""
+  },
+  "anomaly.up.simple": {
+   "reviewed": false,
+   "headline": "On {date}, \"{metric}\" rose sharply to {value} (usually about {typical}).",
+   "meaning": "A jump like this can come from a data error, a promotion or an unexpected event.",
+   "next_step": "Check the records for that day and find the cause.",
+   "details": ""
+  },
+  "anomaly.up.expert": {
+   "reviewed": false,
+   "headline": "On {date}, \"{metric}\" rose sharply to {value} (usually about {typical}).",
+   "meaning": "A jump like this can come from a data error, a promotion or an unexpected event.",
+   "next_step": "Check the records for that day and find the cause.",
+   "details": "Method: distance from the usual value (z-score {z}). Observations: {n}."
+  },
+  "anomaly.up.simpler": {
+   "reviewed": false,
+   "headline": "On {date}, \"{metric}\" rose sharply: {value}.",
+   "meaning": "That is far above usual.",
+   "next_step": "Check that day.",
+   "details": ""
+  },
+  "anomaly.down.simple": {
+   "reviewed": false,
+   "headline": "On {date}, \"{metric}\" fell sharply to {value} (usually about {typical}).",
+   "meaning": "A drop like this can point to an outage, a data error or weak demand.",
+   "next_step": "Find out what happened on that day.",
+   "details": ""
+  },
+  "anomaly.down.expert": {
+   "reviewed": false,
+   "headline": "On {date}, \"{metric}\" fell sharply to {value} (usually about {typical}).",
+   "meaning": "A drop like this can point to an outage, a data error or weak demand.",
+   "next_step": "Find out what happened on that day.",
+   "details": "Method: distance from the usual value (z-score {z}). Observations: {n}."
+  },
+  "anomaly.down.simpler": {
+   "reviewed": false,
+   "headline": "On {date}, \"{metric}\" fell sharply: {value}.",
+   "meaning": "That is far below usual.",
+   "next_step": "Check that day.",
+   "details": ""
+  },
+  "concentration.neutral.simple": {
+   "reviewed": false,
+   "headline": "In \"{metric_short}\", {share}% comes from one group: \"{segment}\".",
+   "meaning": "If that group has trouble, the whole result suffers.",
+   "next_step": "Plan ways to earn from other groups too.",
+   "details": ""
+  },
+  "concentration.neutral.expert": {
+   "reviewed": false,
+   "headline": "In \"{metric_short}\", {share}% comes from one group: \"{segment}\".",
+   "meaning": "If that group has trouble, the whole result suffers.",
+   "next_step": "Plan ways to earn from other groups too.",
+   "details": "Method: the top 3 groups hold {top3}%; the concentration index (HHI) was computed."
+  },
+  "concentration.neutral.simpler": {
+   "reviewed": false,
+   "headline": "{share}% comes from one group: \"{segment}\".",
+   "meaning": "That can be risky.",
+   "next_step": "Grow other groups too.",
+   "details": ""
+  },
+  "driver.up.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" grew, and {share}% of that comes from \"{segment}\".",
+   "meaning": "Most of the improvement comes from this one group.",
+   "next_step": "Learn what works there and try it elsewhere.",
+   "details": ""
+  },
+  "driver.up.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" grew, and {share}% of that comes from \"{segment}\".",
+   "meaning": "Most of the improvement comes from this one group.",
+   "next_step": "Learn what works there and try it elsewhere.",
+   "details": "Total change: {change}."
+  },
+  "driver.up.simpler": {
+   "reviewed": false,
+   "headline": "\"{metric}\" grew: {share}% is from \"{segment}\".",
+   "meaning": "Most of it is from this group.",
+   "next_step": "Learn what works there.",
+   "details": ""
+  },
+  "driver.down.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell, and {share}% of that comes from \"{segment}\".",
+   "meaning": "Most of the decline comes from this one group.",
+   "next_step": "First check what changed in this group: \"{segment}\".",
+   "details": ""
+  },
+  "driver.down.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell, and {share}% of that comes from \"{segment}\".",
+   "meaning": "Most of the decline comes from this one group.",
+   "next_step": "First check what changed in this group: \"{segment}\".",
+   "details": "Total change: {change}."
+  },
+  "driver.down.simpler": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell: {share}% is from \"{segment}\".",
+   "meaning": "Most of it is from this group.",
+   "next_step": "Find what changed there.",
+   "details": ""
+  },
+  "segment_gap.neutral.simple": {
+   "reviewed": false,
+   "headline": "There is a big gap between \"{best}\" and \"{worst}\": \"{metric}\" is {ratio} times higher in the first.",
+   "meaning": "A gap like this shows strong and weak spots.",
+   "next_step": "Try the strong group's approach in the weak one.",
+   "details": ""
+  },
+  "segment_gap.neutral.expert": {
+   "reviewed": false,
+   "headline": "There is a big gap between \"{best}\" and \"{worst}\": \"{metric}\" is {ratio} times higher in the first.",
+   "meaning": "A gap like this shows strong and weak spots.",
+   "next_step": "Try the strong group's approach in the weak one.",
+   "details": "Best group: {best_value}. Weakest group: {worst_value}."
+  },
+  "segment_gap.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Big gap between \"{best}\" and \"{worst}\": {ratio} times.",
+   "meaning": "One does much better.",
+   "next_step": "Find out why.",
+   "details": ""
+  },
+  "segment_momentum.up.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" rose {pct}% {compare} in the \"{segment}\" group.",
+   "meaning": "This group is growing fast.",
+   "next_step": "Give this group extra attention and resources.",
+   "details": ""
+  },
+  "segment_momentum.up.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" rose {pct}% {compare} in the \"{segment}\" group.",
+   "meaning": "This group is growing fast.",
+   "next_step": "Give this group extra attention and resources.",
+   "details": "Previous period: {previous}. Latest period: {current}."
+  },
+  "segment_momentum.up.simpler": {
+   "reviewed": false,
+   "headline": "\"{metric}\" rose {pct}% in the \"{segment}\" group.",
+   "meaning": "This group is growing fast.",
+   "next_step": "Pay attention to it.",
+   "details": ""
+  },
+  "segment_momentum.down.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell {pct}% {compare} in the \"{segment}\" group.",
+   "meaning": "This group is falling behind.",
+   "next_step": "Spot the problem in this group early.",
+   "details": ""
+  },
+  "segment_momentum.down.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell {pct}% {compare} in the \"{segment}\" group.",
+   "meaning": "This group is falling behind.",
+   "next_step": "Spot the problem in this group early.",
+   "details": "Previous period: {previous}. Latest period: {current}."
+  },
+  "segment_momentum.down.simpler": {
+   "reviewed": false,
+   "headline": "\"{metric}\" fell {pct}% in the \"{segment}\" group.",
+   "meaning": "This group is falling behind.",
+   "next_step": "Find out why.",
+   "details": ""
+  },
+  "churn.up.simple": {
+   "reviewed": false,
+   "headline": "The share of customers who did not come back rose: {rate}% of last month's customers (usually {baseline}%).",
+   "meaning": "Lost customers also take future income with them.",
+   "next_step": "Call lost customers and ask why they left.",
+   "details": ""
+  },
+  "churn.up.expert": {
+   "reviewed": false,
+   "headline": "The share of customers who did not come back rose: {rate}% of last month's customers (usually {baseline}%).",
+   "meaning": "Lost customers also take future income with them.",
+   "next_step": "Call lost customers and ask why they left.",
+   "details": "Method: share of last month's customers with no purchase this month (churn). Customers: {customers}."
+  },
+  "churn.up.simpler": {
+   "reviewed": false,
+   "headline": "Customers not coming back rose: {rate}%.",
+   "meaning": "That is more than usual.",
+   "next_step": "Ask them why.",
+   "details": ""
+  },
+  "churn.down.simple": {
+   "reviewed": false,
+   "headline": "The share of customers who did not come back fell: {rate}% of last month's customers (usually {baseline}%).",
+   "meaning": "More customers are coming back, which is a good sign.",
+   "next_step": "Keep doing whatever helped.",
+   "details": ""
+  },
+  "churn.down.expert": {
+   "reviewed": false,
+   "headline": "The share of customers who did not come back fell: {rate}% of last month's customers (usually {baseline}%).",
+   "meaning": "More customers are coming back, which is a good sign.",
+   "next_step": "Keep doing whatever helped.",
+   "details": "Method: share of last month's customers with no purchase this month (churn). Customers: {customers}."
+  },
+  "churn.down.simpler": {
+   "reviewed": false,
+   "headline": "Customers not coming back fell: {rate}%.",
+   "meaning": "More customers return.",
+   "next_step": "Keep it up.",
+   "details": ""
+  },
+  "data_quality.neutral.simple": {
+   "reviewed": false,
+   "headline": "{pct}% of the data in column \"{column}\" is missing.",
+   "meaning": "This can make the analysis less accurate.",
+   "next_step": "Fill in the column or leave it out of the analysis.",
+   "details": ""
+  },
+  "data_quality.neutral.expert": {
+   "reviewed": false,
+   "headline": "{pct}% of the data in column \"{column}\" is missing.",
+   "meaning": "This can make the analysis less accurate.",
+   "next_step": "Fill in the column or leave it out of the analysis.",
+   "details": "Empty rows: {rows}."
+  },
+  "data_quality.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" is missing {pct}% of its data.",
+   "meaning": "This can spoil the result.",
+   "next_step": "Fill in the column.",
+   "details": ""
+  },
+  "funnel_drop.neutral.simple": {
+   "reviewed": false,
+   "headline": "Only {rate}% move from \"{stage_from}\" to \"{stage_to}\" (other stages usually {typical}%).",
+   "meaning": "Many customers are lost at this step.",
+   "next_step": "Review the process between these two stages.",
+   "details": ""
+  },
+  "funnel_drop.neutral.expert": {
+   "reviewed": false,
+   "headline": "Only {rate}% move from \"{stage_from}\" to \"{stage_to}\" (other stages usually {typical}%).",
+   "meaning": "Many customers are lost at this step.",
+   "next_step": "Review the process between these two stages.",
+   "details": "Deals entering the stage: {entered}."
+  },
+  "funnel_drop.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Big loss between stages: \"{stage_from}\" to \"{stage_to}\", {rate}%.",
+   "meaning": "Customers leave here.",
+   "next_step": "Check this step.",
+   "details": ""
+  },
+  "stalled.neutral.simple": {
+   "reviewed": false,
+   "headline": "{share}% of open deal value has not moved for {days} days.",
+   "meaning": "Deals like this are less likely to close with every passing day.",
+   "next_step": "Set the next step for each stalled deal.",
+   "details": ""
+  },
+  "stalled.neutral.expert": {
+   "reviewed": false,
+   "headline": "{share}% of open deal value has not moved for {days} days.",
+   "meaning": "Deals like this are less likely to close with every passing day.",
+   "next_step": "Set the next step for each stalled deal.",
+   "details": "Stalled deals: {deals}. Value: {value}."
+  },
+  "stalled.neutral.simpler": {
+   "reviewed": false,
+   "headline": "{share}% of open deals are stuck.",
+   "meaning": "They may never close.",
+   "next_step": "Contact them.",
+   "details": ""
+  },
+  "win_rate_gap.neutral.simple": {
+   "reviewed": false,
+   "headline": "The share of deals won is {ratio} times higher in \"{best}\" than in \"{worst}\".",
+   "meaning": "So the sales approach differs a lot between them.",
+   "next_step": "Teach the best approach to the others.",
+   "details": ""
+  },
+  "win_rate_gap.neutral.expert": {
+   "reviewed": false,
+   "headline": "The share of deals won is {ratio} times higher in \"{best}\" than in \"{worst}\".",
+   "meaning": "So the sales approach differs a lot between them.",
+   "next_step": "Teach the best approach to the others.",
+   "details": "Closed deals: {n_best} and {n_worst}."
+  },
+  "win_rate_gap.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Big gap in deals won: {ratio} times.",
+   "meaning": "One group sells much better.",
+   "next_step": "Learn from them.",
+   "details": ""
+  },
+  "cycle_change.up.simple": {
+   "reviewed": false,
+   "headline": "The time to close a deal increased {pct}% {compare}: about {days} days on average.",
+   "meaning": "The longer it takes, the more customer interest can fade.",
+   "next_step": "Find the slowest stage and speed it up.",
+   "details": ""
+  },
+  "cycle_change.up.expert": {
+   "reviewed": false,
+   "headline": "The time to close a deal increased {pct}% {compare}: about {days} days on average.",
+   "meaning": "The longer it takes, the more customer interest can fade.",
+   "next_step": "Find the slowest stage and speed it up.",
+   "details": "Average in the previous period: {previous_days} days."
+  },
+  "cycle_change.up.simpler": {
+   "reviewed": false,
+   "headline": "Time to close increased: {days} days.",
+   "meaning": "Deals slowed down.",
+   "next_step": "Find out why.",
+   "details": ""
+  },
+  "cycle_change.down.simple": {
+   "reviewed": false,
+   "headline": "The time to close a deal decreased {pct}% {compare}: about {days} days on average.",
+   "meaning": "Deals close faster, which is good.",
+   "next_step": "Find what sped things up and keep it.",
+   "details": ""
+  },
+  "cycle_change.down.expert": {
+   "reviewed": false,
+   "headline": "The time to close a deal decreased {pct}% {compare}: about {days} days on average.",
+   "meaning": "Deals close faster, which is good.",
+   "next_step": "Find what sped things up and keep it.",
+   "details": "Average in the previous period: {previous_days} days."
+  },
+  "cycle_change.down.simpler": {
+   "reviewed": false,
+   "headline": "Time to close decreased: {days} days.",
+   "meaning": "Deals sped up.",
+   "next_step": "Keep going this way.",
+   "details": ""
+  },
+  "outliers.neutral.simple": {
+   "reviewed": false,
+   "headline": "In column \"{column}\", {count} values differ a lot from the rest ({share}%).",
+   "meaning": "They may be errors or may skew the result.",
+   "next_step": "Check these values and fix any mistakes.",
+   "details": ""
+  },
+  "outliers.neutral.expert": {
+   "reviewed": false,
+   "headline": "In column \"{column}\", {count} values differ a lot from the rest ({share}%).",
+   "meaning": "They may be errors or may skew the result.",
+   "next_step": "Check these values and fix any mistakes.",
+   "details": "Method: interquartile range (IQR) rule, limit {iqr_factor} times. Most extreme value: {extreme}."
+  },
+  "outliers.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" has {count} very large or small values.",
+   "meaning": "They may skew the result.",
+   "next_step": "Check them.",
+   "details": ""
+  },
+  "correlation.up.simple": {
+   "reviewed": false,
+   "headline": "When \"{a}\" increases, \"{b}\" tends to increase too.",
+   "meaning": "The two measures usually move together, but this does not prove that one causes the other.",
+   "next_step": "Use the link to forecast, but check the cause separately.",
+   "details": ""
+  },
+  "correlation.up.expert": {
+   "reviewed": false,
+   "headline": "When \"{a}\" increases, \"{b}\" tends to increase too.",
+   "meaning": "The two measures usually move together, but this does not prove that one causes the other.",
+   "next_step": "Use the link to forecast, but check the cause separately.",
+   "details": "Method: Spearman and Pearson correlation; rho = {rho}, observations: {n}."
+  },
+  "correlation.up.simpler": {
+   "reviewed": false,
+   "headline": "When \"{a}\" increases, \"{b}\" increases too.",
+   "meaning": "They move together. That does not mean one causes the other.",
+   "next_step": "Use it with care.",
+   "details": ""
+  },
+  "correlation.down.simple": {
+   "reviewed": false,
+   "headline": "When \"{a}\" is high, \"{b}\" tends to decrease.",
+   "meaning": "The two measures usually move in opposite ways, but this does not prove that one causes the other.",
+   "next_step": "Use the link to forecast, but check the cause separately.",
+   "details": ""
+  },
+  "correlation.down.expert": {
+   "reviewed": false,
+   "headline": "When \"{a}\" is high, \"{b}\" tends to decrease.",
+   "meaning": "The two measures usually move in opposite ways, but this does not prove that one causes the other.",
+   "next_step": "Use the link to forecast, but check the cause separately.",
+   "details": "Method: Spearman and Pearson correlation; rho = {rho}, observations: {n}."
+  },
+  "correlation.down.simpler": {
+   "reviewed": false,
+   "headline": "When \"{a}\" is high, \"{b}\" decreases.",
+   "meaning": "They move in opposite ways. That does not mean one causes the other.",
+   "next_step": "Use it with care.",
+   "details": ""
+  },
+  "group_difference.neutral.simple": {
+   "reviewed": false,
+   "headline": "\"{metric}\" differs clearly between groups: \"{high}\" is higher, \"{low}\" is lower, a gap of {pct}%.",
+   "meaning": "This is not chance; there is a real pattern.",
+   "next_step": "Try applying what works in the high group to the low group.",
+   "details": ""
+  },
+  "group_difference.neutral.expert": {
+   "reviewed": false,
+   "headline": "\"{metric}\" differs clearly between groups: \"{high}\" is higher, \"{low}\" is lower, a gap of {pct}%.",
+   "meaning": "This is not chance; there is a real pattern.",
+   "next_step": "Try applying what works in the high group to the low group.",
+   "details": "Method: {test}; effect size: {effect}."
+  },
+  "group_difference.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Big gap between \"{high}\" and \"{low}\": {pct}%.",
+   "meaning": "It is not chance.",
+   "next_step": "Find out why.",
+   "details": ""
+  },
+  "skewness.neutral.simple": {
+   "reviewed": false,
+   "headline": "In column \"{column}\", most values are small but a few are very large.",
+   "meaning": "So the average can be misleading.",
+   "next_step": "Look at the middle value instead of the average.",
+   "details": ""
+  },
+  "skewness.neutral.expert": {
+   "reviewed": false,
+   "headline": "In column \"{column}\", most values are small but a few are very large.",
+   "meaning": "So the average can be misleading.",
+   "next_step": "Look at the middle value instead of the average.",
+   "details": "Method: skewness = {skew}. Observations: {n}."
+  },
+  "skewness.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" has a few very large values.",
+   "meaning": "The average is misleading.",
+   "next_step": "Look at the middle value.",
+   "details": ""
+  },
+  "missing_pattern.neutral.simple": {
+   "reviewed": false,
+   "headline": "Gaps in column \"{column}\" are not random: {pct}% in the \"{category}\" group.",
+   "meaning": "This may point to a problem in how the data is collected.",
+   "next_step": "Check how data is entered for this group.",
+   "details": ""
+  },
+  "missing_pattern.neutral.expert": {
+   "reviewed": false,
+   "headline": "Gaps in column \"{column}\" are not random: {pct}% in the \"{category}\" group.",
+   "meaning": "This may point to a problem in how the data is collected.",
+   "next_step": "Check how data is entered for this group.",
+   "details": "Method: chi-square test, Cramér's V = {v}, p = {p}."
+  },
+  "missing_pattern.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Gaps in column \"{column}\" are common in \"{category}\": {pct}%.",
+   "meaning": "It is not chance.",
+   "next_step": "Check data entry.",
+   "details": ""
+  },
+  "trend_regression.up.simple": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" keeps increasing over time: by about {change} units a month.",
+   "meaning": "This is a steady direction, not chance.",
+   "next_step": "Plan for this direction to continue.",
+   "details": ""
+  },
+  "trend_regression.up.expert": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" keeps increasing over time: by about {change} units a month.",
+   "meaning": "This is a steady direction, not chance.",
+   "next_step": "Plan for this direction to continue.",
+   "details": "Method: linear regression; R2 = {r2}, p = {p}."
+  },
+  "trend_regression.up.simpler": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" keeps increasing.",
+   "meaning": "It is a steady change.",
+   "next_step": "Adjust your plan.",
+   "details": ""
+  },
+  "trend_regression.down.simple": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" keeps decreasing over time: by about {change} units a month.",
+   "meaning": "This is a steady direction, not chance.",
+   "next_step": "Plan for this direction to continue.",
+   "details": ""
+  },
+  "trend_regression.down.expert": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" keeps decreasing over time: by about {change} units a month.",
+   "meaning": "This is a steady direction, not chance.",
+   "next_step": "Plan for this direction to continue.",
+   "details": "Method: linear regression; R2 = {r2}, p = {p}."
+  },
+  "trend_regression.down.simpler": {
+   "reviewed": false,
+   "headline": "Column \"{column}\" keeps decreasing.",
+   "meaning": "It is a steady change.",
+   "next_step": "Adjust your plan.",
+   "details": ""
+  }
+ }
+}

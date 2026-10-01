@@ -1,0 +1,1558 @@
+{
+ "description": "Shared by the Python formatters (core/i18n/formats.py) and the TypeScript formatters (frontend/src/lib/format.ts). Numbers are rounded half up on their shortest decimal text (1.005 -> 1.01). U+202F separates uz digit groups and U+00A0 separates a number from its unit; both are written as \\u escapes.",
+ "cases": [
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 0,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 0,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 7,
+   "args": {},
+   "expected": "7"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 7,
+   "args": {},
+   "expected": "7"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 999,
+   "args": {},
+   "expected": "999"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 999,
+   "args": {},
+   "expected": "999"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 1000,
+   "args": {},
+   "expected": "1\u202f000"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 1000,
+   "args": {},
+   "expected": "1,000"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 1234567,
+   "args": {},
+   "expected": "1\u202f234\u202f567"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 1234567,
+   "args": {},
+   "expected": "1,234,567"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": -1234,
+   "args": {},
+   "expected": "-1\u202f234"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": -1234,
+   "args": {},
+   "expected": "-1,234"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 1234.5,
+   "args": {},
+   "expected": "1\u202f235"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 1234.5,
+   "args": {},
+   "expected": "1,235"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 2.5,
+   "args": {},
+   "expected": "3"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 2.5,
+   "args": {},
+   "expected": "3"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": -2.5,
+   "args": {},
+   "expected": "-3"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": -2.5,
+   "args": {},
+   "expected": "-3"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 1000000000,
+   "args": {},
+   "expected": "1\u202f000\u202f000\u202f000"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 1000000000,
+   "args": {},
+   "expected": "1,000,000,000"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": 99999.5,
+   "args": {},
+   "expected": "100\u202f000"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": 99999.5,
+   "args": {},
+   "expected": "100,000"
+  },
+  {
+   "fn": "integer",
+   "locale": "uz",
+   "value": null,
+   "args": {},
+   "expected": "–"
+  },
+  {
+   "fn": "integer",
+   "locale": "en",
+   "value": null,
+   "args": {},
+   "expected": "–"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 1234.56,
+   "args": {},
+   "expected": "1\u202f234,56"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 1234.56,
+   "args": {},
+   "expected": "1,234.56"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 0,
+   "args": {},
+   "expected": "0,00"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 0,
+   "args": {},
+   "expected": "0.00"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 0.005,
+   "args": {},
+   "expected": "0,01"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 0.005,
+   "args": {},
+   "expected": "0.01"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 1.005,
+   "args": {},
+   "expected": "1,01"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 1.005,
+   "args": {},
+   "expected": "1.01"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": -0.001,
+   "args": {},
+   "expected": "0,00"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": -0.001,
+   "args": {},
+   "expected": "0.00"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 1234567.891,
+   "args": {},
+   "expected": "1\u202f234\u202f567,89"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 1234567.891,
+   "args": {},
+   "expected": "1,234,567.89"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 2.5,
+   "args": {
+    "digits": 0
+   },
+   "expected": "3"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 2.5,
+   "args": {
+    "digits": 0
+   },
+   "expected": "3"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 3.14159,
+   "args": {
+    "digits": 3
+   },
+   "expected": "3,142"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 3.14159,
+   "args": {
+    "digits": 3
+   },
+   "expected": "3.142"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": -12.345,
+   "args": {},
+   "expected": "-12,35"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": -12.345,
+   "args": {},
+   "expected": "-12.35"
+  },
+  {
+   "fn": "decimal",
+   "locale": "uz",
+   "value": 100,
+   "args": {
+    "digits": 1
+   },
+   "expected": "100,0"
+  },
+  {
+   "fn": "decimal",
+   "locale": "en",
+   "value": 100,
+   "args": {
+    "digits": 1
+   },
+   "expected": "100.0"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 8.2,
+   "args": {},
+   "expected": "8,2%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 8.2,
+   "args": {},
+   "expected": "8.2%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 8.25,
+   "args": {},
+   "expected": "8,3%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 8.25,
+   "args": {},
+   "expected": "8.3%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 0,
+   "args": {},
+   "expected": "0,0%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 0,
+   "args": {},
+   "expected": "0.0%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 100,
+   "args": {},
+   "expected": "100,0%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 100,
+   "args": {},
+   "expected": "100.0%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": -3.14,
+   "args": {},
+   "expected": "-3,1%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": -3.14,
+   "args": {},
+   "expected": "-3.1%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 12.5,
+   "args": {
+    "digits": 0
+   },
+   "expected": "13%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 12.5,
+   "args": {
+    "digits": 0
+   },
+   "expected": "13%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 0.082,
+   "args": {
+    "from_ratio": true
+   },
+   "expected": "8,2%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 0.082,
+   "args": {
+    "from_ratio": true
+   },
+   "expected": "8.2%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 0.5,
+   "args": {
+    "from_ratio": true
+   },
+   "expected": "50,0%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 0.5,
+   "args": {
+    "from_ratio": true
+   },
+   "expected": "50.0%"
+  },
+  {
+   "fn": "percent",
+   "locale": "uz",
+   "value": 1234.5,
+   "args": {},
+   "expected": "1\u202f234,5%"
+  },
+  {
+   "fn": "percent",
+   "locale": "en",
+   "value": 1234.5,
+   "args": {},
+   "expected": "1,234.5%"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 0,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 0,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 15,
+   "args": {},
+   "expected": "15"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 15,
+   "args": {},
+   "expected": "15"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 999,
+   "args": {},
+   "expected": "999"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 999,
+   "args": {},
+   "expected": "999"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 12.34,
+   "args": {},
+   "expected": "12,3"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 12.34,
+   "args": {},
+   "expected": "12.3"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 0.04,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 0.04,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": -0.04,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": -0.04,
+   "args": {},
+   "expected": "0"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 1000,
+   "args": {},
+   "expected": "1\u00a0ming"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 1000,
+   "args": {},
+   "expected": "1K"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 1500,
+   "args": {},
+   "expected": "1,5\u00a0ming"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 1500,
+   "args": {},
+   "expected": "1.5K"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 5000,
+   "args": {},
+   "expected": "5\u00a0ming"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 5000,
+   "args": {},
+   "expected": "5K"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 5400,
+   "args": {},
+   "expected": "5,4\u00a0ming"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 5400,
+   "args": {},
+   "expected": "5.4K"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": -5400,
+   "args": {},
+   "expected": "-5,4\u00a0ming"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": -5400,
+   "args": {},
+   "expected": "-5.4K"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 999949,
+   "args": {},
+   "expected": "999,9\u00a0ming"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 999949,
+   "args": {},
+   "expected": "999.9K"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 999950,
+   "args": {},
+   "expected": "1\u00a0mln"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 999950,
+   "args": {},
+   "expected": "1M"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 1000000,
+   "args": {},
+   "expected": "1\u00a0mln"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 1000000,
+   "args": {},
+   "expected": "1M"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 2500000,
+   "args": {},
+   "expected": "2,5\u00a0mln"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 2500000,
+   "args": {},
+   "expected": "2.5M"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 12800000,
+   "args": {},
+   "expected": "12,8\u00a0mln"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 12800000,
+   "args": {},
+   "expected": "12.8M"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 999999999,
+   "args": {},
+   "expected": "1\u00a0mlrd"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 999999999,
+   "args": {},
+   "expected": "1B"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 1234567890,
+   "args": {},
+   "expected": "1,2\u00a0mlrd"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 1234567890,
+   "args": {},
+   "expected": "1.2B"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 1250000000000,
+   "args": {},
+   "expected": "1,3\u00a0trln"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 1250000000000,
+   "args": {},
+   "expected": "1.3T"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": 1234567,
+   "args": {
+    "digits": 2
+   },
+   "expected": "1,23\u00a0mln"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": 1234567,
+   "args": {
+    "digits": 2
+   },
+   "expected": "1.23M"
+  },
+  {
+   "fn": "compact",
+   "locale": "uz",
+   "value": null,
+   "args": {},
+   "expected": "–"
+  },
+  {
+   "fn": "compact",
+   "locale": "en",
+   "value": null,
+   "args": {},
+   "expected": "–"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 12800000,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "12,8\u00a0mln\u00a0soʻm"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": 12800000,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "UZS\u00a012.8M"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 5000,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "5\u00a0ming\u00a0soʻm"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 950,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "950\u00a0soʻm"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": 950,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "UZS\u00a0950"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 1234567,
+   "args": {
+    "currency": "UZS",
+    "compact": false
+   },
+   "expected": "1\u202f234\u202f567\u00a0soʻm"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": 1234567,
+   "args": {
+    "currency": "UZS",
+    "compact": false
+   },
+   "expected": "UZS\u00a01,234,567"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 1234567.6,
+   "args": {
+    "currency": "UZS",
+    "compact": false
+   },
+   "expected": "1\u202f234\u202f568\u00a0soʻm"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 1250000,
+   "args": {
+    "currency": "USD"
+   },
+   "expected": "1,3\u00a0mln\u00a0$"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": 1250000,
+   "args": {
+    "currency": "USD"
+   },
+   "expected": "$1.3M"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 1234.5,
+   "args": {
+    "currency": "USD",
+    "compact": false
+   },
+   "expected": "1\u202f234,50\u00a0$"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": 1234.5,
+   "args": {
+    "currency": "EUR",
+    "compact": false
+   },
+   "expected": "€1,234.50"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": 45000,
+   "args": {
+    "currency": "RUB"
+   },
+   "expected": "₽45K"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": 45000,
+   "args": {
+    "currency": "RUB"
+   },
+   "expected": "45\u00a0ming\u00a0₽"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": -5000,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "-5\u00a0ming\u00a0soʻm"
+  },
+  {
+   "fn": "currency",
+   "locale": "en",
+   "value": -1500,
+   "args": {
+    "currency": "USD"
+   },
+   "expected": "-$1.5K"
+  },
+  {
+   "fn": "currency",
+   "locale": "uz",
+   "value": null,
+   "args": {
+    "currency": "UZS"
+   },
+   "expected": "–"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 1,
+   "args": {},
+   "expected": "yanvar"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 1,
+   "args": {},
+   "expected": "January"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 2,
+   "args": {},
+   "expected": "fevral"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 2,
+   "args": {},
+   "expected": "February"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 3,
+   "args": {},
+   "expected": "mart"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 3,
+   "args": {},
+   "expected": "March"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 4,
+   "args": {},
+   "expected": "aprel"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 4,
+   "args": {},
+   "expected": "April"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 5,
+   "args": {},
+   "expected": "may"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 5,
+   "args": {},
+   "expected": "May"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 6,
+   "args": {},
+   "expected": "iyun"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 6,
+   "args": {},
+   "expected": "June"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 7,
+   "args": {},
+   "expected": "iyul"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 7,
+   "args": {},
+   "expected": "July"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 8,
+   "args": {},
+   "expected": "avgust"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 8,
+   "args": {},
+   "expected": "August"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 9,
+   "args": {},
+   "expected": "sentabr"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 9,
+   "args": {},
+   "expected": "September"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 10,
+   "args": {},
+   "expected": "oktabr"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 10,
+   "args": {},
+   "expected": "October"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 11,
+   "args": {},
+   "expected": "noyabr"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 11,
+   "args": {},
+   "expected": "November"
+  },
+  {
+   "fn": "month",
+   "locale": "uz",
+   "value": 12,
+   "args": {},
+   "expected": "dekabr"
+  },
+  {
+   "fn": "month",
+   "locale": "en",
+   "value": 12,
+   "args": {},
+   "expected": "December"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 0,
+   "args": {},
+   "expected": "dushanba"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 0,
+   "args": {},
+   "expected": "Monday"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 1,
+   "args": {},
+   "expected": "seshanba"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 1,
+   "args": {},
+   "expected": "Tuesday"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 2,
+   "args": {},
+   "expected": "chorshanba"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 2,
+   "args": {},
+   "expected": "Wednesday"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 3,
+   "args": {},
+   "expected": "payshanba"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 3,
+   "args": {},
+   "expected": "Thursday"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 4,
+   "args": {},
+   "expected": "juma"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 4,
+   "args": {},
+   "expected": "Friday"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 5,
+   "args": {},
+   "expected": "shanba"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 5,
+   "args": {},
+   "expected": "Saturday"
+  },
+  {
+   "fn": "weekday",
+   "locale": "uz",
+   "value": 6,
+   "args": {},
+   "expected": "yakshanba"
+  },
+  {
+   "fn": "weekday",
+   "locale": "en",
+   "value": 6,
+   "args": {},
+   "expected": "Sunday"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-08-12",
+   "args": {
+    "style": "date"
+   },
+   "expected": "2026-yil 12-avgust"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-08-12",
+   "args": {
+    "style": "date"
+   },
+   "expected": "12 Aug 2026"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-01-01",
+   "args": {
+    "style": "date"
+   },
+   "expected": "2026-yil 1-yanvar"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-01-01",
+   "args": {
+    "style": "date"
+   },
+   "expected": "1 Jan 2026"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-12-31",
+   "args": {
+    "style": "date"
+   },
+   "expected": "2026-yil 31-dekabr"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-12-31",
+   "args": {
+    "style": "date"
+   },
+   "expected": "31 Dec 2026"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2024-02-29",
+   "args": {
+    "style": "date"
+   },
+   "expected": "2024-yil 29-fevral"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2024-02-29",
+   "args": {
+    "style": "date"
+   },
+   "expected": "29 Feb 2024"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-08-12T10:30:00",
+   "args": {
+    "style": "date"
+   },
+   "expected": "2026-yil 12-avgust"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-08-12T10:30:00",
+   "args": {
+    "style": "date"
+   },
+   "expected": "12 Aug 2026"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-09-15",
+   "args": {
+    "style": "month"
+   },
+   "expected": "2026-yil sentabr"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-09-15",
+   "args": {
+    "style": "month"
+   },
+   "expected": "Sep 2026"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-05-02",
+   "args": {
+    "style": "month"
+   },
+   "expected": "2026-yil may"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-05-02",
+   "args": {
+    "style": "month"
+   },
+   "expected": "May 2026"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-08-12",
+   "args": {
+    "style": "short"
+   },
+   "expected": "12.08.2026"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-08-12",
+   "args": {
+    "style": "short"
+   },
+   "expected": "2026-08-12"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "2026-01-05",
+   "args": {
+    "style": "short"
+   },
+   "expected": "05.01.2026"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "2026-01-05",
+   "args": {
+    "style": "short"
+   },
+   "expected": "2026-01-05"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": "not a date",
+   "args": {
+    "style": "date"
+   },
+   "expected": "–"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": "not a date",
+   "args": {
+    "style": "date"
+   },
+   "expected": "–"
+  },
+  {
+   "fn": "date",
+   "locale": "uz",
+   "value": null,
+   "args": {
+    "style": "month"
+   },
+   "expected": "–"
+  },
+  {
+   "fn": "date",
+   "locale": "en",
+   "value": null,
+   "args": {
+    "style": "month"
+   },
+   "expected": "–"
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "1\u202f234\u202f567",
+   "args": {},
+   "expected": 1234567
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "1 234 567",
+   "args": {},
+   "expected": 1234567
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "1\u202f234,56",
+   "args": {},
+   "expected": 1234.56
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "1,234.56",
+   "args": {},
+   "expected": 1234.56
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "1,234",
+   "args": {},
+   "expected": 1234
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "1,234",
+   "args": {},
+   "expected": 1.234
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "1.234",
+   "args": {},
+   "expected": 1.234
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "12,8\u00a0mln",
+   "args": {},
+   "expected": 12800000
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "12.8M",
+   "args": {},
+   "expected": 12800000
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "5\u00a0ming",
+   "args": {},
+   "expected": 5000
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "5K",
+   "args": {},
+   "expected": 5000
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "1,2\u00a0mlrd",
+   "args": {},
+   "expected": 1200000000
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "1.2B",
+   "args": {},
+   "expected": 1200000000
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "8,2%",
+   "args": {},
+   "expected": 8.2
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "8.2%",
+   "args": {},
+   "expected": 8.2
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "12,8\u00a0mln\u00a0soʻm",
+   "args": {},
+   "expected": 12800000
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "UZS\u00a012.8M",
+   "args": {},
+   "expected": 12800000
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "$1.3M",
+   "args": {},
+   "expected": 1300000
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "-5,4\u00a0ming",
+   "args": {},
+   "expected": -5400
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "−3,5",
+   "args": {},
+   "expected": -3.5
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "0",
+   "args": {},
+   "expected": 0
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "abc",
+   "args": {},
+   "expected": null
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "",
+   "args": {},
+   "expected": null
+  },
+  {
+   "fn": "parse",
+   "locale": "en",
+   "value": "1,2,3",
+   "args": {},
+   "expected": null
+  },
+  {
+   "fn": "parse",
+   "locale": "uz",
+   "value": "12 mln mln",
+   "args": {},
+   "expected": null
+  }
+ ]
+}

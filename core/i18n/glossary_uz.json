@@ -1,0 +1,1659 @@
+{
+ "locale": "uz",
+ "version": 1,
+ "entries": {
+  "churn": {
+   "term": "mijozlar ketishi",
+   "plain": "oldin xarid qilgan, lekin endi qilmayotgan mijozlar",
+   "aliases": [
+    "churn",
+    "otток",
+    "отток"
+   ],
+   "reviewed": false
+  },
+  "anomaly": {
+   "term": "anomaliya",
+   "plain": "odatdagidan keskin farq",
+   "aliases": [
+    "anomaly",
+    "аномалия",
+    "gʻalati qiymat"
+   ],
+   "reviewed": false
+  },
+  "concentration": {
+   "term": "konsentratsiya",
+   "plain": "bir narsaga haddan tashqari bogʻliqlik",
+   "aliases": [
+    "concentration",
+    "kontsentratsiya"
+   ],
+   "reviewed": false
+  },
+  "correlation": {
+   "term": "korrelyatsiya",
+   "plain": "ikki koʻrsatkichning birga oʻzgarishi",
+   "aliases": [
+    "correlation",
+    "bogʻliqlik",
+    "корреляция"
+   ],
+   "reviewed": false
+  },
+  "median": {
+   "term": "mediana",
+   "plain": "oʻrtadagi qiymat",
+   "aliases": [
+    "median",
+    "медиана"
+   ],
+   "reviewed": false
+  },
+  "standard_deviation": {
+   "term": "standart ogʻish",
+   "plain": "qiymatlar qanchalik tarqoq",
+   "aliases": [
+    "standard deviation",
+    "sigma"
+   ],
+   "reviewed": false
+  },
+  "margin": {
+   "term": "marja",
+   "plain": "foydaning savdodagi ulushi",
+   "aliases": [
+    "margin",
+    "маржа"
+   ],
+   "reviewed": false
+  },
+  "win_rate": {
+   "term": "yutish ulushi",
+   "plain": "yutib olingan bitimlar ulushi",
+   "aliases": [
+    "win rate",
+    "yutuq ulushi"
+   ],
+   "reviewed": false
+  },
+  "average": {
+   "term": "oʻrtacha",
+   "plain": "barcha qiymatlar yigʻindisining ularning soniga nisbati",
+   "aliases": [
+    "mean",
+    "arifmetik oʻrtacha",
+    "среднее"
+   ],
+   "reviewed": false
+  },
+  "mode": {
+   "term": "moda",
+   "plain": "eng koʻp uchraydigan qiymat",
+   "aliases": [
+    "mode"
+   ],
+   "reviewed": false
+  },
+  "variance": {
+   "term": "dispersiya",
+   "plain": "qiymatlarning oʻrtachadan chetlanishi darajasi",
+   "aliases": [
+    "variance"
+   ],
+   "reviewed": false
+  },
+  "range": {
+   "term": "qamrov",
+   "plain": "eng kichik va eng katta qiymat orasidagi farq",
+   "aliases": [
+    "range",
+    "diapazon"
+   ],
+   "reviewed": false
+  },
+  "quartile": {
+   "term": "kvartil",
+   "plain": "tartiblangan qiymatlarni toʻrt teng qismga boʻluvchi nuqta",
+   "aliases": [
+    "quartile"
+   ],
+   "reviewed": false
+  },
+  "percentile": {
+   "term": "persentil",
+   "plain": "ma'lum ulushdagi qiymatlar undan pastda qoladigan nuqta",
+   "aliases": [
+    "percentile"
+   ],
+   "reviewed": false
+  },
+  "iqr": {
+   "term": "kvartillar oraligʻi",
+   "plain": "qiymatlarning oʻrtadagi yarmi qanchalik tarqoq",
+   "aliases": [
+    "IQR",
+    "iqr"
+   ],
+   "reviewed": false
+  },
+  "outlier": {
+   "term": "chekka qiymat",
+   "plain": "boshqalardan juda uzoqda turgan qiymat",
+   "aliases": [
+    "outlier",
+    "outliers",
+    "ekstremal qiymat"
+   ],
+   "reviewed": false
+  },
+  "skewness": {
+   "term": "assimetriya",
+   "plain": "qiymatlarning koʻpi kichik, lekin bir nechtasi juda katta boʻlishi",
+   "aliases": [
+    "skew",
+    "skewness"
+   ],
+   "reviewed": false
+  },
+  "distribution": {
+   "term": "taqsimot",
+   "plain": "qiymatlarning oraliq boʻylab qanday joylashgani",
+   "aliases": [
+    "distribution",
+    "tarqalish"
+   ],
+   "reviewed": false
+  },
+  "histogram": {
+   "term": "gistogramma",
+   "plain": "har bir oraliqqa nechta qiymat tushganini koʻrsatuvchi diagramma",
+   "aliases": [
+    "histogram"
+   ],
+   "reviewed": false
+  },
+  "boxplot": {
+   "term": "quti diagrammasi",
+   "plain": "oʻrtadagi yarmi, oʻrtadagi qiymat va chekkalarni koʻrsatuvchi diagramma",
+   "aliases": [
+    "box plot",
+    "boxplot"
+   ],
+   "reviewed": false
+  },
+  "p_value": {
+   "term": "p-qiymat",
+   "plain": "natija shunchaki tasodif boʻlish ehtimoli",
+   "aliases": [
+    "p-value",
+    "p value"
+   ],
+   "reviewed": false
+  },
+  "significance": {
+   "term": "statistik ahamiyat",
+   "plain": "natija tasodif boʻlishi ehtimoldan yiroq ekani",
+   "aliases": [
+    "significance",
+    "ahamiyatlilik"
+   ],
+   "reviewed": false
+  },
+  "confidence_interval": {
+   "term": "ishonch oraligʻi",
+   "plain": "haqiqiy qiymat ehtimol joylashgan oraliq",
+   "aliases": [
+    "confidence interval"
+   ],
+   "reviewed": false
+  },
+  "confidence_level": {
+   "term": "ishonch darajasi",
+   "plain": "topilma toʻgʻriligiga qanchalik ishonch borligi",
+   "aliases": [
+    "confidence",
+    "ishonch"
+   ],
+   "reviewed": false
+  },
+  "sample": {
+   "term": "tanlama",
+   "plain": "tekshirilgan ma'lumotlar qismi",
+   "aliases": [
+    "sample",
+    "namuna"
+   ],
+   "reviewed": false
+  },
+  "sample_size": {
+   "term": "tanlama hajmi",
+   "plain": "nechta yozuv tekshirilgani",
+   "aliases": [
+    "sample size",
+    "n"
+   ],
+   "reviewed": false
+  },
+  "z_score": {
+   "term": "z-ball",
+   "plain": "qiymat oʻrtachadan nechta odatiy qadam uzoqda ekani",
+   "aliases": [
+    "z-score",
+    "z score"
+   ],
+   "reviewed": false
+  },
+  "regression": {
+   "term": "regressiya",
+   "plain": "bir koʻrsatkich boshqasi bilan qanday oʻzgarishini koʻrsatuvchi chiziq",
+   "aliases": [
+    "regression"
+   ],
+   "reviewed": false
+  },
+  "r_squared": {
+   "term": "R kvadrat",
+   "plain": "trend chizigʻi oʻzgarishning qancha qismini tushuntirishi",
+   "aliases": [
+    "R2",
+    "r2",
+    "r-squared"
+   ],
+   "reviewed": false
+  },
+  "slope": {
+   "term": "qiyalik",
+   "plain": "har bir qadamda qiymat qancha oʻzgarishi",
+   "aliases": [
+    "slope"
+   ],
+   "reviewed": false
+  },
+  "trend": {
+   "term": "trend",
+   "plain": "qiymatning vaqt boʻyicha umumiy yoʻnalishi",
+   "aliases": [
+    "tendensiya",
+    "тренд"
+   ],
+   "reviewed": false
+  },
+  "seasonality": {
+   "term": "mavsumiylik",
+   "plain": "har yil, oy yoki haftada takrorlanadigan oʻzgarish",
+   "aliases": [
+    "seasonality",
+    "mavsumiy"
+   ],
+   "reviewed": false
+  },
+  "moving_average": {
+   "term": "harakatlanuvchi oʻrtacha",
+   "plain": "soʻnggi bir necha davrning oʻrtachasi",
+   "aliases": [
+    "moving average"
+   ],
+   "reviewed": false
+  },
+  "forecast": {
+   "term": "prognoz",
+   "plain": "kelgusi qiymatlarning taxmini",
+   "aliases": [
+    "forecast",
+    "bashorat"
+   ],
+   "reviewed": false
+  },
+  "anova": {
+   "term": "dispersiya tahlili",
+   "plain": "bir nechta guruh bir-biridan farq qilishini tekshirish usuli",
+   "aliases": [
+    "ANOVA",
+    "anova"
+   ],
+   "reviewed": false
+  },
+  "t_test": {
+   "term": "t-sinov",
+   "plain": "ikki guruh bir-biridan farq qilishini tekshirish usuli",
+   "aliases": [
+    "t-test",
+    "t test"
+   ],
+   "reviewed": false
+  },
+  "chi_square": {
+   "term": "xi-kvadrat sinovi",
+   "plain": "ikki turkum oʻzaro bogʻliq yoki yoʻqligini tekshirish usuli",
+   "aliases": [
+    "chi-square",
+    "chi square"
+   ],
+   "reviewed": false
+  },
+  "effect_size": {
+   "term": "ta'sir kuchi",
+   "plain": "farq mavjudligi emas, balki qanchalik kattaligi",
+   "aliases": [
+    "effect size",
+    "cohen d"
+   ],
+   "reviewed": false
+  },
+  "spearman": {
+   "term": "Spirmen korrelyatsiyasi",
+   "plain": "faqat tartib raqamlariga qarab bogʻliqlikni oʻlchash",
+   "aliases": [
+    "Spearman"
+   ],
+   "reviewed": false
+  },
+  "pearson": {
+   "term": "Pirson korrelyatsiyasi",
+   "plain": "toʻgʻri chiziqli bogʻliqlikni oʻlchash",
+   "aliases": [
+    "Pearson"
+   ],
+   "reviewed": false
+  },
+  "causation": {
+   "term": "sabab-oqibat",
+   "plain": "bir narsa ikkinchisini haqiqatan keltirib chiqarishi",
+   "aliases": [
+    "causation",
+    "sababiyat"
+   ],
+   "reviewed": false
+  },
+  "null_value": {
+   "term": "boʻsh qiymat",
+   "plain": "ma'lumot yozilmagan katak",
+   "aliases": [
+    "null",
+    "missing value",
+    "NaN"
+   ],
+   "reviewed": false
+  },
+  "duplicate": {
+   "term": "dublikat",
+   "plain": "bir necha marta takrorlangan yozuv",
+   "aliases": [
+    "duplicate",
+    "takror yozuv"
+   ],
+   "reviewed": false
+  },
+  "cardinality": {
+   "term": "xilma-xillik soni",
+   "plain": "ustunda nechta turli qiymat borligi",
+   "aliases": [
+    "cardinality",
+    "kardinallik"
+   ],
+   "reviewed": false
+  },
+  "cohort": {
+   "term": "kogorta",
+   "plain": "bir davrda boshlagan mijozlar guruhi",
+   "aliases": [
+    "cohort"
+   ],
+   "reviewed": false
+  },
+  "segment": {
+   "term": "guruh",
+   "plain": "oʻxshash mijozlar, mahsulotlar yoki yozuvlar toʻplami",
+   "aliases": [
+    "segment",
+    "segmentatsiya"
+   ],
+   "reviewed": false
+  },
+  "benchmark": {
+   "term": "solishtirma me'yor",
+   "plain": "taqqoslash uchun olinadigan namunaviy qiymat",
+   "aliases": [
+    "benchmark",
+    "etalon"
+   ],
+   "reviewed": false
+  },
+  "baseline": {
+   "term": "boshlangʻich daraja",
+   "plain": "oʻzgarishdan oldingi odatiy daraja",
+   "aliases": [
+    "baseline"
+   ],
+   "reviewed": false
+  },
+  "threshold": {
+   "term": "chegara",
+   "plain": "oshib ketsa e'tibor talab qiladigan daraja",
+   "aliases": [
+    "threshold"
+   ],
+   "reviewed": false
+  },
+  "growth_rate": {
+   "term": "oʻsish sur'ati",
+   "plain": "qiymat foizda qanchalik tez oʻsishi",
+   "aliases": [
+    "growth rate",
+    "oʻsish tempi"
+   ],
+   "reviewed": false
+  },
+  "cagr": {
+   "term": "yillik oʻrtacha oʻsish",
+   "plain": "bir necha yil davomida oʻrtacha yillik oʻsish",
+   "aliases": [
+    "CAGR",
+    "cagr"
+   ],
+   "reviewed": false
+  },
+  "yoy": {
+   "term": "yilma-yil",
+   "plain": "oʻtgan yilning shu davri bilan taqqoslash",
+   "aliases": [
+    "YoY",
+    "year over year"
+   ],
+   "reviewed": false
+  },
+  "mom": {
+   "term": "oyma-oy",
+   "plain": "oldingi oy bilan taqqoslash",
+   "aliases": [
+    "MoM",
+    "month over month"
+   ],
+   "reviewed": false
+  },
+  "ytd": {
+   "term": "yil boshidan buyon",
+   "plain": "joriy yil boshidan bugungacha boʻlgan davr",
+   "aliases": [
+    "YTD",
+    "year to date"
+   ],
+   "reviewed": false
+  },
+  "ratio": {
+   "term": "nisbat",
+   "plain": "bir son ikkinchisidan necha marta katta ekani",
+   "aliases": [
+    "ratio",
+    "koeffitsiyent"
+   ],
+   "reviewed": false
+  },
+  "share": {
+   "term": "ulush",
+   "plain": "butunning foizdagi qismi",
+   "aliases": [
+    "share",
+    "hissa"
+   ],
+   "reviewed": false
+  },
+  "pareto": {
+   "term": "Pareto qoidasi",
+   "plain": "kam sonli sabablar natijaning koʻp qismini beradi",
+   "aliases": [
+    "Pareto",
+    "80/20"
+   ],
+   "reviewed": false
+  },
+  "hhi": {
+   "term": "konsentratsiya koʻrsatkichi",
+   "plain": "narsa guruhlar orasida qanchalik notekis taqsimlangani",
+   "aliases": [
+    "HHI",
+    "hhi"
+   ],
+   "reviewed": false
+  },
+  "gini": {
+   "term": "Jini indeksi",
+   "plain": "taqsimot qanchalik tengsizligini koʻrsatuvchi son",
+   "aliases": [
+    "Gini"
+   ],
+   "reviewed": false
+  },
+  "weighted_average": {
+   "term": "vaznli oʻrtacha",
+   "plain": "kattaroq qiymatlar koʻproq hisobga olinadigan oʻrtacha",
+   "aliases": [
+    "weighted average"
+   ],
+   "reviewed": false
+  },
+  "total": {
+   "term": "jami",
+   "plain": "barcha qiymatlar yigʻindisi",
+   "aliases": [
+    "total",
+    "yigʻindi",
+    "sum"
+   ],
+   "reviewed": false
+  },
+  "count": {
+   "term": "soni",
+   "plain": "yozuvlar miqdori",
+   "aliases": [
+    "count",
+    "miqdor"
+   ],
+   "reviewed": false
+  },
+  "minimum": {
+   "term": "eng kichik qiymat",
+   "plain": "barcha qiymatlar ichida eng kichigi",
+   "aliases": [
+    "min",
+    "minimum"
+   ],
+   "reviewed": false
+  },
+  "maximum": {
+   "term": "eng katta qiymat",
+   "plain": "barcha qiymatlar ichida eng kattasi",
+   "aliases": [
+    "max",
+    "maximum"
+   ],
+   "reviewed": false
+  },
+  "top_n": {
+   "term": "yetakchilar",
+   "plain": "kattadan boshlab tartiblangandagi dastlabki bir nechta element",
+   "aliases": [
+    "top",
+    "top n"
+   ],
+   "reviewed": false
+  },
+  "revenue": {
+   "term": "tushum",
+   "plain": "sotuvdan olingan barcha pul",
+   "aliases": [
+    "revenue",
+    "daromad",
+    "выручка"
+   ],
+   "reviewed": false
+  },
+  "profit": {
+   "term": "foyda",
+   "plain": "barcha xarajatlar toʻlangandan keyin qolgan pul",
+   "aliases": [
+    "profit",
+    "прибыль"
+   ],
+   "reviewed": false
+  },
+  "gross_profit": {
+   "term": "yalpi foyda",
+   "plain": "savdodan tovarning bevosita tannarxi ayirilgani",
+   "aliases": [
+    "gross profit"
+   ],
+   "reviewed": false
+  },
+  "net_profit": {
+   "term": "sof foyda",
+   "plain": "barcha xarajat va soliqlardan keyin qolgan pul",
+   "aliases": [
+    "net profit"
+   ],
+   "reviewed": false
+  },
+  "gross_margin": {
+   "term": "yalpi marja",
+   "plain": "tovar tannarxidan keyin savdoda qolgan ulush",
+   "aliases": [
+    "gross margin"
+   ],
+   "reviewed": false
+  },
+  "operating_margin": {
+   "term": "operatsion marja",
+   "plain": "joriy xarajatlardan keyin savdoda qolgan ulush",
+   "aliases": [
+    "operating margin"
+   ],
+   "reviewed": false
+  },
+  "cost_of_goods": {
+   "term": "tannarx",
+   "plain": "sotilgan tovarni sotib olish yoki ishlab chiqarish xarajati",
+   "aliases": [
+    "COGS",
+    "cogs",
+    "себестоимость"
+   ],
+   "reviewed": false
+  },
+  "expense": {
+   "term": "xarajat",
+   "plain": "biznesni yuritish uchun sarflangan pul",
+   "aliases": [
+    "expense",
+    "затраты",
+    "chiqim"
+   ],
+   "reviewed": false
+  },
+  "fixed_cost": {
+   "term": "doimiy xarajat",
+   "plain": "savdo hajmiga qarab oʻzgarmaydigan xarajat",
+   "aliases": [
+    "fixed cost"
+   ],
+   "reviewed": false
+  },
+  "variable_cost": {
+   "term": "oʻzgaruvchan xarajat",
+   "plain": "savdo bilan birga oshadigan xarajat",
+   "aliases": [
+    "variable cost"
+   ],
+   "reviewed": false
+  },
+  "overhead": {
+   "term": "umumiy xarajat",
+   "plain": "bitta mahsulotga bogʻlanmagan doimiy xarajatlar",
+   "aliases": [
+    "overhead"
+   ],
+   "reviewed": false
+  },
+  "ebitda": {
+   "term": "EBITDA",
+   "plain": "foiz, soliq va eskirish hisobga olinmagan foyda",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cash_flow": {
+   "term": "pul oqimi",
+   "plain": "kirgan pul bilan chiqqan pul farqi",
+   "aliases": [
+    "cash flow",
+    "cashflow"
+   ],
+   "reviewed": false
+  },
+  "liquidity": {
+   "term": "likvidlik",
+   "plain": "mol-mulkni qanchalik tez pulga aylantirish mumkinligi",
+   "aliases": [
+    "liquidity"
+   ],
+   "reviewed": false
+  },
+  "receivable": {
+   "term": "debitorlik qarzi",
+   "plain": "mijozlar hali toʻlamagan pul",
+   "aliases": [
+    "accounts receivable",
+    "AR"
+   ],
+   "reviewed": false
+  },
+  "payable": {
+   "term": "kreditorlik qarzi",
+   "plain": "yetkazib beruvchilarga hali toʻlanmagan pul",
+   "aliases": [
+    "accounts payable",
+    "AP"
+   ],
+   "reviewed": false
+  },
+  "working_capital": {
+   "term": "aylanma mablagʻ",
+   "plain": "kundalik faoliyat uchun mavjud pul",
+   "aliases": [
+    "working capital"
+   ],
+   "reviewed": false
+  },
+  "balance_sheet": {
+   "term": "balans",
+   "plain": "biznesga tegishli mol-mulk va qarzlar roʻyxati",
+   "aliases": [
+    "balance sheet"
+   ],
+   "reviewed": false
+  },
+  "asset": {
+   "term": "aktiv",
+   "plain": "biznesga tegishli qimmatli narsa",
+   "aliases": [
+    "asset",
+    "mulk"
+   ],
+   "reviewed": false
+  },
+  "liability": {
+   "term": "majburiyat",
+   "plain": "biznes toʻlashi kerak boʻlgan pul",
+   "aliases": [
+    "liability",
+    "passiv"
+   ],
+   "reviewed": false
+  },
+  "equity": {
+   "term": "oʻz kapitali",
+   "plain": "barcha qarzlar toʻlangach egalarga qoladigan qism",
+   "aliases": [
+    "equity"
+   ],
+   "reviewed": false
+  },
+  "depreciation": {
+   "term": "eskirish",
+   "plain": "uskunaning yil sayin qiymatini yoʻqotishi",
+   "aliases": [
+    "depreciation",
+    "amortizatsiya"
+   ],
+   "reviewed": false
+  },
+  "budget": {
+   "term": "byudjet",
+   "plain": "qancha topish va sarflash rejasi",
+   "aliases": [
+    "budget",
+    "бюджет"
+   ],
+   "reviewed": false
+  },
+  "variance_to_plan": {
+   "term": "rejadan chetlanish",
+   "plain": "haqiqiy va rejalashtirilgan raqamlar orasidagi farq",
+   "aliases": [
+    "plan variance"
+   ],
+   "reviewed": false
+  },
+  "break_even": {
+   "term": "zarar koʻrmaslik nuqtasi",
+   "plain": "daromad xarajatga teng boʻladigan nuqta",
+   "aliases": [
+    "break-even",
+    "break even"
+   ],
+   "reviewed": false
+  },
+  "roi": {
+   "term": "investitsiya samaradorligi",
+   "plain": "kiritilgan pulga nisbatan qancha topilgani",
+   "aliases": [
+    "ROI",
+    "roi"
+   ],
+   "reviewed": false
+  },
+  "payback": {
+   "term": "qoplash muddati",
+   "plain": "sarmoya qaytib kelishi uchun ketadigan vaqt",
+   "aliases": [
+    "payback"
+   ],
+   "reviewed": false
+  },
+  "inflation": {
+   "term": "inflyatsiya",
+   "plain": "narxlarning vaqt oʻtishi bilan umumiy oshishi",
+   "aliases": [
+    "inflation"
+   ],
+   "reviewed": false
+  },
+  "exchange_rate": {
+   "term": "valyuta kursi",
+   "plain": "bir valyutaning boshqa valyutadagi narxi",
+   "aliases": [
+    "exchange rate",
+    "kurs"
+   ],
+   "reviewed": false
+  },
+  "vat": {
+   "term": "QQS",
+   "plain": "tovar va xizmat narxiga qoʻshiladigan soliq",
+   "aliases": [
+    "VAT",
+    "ндс"
+   ],
+   "reviewed": false
+  },
+  "discount": {
+   "term": "chegirma",
+   "plain": "odatdagi narxdan kamaytirish",
+   "aliases": [
+    "discount",
+    "skidka"
+   ],
+   "reviewed": false
+  },
+  "markup": {
+   "term": "ustama",
+   "plain": "narx hosil qilish uchun tannarxga qoʻshiladigan qism",
+   "aliases": [
+    "markup"
+   ],
+   "reviewed": false
+  },
+  "npl": {
+   "term": "muammoli kredit",
+   "plain": "oʻz vaqtida qaytarilmayotgan kredit",
+   "aliases": [
+    "NPL",
+    "npl"
+   ],
+   "reviewed": false
+  },
+  "interest_rate": {
+   "term": "foiz stavkasi",
+   "plain": "qarz pulning foizdagi narxi",
+   "aliases": [
+    "interest rate"
+   ],
+   "reviewed": false
+  },
+  "overdue": {
+   "term": "muddati oʻtgan",
+   "plain": "kelishilgan sanagacha toʻlanmagan",
+   "aliases": [
+    "overdue",
+    "delinquent"
+   ],
+   "reviewed": false
+  },
+  "deposit": {
+   "term": "omonat",
+   "plain": "mijoz bankda saqlaydigan pul",
+   "aliases": [
+    "deposit"
+   ],
+   "reviewed": false
+  },
+  "loan": {
+   "term": "kredit",
+   "plain": "qaytarilishi shart boʻlgan qarz pul",
+   "aliases": [
+    "loan",
+    "qarz"
+   ],
+   "reviewed": false
+  },
+  "pipeline": {
+   "term": "bitimlar quvuri",
+   "plain": "barcha ochiq bitimlar va ularning kutilayotgan qiymati",
+   "aliases": [
+    "pipeline",
+    "voronka"
+   ],
+   "reviewed": false
+  },
+  "funnel": {
+   "term": "savdo voronkasi",
+   "plain": "mijoz birinchi aloqadan xaridgacha oʻtadigan bosqichlar",
+   "aliases": [
+    "funnel",
+    "воронка"
+   ],
+   "reviewed": false
+  },
+  "conversion_rate": {
+   "term": "oʻtish ulushi",
+   "plain": "keyingi bosqichga oʻtganlar ulushi",
+   "aliases": [
+    "conversion",
+    "conversion rate",
+    "konversiya"
+   ],
+   "reviewed": false
+  },
+  "lead": {
+   "term": "potensial mijoz",
+   "plain": "mijozga aylanishi mumkin boʻlgan odam",
+   "aliases": [
+    "lead",
+    "lid"
+   ],
+   "reviewed": false
+  },
+  "qualified_lead": {
+   "term": "saralangan mijoz",
+   "plain": "xarid qilish ehtimoli yuqori boʻlgan potensial mijoz",
+   "aliases": [
+    "qualified lead"
+   ],
+   "reviewed": false
+  },
+  "deal": {
+   "term": "bitim",
+   "plain": "ustida ishlanayotgan mumkin boʻlgan savdo",
+   "aliases": [
+    "deal",
+    "sdelka"
+   ],
+   "reviewed": false
+  },
+  "open_deal": {
+   "term": "ochiq bitim",
+   "plain": "hali yutilmagan ham, yoʻqotilmagan ham bitim",
+   "aliases": [
+    "open deal"
+   ],
+   "reviewed": false
+  },
+  "stalled_deal": {
+   "term": "qotib qolgan bitim",
+   "plain": "uzoq vaqt davomida oldinga siljimagan bitim",
+   "aliases": [
+    "stalled"
+   ],
+   "reviewed": false
+  },
+  "sales_cycle": {
+   "term": "savdo sikli",
+   "plain": "birinchi aloqadan bitim yopilgunga qadar ketgan vaqt",
+   "aliases": [
+    "sales cycle",
+    "cycle time"
+   ],
+   "reviewed": false
+  },
+  "deal_size": {
+   "term": "oʻrtacha bitim hajmi",
+   "plain": "yutib olingan bitimning oʻrtacha qiymati",
+   "aliases": [
+    "deal size",
+    "ACV"
+   ],
+   "reviewed": false
+  },
+  "quota": {
+   "term": "kvota",
+   "plain": "shaxs yoki jamoa uchun belgilangan savdo maqsadi",
+   "aliases": [
+    "quota",
+    "reja"
+   ],
+   "reviewed": false
+  },
+  "attainment": {
+   "term": "rejaning bajarilishi",
+   "plain": "maqsadning qancha qismiga erishilgani",
+   "aliases": [
+    "attainment"
+   ],
+   "reviewed": false
+  },
+  "forecast_sales": {
+   "term": "savdo prognozi",
+   "plain": "kelgusi davr uchun kutilayotgan savdo",
+   "aliases": [
+    "sales forecast"
+   ],
+   "reviewed": false
+  },
+  "upsell": {
+   "term": "qimmatroq sotish",
+   "plain": "mavjud mijozga qimmatroq variantni sotish",
+   "aliases": [
+    "upsell",
+    "upselling"
+   ],
+   "reviewed": false
+  },
+  "cross_sell": {
+   "term": "qoʻshimcha sotish",
+   "plain": "mavjud mijozga qoʻshimcha mahsulot sotish",
+   "aliases": [
+    "cross-sell",
+    "cross sell"
+   ],
+   "reviewed": false
+  },
+  "retention": {
+   "term": "mijozlarni saqlab qolish",
+   "plain": "qolgan mijozlar ulushi",
+   "aliases": [
+    "retention",
+    "saqlash"
+   ],
+   "reviewed": false
+  },
+  "loyalty": {
+   "term": "mijoz sadoqati",
+   "plain": "mijozlarning qayta xarid qilishga tayyorligi",
+   "aliases": [
+    "loyalty",
+    "sadoqat"
+   ],
+   "reviewed": false
+  },
+  "repeat_purchase": {
+   "term": "takroriy xarid",
+   "plain": "oldin xarid qilgan mijozning yangi xaridi",
+   "aliases": [
+    "repeat purchase"
+   ],
+   "reviewed": false
+  },
+  "ltv": {
+   "term": "mijozning umr boʻyi qiymati",
+   "plain": "mijoz butun davr davomida keltirishi kutilgan pul",
+   "aliases": [
+    "LTV",
+    "ltv",
+    "CLV"
+   ],
+   "reviewed": false
+  },
+  "cac": {
+   "term": "mijoz jalb qilish xarajati",
+   "plain": "bitta yangi mijoz topishga ketgan xarajat",
+   "aliases": [
+    "CAC",
+    "cac"
+   ],
+   "reviewed": false
+  },
+  "arpu": {
+   "term": "bitta mijozdan oʻrtacha tushum",
+   "plain": "bitta mijoz keltiradigan oʻrtacha daromad",
+   "aliases": [
+    "ARPU",
+    "arpu"
+   ],
+   "reviewed": false
+  },
+  "average_check": {
+   "term": "oʻrtacha chek",
+   "plain": "bitta xaridning oʻrtacha summasi",
+   "aliases": [
+    "average check",
+    "AOV",
+    "oʻrtacha buyurtma"
+   ],
+   "reviewed": false
+  },
+  "basket": {
+   "term": "savat hajmi",
+   "plain": "bitta xaridda nechta mahsulot borligi",
+   "aliases": [
+    "basket",
+    "basket size"
+   ],
+   "reviewed": false
+  },
+  "sku": {
+   "term": "mahsulot kodi",
+   "plain": "har bir mahsulot turi uchun noyob kod",
+   "aliases": [
+    "SKU",
+    "sku",
+    "artikul"
+   ],
+   "reviewed": false
+  },
+  "inventory": {
+   "term": "ombor zaxirasi",
+   "plain": "hozir omborda turgan tovarlar",
+   "aliases": [
+    "inventory",
+    "stock",
+    "zaxira"
+   ],
+   "reviewed": false
+  },
+  "turnover": {
+   "term": "aylanuvchanlik",
+   "plain": "zaxira qanchalik tez sotilib, yangilanishi",
+   "aliases": [
+    "turnover",
+    "inventory turnover"
+   ],
+   "reviewed": false
+  },
+  "stockout": {
+   "term": "tovar tugashi",
+   "plain": "mahsulot butunlay sotilib ketishi",
+   "aliases": [
+    "stockout",
+    "out of stock"
+   ],
+   "reviewed": false
+  },
+  "returns": {
+   "term": "qaytarilgan tovarlar",
+   "plain": "mijozlar qaytargan tovarlar",
+   "aliases": [
+    "returns",
+    "qaytarish"
+   ],
+   "reviewed": false
+  },
+  "refund": {
+   "term": "pulni qaytarish",
+   "plain": "mijozga qaytarilgan pul",
+   "aliases": [
+    "refund"
+   ],
+   "reviewed": false
+  },
+  "channel": {
+   "term": "savdo kanali",
+   "plain": "mijoz xarid qiladigan yoʻl, masalan doʻkon yoki onlayn",
+   "aliases": [
+    "channel",
+    "kanal"
+   ],
+   "reviewed": false
+  },
+  "territory": {
+   "term": "hudud",
+   "plain": "bitta sotuvchi javob beradigan joy yoki mijozlar",
+   "aliases": [
+    "territory",
+    "region"
+   ],
+   "reviewed": false
+  },
+  "owner": {
+   "term": "mas'ul",
+   "plain": "bitim yoki mijoz uchun javob beradigan odam",
+   "aliases": [
+    "owner",
+    "menejer",
+    "ответственный"
+   ],
+   "reviewed": false
+  },
+  "source": {
+   "term": "manba",
+   "plain": "mijoz yoki bitim qayerdan kelgani",
+   "aliases": [
+    "source",
+    "источник"
+   ],
+   "reviewed": false
+  },
+  "promotion": {
+   "term": "aksiya",
+   "plain": "savdoni oshirish uchun qisqa muddatli taklif",
+   "aliases": [
+    "promotion",
+    "promo"
+   ],
+   "reviewed": false
+  },
+  "campaign": {
+   "term": "kampaniya",
+   "plain": "rejalashtirilgan marketing harakatlari majmui",
+   "aliases": [
+    "campaign"
+   ],
+   "reviewed": false
+  },
+  "ctr": {
+   "term": "bosish ulushi",
+   "plain": "koʻrganlardan bosganlar ulushi",
+   "aliases": [
+    "CTR",
+    "ctr"
+   ],
+   "reviewed": false
+  },
+  "roas": {
+   "term": "reklama samaradorligi",
+   "plain": "reklamaga sarflangan har bir soʻm qancha savdo keltirgani",
+   "aliases": [
+    "ROAS",
+    "roas"
+   ],
+   "reviewed": false
+  },
+  "nps": {
+   "term": "tavsiya indeksi",
+   "plain": "mijozlar sizni tavsiya qilish ehtimolini koʻrsatuvchi ball",
+   "aliases": [
+    "NPS",
+    "nps"
+   ],
+   "reviewed": false
+  },
+  "sla": {
+   "term": "xizmat darajasi kelishuvi",
+   "plain": "javob berish tezligi haqidagi va'da",
+   "aliases": [
+    "SLA",
+    "sla"
+   ],
+   "reviewed": false
+  },
+  "backlog": {
+   "term": "navbatdagi ishlar",
+   "plain": "bajarilishini kutayotgan ish yoki buyurtmalar",
+   "aliases": [
+    "backlog"
+   ],
+   "reviewed": false
+  },
+  "throughput": {
+   "term": "ish unumdorligi",
+   "plain": "bir davrda tugallangan ish miqdori",
+   "aliases": [
+    "throughput"
+   ],
+   "reviewed": false
+  },
+  "utilization": {
+   "term": "foydalanish darajasi",
+   "plain": "mavjud imkoniyatning ishlatilgan ulushi",
+   "aliases": [
+    "utilization",
+    "capacity use"
+   ],
+   "reviewed": false
+  },
+  "headcount": {
+   "term": "xodimlar soni",
+   "plain": "ishlayotgan odamlar miqdori",
+   "aliases": [
+    "headcount",
+    "shtat"
+   ],
+   "reviewed": false
+  },
+  "attrition": {
+   "term": "xodimlar ketishi",
+   "plain": "kompaniyadan ketayotgan xodimlar",
+   "aliases": [
+    "attrition",
+    "turnover rate"
+   ],
+   "reviewed": false
+  },
+  "tenure": {
+   "term": "ish staji",
+   "plain": "odam shu yerda qancha vaqt ishlagani",
+   "aliases": [
+    "tenure",
+    "staj"
+   ],
+   "reviewed": false
+  },
+  "dataset": {
+   "term": "ma'lumotlar toʻplami",
+   "plain": "sizning ma'lumotlaringiz joylashgan jadval yoki jadvallar",
+   "aliases": [
+    "dataset"
+   ],
+   "reviewed": false
+  },
+  "column": {
+   "term": "ustun",
+   "plain": "jadvalning bitta maydoni, masalan sana yoki summa",
+   "aliases": [
+    "column",
+    "field"
+   ],
+   "reviewed": false
+  },
+  "row": {
+   "term": "qator",
+   "plain": "jadvalning bitta yozuvi",
+   "aliases": [
+    "row",
+    "record"
+   ],
+   "reviewed": false
+  },
+  "schema": {
+   "term": "tuzilma",
+   "plain": "ustunlar va ularning turlari roʻyxati",
+   "aliases": [
+    "schema"
+   ],
+   "reviewed": false
+  },
+  "metric": {
+   "term": "koʻrsatkich",
+   "plain": "biror narsani oʻlchaydigan son, masalan tushum",
+   "aliases": [
+    "metric",
+    "kpi",
+    "KPI"
+   ],
+   "reviewed": false
+  },
+  "dimension": {
+   "term": "kesim",
+   "plain": "raqamlarni boʻlish usuli, masalan hudud boʻyicha",
+   "aliases": [
+    "dimension"
+   ],
+   "reviewed": false
+  },
+  "filter": {
+   "term": "filtr",
+   "plain": "ma'lumotning faqat bir qismini qoldiradigan qoida",
+   "aliases": [
+    "filter"
+   ],
+   "reviewed": false
+  },
+  "drill_down": {
+   "term": "batafsil koʻrish",
+   "plain": "raqam ortidagi tafsilotlarni koʻrish",
+   "aliases": [
+    "drill",
+    "drill down"
+   ],
+   "reviewed": false
+  },
+  "cross_filter": {
+   "term": "oʻzaro filtr",
+   "plain": "bitta diagrammani bosib boshqalarini filtrlash",
+   "aliases": [
+    "cross-filter"
+   ],
+   "reviewed": false
+  },
+  "dashboard": {
+   "term": "boshqaruv paneli",
+   "plain": "asosiy raqamlar va diagrammalar joylashgan sahifa",
+   "aliases": [
+    "dashboard",
+    "dashbord",
+    "panel"
+   ],
+   "reviewed": false
+  },
+  "kpi_tile": {
+   "term": "koʻrsatkich kartasi",
+   "plain": "bitta asosiy raqamni koʻrsatadigan kichik karta",
+   "aliases": [
+    "KPI card",
+    "tile"
+   ],
+   "reviewed": false
+  },
+  "gauge": {
+   "term": "spidometr diagrammasi",
+   "plain": "maqsad sari borishni koʻrsatuvchi doira diagramma",
+   "aliases": [
+    "gauge"
+   ],
+   "reviewed": false
+  },
+  "treemap": {
+   "term": "toʻgʻri toʻrtburchaklar diagrammasi",
+   "plain": "kattaligi qiymatga qarab belgilangan toʻrtburchaklar",
+   "aliases": [
+    "treemap"
+   ],
+   "reviewed": false
+  },
+  "heatmap": {
+   "term": "issiqlik xaritasi",
+   "plain": "rang qiymat kattaligini koʻrsatadigan jadval",
+   "aliases": [
+    "heatmap"
+   ],
+   "reviewed": false
+  },
+  "waterfall": {
+   "term": "sharshara diagrammasi",
+   "plain": "qadamlar umumiy natijaga qanday qoʻshilishini koʻrsatuvchi diagramma",
+   "aliases": [
+    "waterfall"
+   ],
+   "reviewed": false
+  },
+  "scatter": {
+   "term": "nuqtali diagramma",
+   "plain": "ikki koʻrsatkichni solishtiruvchi nuqtalar",
+   "aliases": [
+    "scatter",
+    "scatter plot"
+   ],
+   "reviewed": false
+  },
+  "stacked_chart": {
+   "term": "ustma-ust diagramma",
+   "plain": "qismlar umumiy summaga yigʻilib koʻrsatilgan diagramma",
+   "aliases": [
+    "stacked"
+   ],
+   "reviewed": false
+  },
+  "donut": {
+   "term": "halqa diagramma",
+   "plain": "butunning ulushlarini koʻrsatuvchi halqa",
+   "aliases": [
+    "donut",
+    "pie"
+   ],
+   "reviewed": false
+  },
+  "legend": {
+   "term": "izoh",
+   "plain": "diagrammadagi ranglarni tushuntiruvchi belgi",
+   "aliases": [
+    "legend"
+   ],
+   "reviewed": false
+  },
+  "axis": {
+   "term": "oʻq",
+   "plain": "diagramma boʻylab raqam yoki yozuvlar turgan chiziq",
+   "aliases": [
+    "axis"
+   ],
+   "reviewed": false
+  },
+  "tooltip": {
+   "term": "maslahat oynasi",
+   "plain": "biror narsaga koʻrsatkichni olib borganda chiqadigan kichik izoh",
+   "aliases": [
+    "tooltip"
+   ],
+   "reviewed": false
+  },
+  "grain": {
+   "term": "batafsillik darajasi",
+   "plain": "ma'lumot qanchalik mayda boʻlingani, masalan kunlik yoki oylik",
+   "aliases": [
+    "granularity",
+    "grain"
+   ],
+   "reviewed": false
+  },
+  "aggregation": {
+   "term": "yigʻish",
+   "plain": "koʻp qatorni bitta songa birlashtirish",
+   "aliases": [
+    "aggregation",
+    "agregatsiya"
+   ],
+   "reviewed": false
+  },
+  "join": {
+   "term": "jadvallarni bogʻlash",
+   "plain": "ikki jadvalni umumiy ustun orqali bogʻlash",
+   "aliases": [
+    "join"
+   ],
+   "reviewed": false
+  },
+  "primary_key": {
+   "term": "noyob identifikator",
+   "plain": "faqat bitta qatorni belgilaydigan qiymat",
+   "aliases": [
+    "primary key",
+    "id"
+   ],
+   "reviewed": false
+  },
+  "data_quality": {
+   "term": "ma'lumot sifati",
+   "plain": "ma'lumotlaringiz qanchalik toʻliq va toʻgʻri ekani",
+   "aliases": [
+    "data quality"
+   ],
+   "reviewed": false
+  },
+  "data_cleaning": {
+   "term": "ma'lumotni tozalash",
+   "plain": "ma'lumotdagi xato va boʻshliqlarni tuzatish",
+   "aliases": [
+    "cleaning",
+    "data cleaning"
+   ],
+   "reviewed": false
+  },
+  "pii": {
+   "term": "shaxsiy ma'lumot",
+   "plain": "odamni aniqlaydigan axborot, masalan telefon raqami",
+   "aliases": [
+    "PII",
+    "pii"
+   ],
+   "reviewed": false
+  },
+  "masking": {
+   "term": "yashirish",
+   "plain": "maxfiylikni saqlash uchun qiymatning bir qismini berkitish",
+   "aliases": [
+    "masking",
+    "maskalash"
+   ],
+   "reviewed": false
+  },
+  "privacy_mode": {
+   "term": "maxfiylik rejimi",
+   "plain": "kompyuteringizdan nima chiqishini belgilovchi sozlama",
+   "aliases": [
+    "privacy mode"
+   ],
+   "reviewed": false
+  },
+  "audit_log": {
+   "term": "audit jurnali",
+   "plain": "kim, nima va qachon qilgani haqidagi yozuv",
+   "aliases": [
+    "audit log",
+    "audit"
+   ],
+   "reviewed": false
+  },
+  "verified_answer": {
+   "term": "tasdiqlangan javob",
+   "plain": "avtomatik tekshiruvdan oʻtgan javob",
+   "aliases": [
+    "verified"
+   ],
+   "reviewed": false
+  },
+  "unverified_answer": {
+   "term": "tasdiqlanmagan javob",
+   "plain": "tekshiruvdan oʻtmagan javob",
+   "aliases": [
+    "unverified"
+   ],
+   "reviewed": false
+  },
+  "sql": {
+   "term": "SQL",
+   "plain": "ma'lumotlar bazasiga savol berish tili",
+   "aliases": [],
+   "reviewed": false
+  },
+  "llm": {
+   "term": "til modeli",
+   "plain": "matn yozadigan sun'iy intellekt",
+   "aliases": [
+    "LLM",
+    "llm",
+    "AI"
+   ],
+   "reviewed": false
+  },
+  "export": {
+   "term": "yuklab olish",
+   "plain": "natijani fayl sifatida saqlash",
+   "aliases": [
+    "export",
+    "eksport"
+   ],
+   "reviewed": false
+  },
+  "retention_policy": {
+   "term": "saqlash muddati",
+   "plain": "ma'lumot oʻchirilguncha qancha saqlanishi",
+   "aliases": [
+    "retention period"
+   ],
+   "reviewed": false
+  },
+  "template": {
+   "term": "shablon",
+   "plain": "boshlash uchun tayyor koʻrinish",
+   "aliases": [
+    "template"
+   ],
+   "reviewed": false
+  },
+  "domain": {
+   "term": "faoliyat sohasi",
+   "plain": "ma'lumot turi, masalan chakana savdo yoki bank",
+   "aliases": [
+    "domain",
+    "soha"
+   ],
+   "reviewed": false
+  },
+  "period": {
+   "term": "davr",
+   "plain": "hafta yoki oy kabi vaqt oraligʻi",
+   "aliases": [
+    "period"
+   ],
+   "reviewed": false
+  },
+  "fiscal_year": {
+   "term": "moliyaviy yil",
+   "plain": "kompaniya hisob-kitobi uchun ishlatadigan oʻn ikki oy",
+   "aliases": [
+    "fiscal year"
+   ],
+   "reviewed": false
+  },
+  "quarter": {
+   "term": "chorak",
+   "plain": "uch oylik davr",
+   "aliases": [
+    "quarter",
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4"
+   ],
+   "reviewed": false
+  }
+ }
+}

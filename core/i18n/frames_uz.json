@@ -1,0 +1,552 @@
+{
+ "locale": "uz",
+ "version": 1,
+ "frames": {
+  "trend.up.simple": {
+   "reviewed": false,
+   "headline": "«{metric}» {compare} {pct} foizga oʻsdi.",
+   "meaning": "Natija yaxshi tomonga ketmoqda. Sababini bilsangiz, buni mustahkamlash mumkin.",
+   "next_step": "Oʻsish qaysi guruh yoki kun hisobiga boʻlganini tekshiring.",
+   "details": ""
+  },
+  "trend.up.expert": {
+   "reviewed": false,
+   "headline": "«{metric}» {compare} {pct} foizga oʻsdi.",
+   "meaning": "Natija yaxshi tomonga ketmoqda. Sababini bilsangiz, buni mustahkamlash mumkin.",
+   "next_step": "Oʻsish qaysi guruh yoki kun hisobiga boʻlganini tekshiring.",
+   "details": "Oxirgi davr: {current}. Oldingi davr: {previous}."
+  },
+  "trend.up.simpler": {
+   "reviewed": false,
+   "headline": "«{metric}» {pct} foizga oʻsdi.",
+   "meaning": "Bu yaxshi.",
+   "next_step": "Sababini toping.",
+   "details": ""
+  },
+  "trend.down.simple": {
+   "reviewed": false,
+   "headline": "«{metric}» {compare} {pct} foizga kamaydi.",
+   "meaning": "Bu davom etsa, umumiy natija pasayadi.",
+   "next_step": "Eng koʻp kamaygan guruhni toping va sababini aniqlang.",
+   "details": ""
+  },
+  "trend.down.expert": {
+   "reviewed": false,
+   "headline": "«{metric}» {compare} {pct} foizga kamaydi.",
+   "meaning": "Bu davom etsa, umumiy natija pasayadi.",
+   "next_step": "Eng koʻp kamaygan guruhni toping va sababini aniqlang.",
+   "details": "Oxirgi davr: {current}. Oldingi davr: {previous}."
+  },
+  "trend.down.simpler": {
+   "reviewed": false,
+   "headline": "«{metric}» {pct} foizga kamaydi.",
+   "meaning": "Bu ogohlantirish.",
+   "next_step": "Sababini toping.",
+   "details": ""
+  },
+  "anomaly.up.simple": {
+   "reviewed": false,
+   "headline": "{date} kuni «{metric}» odatdagidan keskin oshdi: {value} (odatda taxminan {typical}).",
+   "meaning": "Bunday sakrash xato yozuv, aksiya yoki kutilmagan voqea natijasi boʻlishi mumkin.",
+   "next_step": "Shu kundagi yozuvlarni tekshirib, sababini aniqlang.",
+   "details": ""
+  },
+  "anomaly.up.expert": {
+   "reviewed": false,
+   "headline": "{date} kuni «{metric}» odatdagidan keskin oshdi: {value} (odatda taxminan {typical}).",
+   "meaning": "Bunday sakrash xato yozuv, aksiya yoki kutilmagan voqea natijasi boʻlishi mumkin.",
+   "next_step": "Shu kundagi yozuvlarni tekshirib, sababini aniqlang.",
+   "details": "Usul: odatdagi qiymatdan chetlanish (z-ball {z}). Kuzatuvlar soni: {n}."
+  },
+  "anomaly.up.simpler": {
+   "reviewed": false,
+   "headline": "{date} kuni «{metric}» keskin oshdi: {value}.",
+   "meaning": "Bu odatdagidan ancha yuqori.",
+   "next_step": "Shu kunni tekshiring.",
+   "details": ""
+  },
+  "anomaly.down.simple": {
+   "reviewed": false,
+   "headline": "{date} kuni «{metric}» odatdagidan keskin kamaydi: {value} (odatda taxminan {typical}).",
+   "meaning": "Bunday tushish uzilish, xato yozuv yoki talab susayishi belgisi boʻlishi mumkin.",
+   "next_step": "Shu kunda nima boʻlganini tekshiring.",
+   "details": ""
+  },
+  "anomaly.down.expert": {
+   "reviewed": false,
+   "headline": "{date} kuni «{metric}» odatdagidan keskin kamaydi: {value} (odatda taxminan {typical}).",
+   "meaning": "Bunday tushish uzilish, xato yozuv yoki talab susayishi belgisi boʻlishi mumkin.",
+   "next_step": "Shu kunda nima boʻlganini tekshiring.",
+   "details": "Usul: odatdagi qiymatdan chetlanish (z-ball {z}). Kuzatuvlar soni: {n}."
+  },
+  "anomaly.down.simpler": {
+   "reviewed": false,
+   "headline": "{date} kuni «{metric}» keskin kamaydi: {value}.",
+   "meaning": "Bu odatdagidan ancha past.",
+   "next_step": "Shu kunni tekshiring.",
+   "details": ""
+  },
+  "concentration.neutral.simple": {
+   "reviewed": false,
+   "headline": "{metric_gen} {share} foizi bitta guruhdan keladi: «{segment}».",
+   "meaning": "Bu guruhda muammo chiqsa, umumiy natija sezilarli tushadi.",
+   "next_step": "Boshqa guruhlardan ham daromad olish yoʻllarini rejalashtiring.",
+   "details": ""
+  },
+  "concentration.neutral.expert": {
+   "reviewed": false,
+   "headline": "{metric_gen} {share} foizi bitta guruhdan keladi: «{segment}».",
+   "meaning": "Bu guruhda muammo chiqsa, umumiy natija sezilarli tushadi.",
+   "next_step": "Boshqa guruhlardan ham daromad olish yoʻllarini rejalashtiring.",
+   "details": "Usul: eng yirik 3 guruh ulushi {top3} foiz; konsentratsiya koʻrsatkichi (HHI) hisoblandi."
+  },
+  "concentration.neutral.simpler": {
+   "reviewed": false,
+   "headline": "{share} foiz bitta guruhdan keladi: «{segment}».",
+   "meaning": "Bu xavfli boʻlishi mumkin.",
+   "next_step": "Boshqa guruhlarni ham rivojlantiring.",
+   "details": ""
+  },
+  "driver.up.simple": {
+   "reviewed": false,
+   "headline": "«{metric}» oʻsdi, buning {share} foizi «{segment}» hissasiga toʻgʻri keladi.",
+   "meaning": "Asosiy yaxshilanish aynan shu guruhdan.",
+   "next_step": "Nima ishlayotganini aniqlab, boshqa guruhlarda ham sinab koʻring.",
+   "details": ""
+  },
+  "driver.up.expert": {
+   "reviewed": false,
+   "headline": "«{metric}» oʻsdi, buning {share} foizi «{segment}» hissasiga toʻgʻri keladi.",
+   "meaning": "Asosiy yaxshilanish aynan shu guruhdan.",
+   "next_step": "Nima ishlayotganini aniqlab, boshqa guruhlarda ham sinab koʻring.",
+   "details": "Umumiy oʻzgarish: {change}."
+  },
+  "driver.up.simpler": {
+   "reviewed": false,
+   "headline": "«{metric}» oʻsdi: {share} foizi «{segment}» hisobiga.",
+   "meaning": "Asosiy hissa shu guruhda.",
+   "next_step": "U yerda nima yaxshi ishlayotganini toping.",
+   "details": ""
+  },
+  "driver.down.simple": {
+   "reviewed": false,
+   "headline": "«{metric}» kamaydi, buning {share} foizi «{segment}» hissasiga toʻgʻri keladi.",
+   "meaning": "Pasayishning asosiy qismi aynan shu guruhdan.",
+   "next_step": "Avval shu guruhda nima oʻzgarganini tekshiring: «{segment}».",
+   "details": ""
+  },
+  "driver.down.expert": {
+   "reviewed": false,
+   "headline": "«{metric}» kamaydi, buning {share} foizi «{segment}» hissasiga toʻgʻri keladi.",
+   "meaning": "Pasayishning asosiy qismi aynan shu guruhdan.",
+   "next_step": "Avval shu guruhda nima oʻzgarganini tekshiring: «{segment}».",
+   "details": "Umumiy oʻzgarish: {change}."
+  },
+  "driver.down.simpler": {
+   "reviewed": false,
+   "headline": "«{metric}» kamaydi: {share} foizi «{segment}» hisobiga.",
+   "meaning": "Asosiy sabab shu guruhda.",
+   "next_step": "U yerda nima oʻzgarganini toping.",
+   "details": ""
+  },
+  "segment_gap.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{best}» va «{worst}» oʻrtasida katta farq bor: «{metric}» birinchisida {ratio} baravar yuqori.",
+   "meaning": "Bunday farq kuchli va zaif tomonlarni koʻrsatadi.",
+   "next_step": "Kuchli guruh tajribasini zaif guruhga qoʻllab koʻring.",
+   "details": ""
+  },
+  "segment_gap.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{best}» va «{worst}» oʻrtasida katta farq bor: «{metric}» birinchisida {ratio} baravar yuqori.",
+   "meaning": "Bunday farq kuchli va zaif tomonlarni koʻrsatadi.",
+   "next_step": "Kuchli guruh tajribasini zaif guruhga qoʻllab koʻring.",
+   "details": "Eng yaxshi guruh: {best_value}. Eng zaif guruh: {worst_value}."
+  },
+  "segment_gap.neutral.simpler": {
+   "reviewed": false,
+   "headline": "«{best}» va «{worst}» oʻrtasida katta farq bor: {ratio} baravar.",
+   "meaning": "Biri ancha yaxshi ishlayapti.",
+   "next_step": "Sababini toping.",
+   "details": ""
+  },
+  "segment_momentum.up.simple": {
+   "reviewed": false,
+   "headline": "«{segment}» guruhida «{metric}» {compare} {pct} foizga oʻsdi.",
+   "meaning": "Bu guruh tez rivojlanmoqda.",
+   "next_step": "Bu guruhga qoʻshimcha e'tibor va resurs ajrating.",
+   "details": ""
+  },
+  "segment_momentum.up.expert": {
+   "reviewed": false,
+   "headline": "«{segment}» guruhida «{metric}» {compare} {pct} foizga oʻsdi.",
+   "meaning": "Bu guruh tez rivojlanmoqda.",
+   "next_step": "Bu guruhga qoʻshimcha e'tibor va resurs ajrating.",
+   "details": "Oldingi davr: {previous}. Oxirgi davr: {current}."
+  },
+  "segment_momentum.up.simpler": {
+   "reviewed": false,
+   "headline": "«{segment}» guruhida «{metric}» {pct} foizga oʻsdi.",
+   "meaning": "Bu guruh tez oʻsmoqda.",
+   "next_step": "Unga e'tibor bering.",
+   "details": ""
+  },
+  "segment_momentum.down.simple": {
+   "reviewed": false,
+   "headline": "«{segment}» guruhida «{metric}» {compare} {pct} foizga kamaydi.",
+   "meaning": "Bu guruh orqada qolmoqda.",
+   "next_step": "Bu guruhdagi muammoni erta aniqlang.",
+   "details": ""
+  },
+  "segment_momentum.down.expert": {
+   "reviewed": false,
+   "headline": "«{segment}» guruhida «{metric}» {compare} {pct} foizga kamaydi.",
+   "meaning": "Bu guruh orqada qolmoqda.",
+   "next_step": "Bu guruhdagi muammoni erta aniqlang.",
+   "details": "Oldingi davr: {previous}. Oxirgi davr: {current}."
+  },
+  "segment_momentum.down.simpler": {
+   "reviewed": false,
+   "headline": "«{segment}» guruhida «{metric}» {pct} foizga kamaydi.",
+   "meaning": "Bu guruh orqada qolmoqda.",
+   "next_step": "Sababini toping.",
+   "details": ""
+  },
+  "churn.up.simple": {
+   "reviewed": false,
+   "headline": "Mijozlarning qaytmaslik ulushi oshdi: oldingi oy mijozlarining {rate} foizi qaytib kelmadi (avvalgi oylarda oʻrtacha {baseline} foiz).",
+   "meaning": "Qaytmagan mijozlar kelgusi daromadni ham olib ketadi.",
+   "next_step": "Ketgan mijozlarga qoʻngʻiroq qilib, sababini soʻrang.",
+   "details": ""
+  },
+  "churn.up.expert": {
+   "reviewed": false,
+   "headline": "Mijozlarning qaytmaslik ulushi oshdi: oldingi oy mijozlarining {rate} foizi qaytib kelmadi (avvalgi oylarda oʻrtacha {baseline} foiz).",
+   "meaning": "Qaytmagan mijozlar kelgusi daromadni ham olib ketadi.",
+   "next_step": "Ketgan mijozlarga qoʻngʻiroq qilib, sababini soʻrang.",
+   "details": "Usul: oldingi oy mijozlari ichida joriy oyda xarid qilmaganlar ulushi (churn). Mijozlar soni: {customers}."
+  },
+  "churn.up.simpler": {
+   "reviewed": false,
+   "headline": "Qaytmagan mijozlar ulushi oshdi: {rate} foiz.",
+   "meaning": "Bu odatdagidan koʻp.",
+   "next_step": "Sababini soʻrang.",
+   "details": ""
+  },
+  "churn.down.simple": {
+   "reviewed": false,
+   "headline": "Mijozlarning qaytmaslik ulushi kamaydi: oldingi oy mijozlarining {rate} foizi qaytib kelmadi (avvalgi oylarda oʻrtacha {baseline} foiz).",
+   "meaning": "Mijozlar koʻproq qaytmoqda, bu yaxshi belgi.",
+   "next_step": "Nima yordam bergan boʻlsa, shuni davom ettiring.",
+   "details": ""
+  },
+  "churn.down.expert": {
+   "reviewed": false,
+   "headline": "Mijozlarning qaytmaslik ulushi kamaydi: oldingi oy mijozlarining {rate} foizi qaytib kelmadi (avvalgi oylarda oʻrtacha {baseline} foiz).",
+   "meaning": "Mijozlar koʻproq qaytmoqda, bu yaxshi belgi.",
+   "next_step": "Nima yordam bergan boʻlsa, shuni davom ettiring.",
+   "details": "Usul: oldingi oy mijozlari ichida joriy oyda xarid qilmaganlar ulushi (churn). Mijozlar soni: {customers}."
+  },
+  "churn.down.simpler": {
+   "reviewed": false,
+   "headline": "Qaytmagan mijozlar ulushi kamaydi: {rate} foiz.",
+   "meaning": "Mijozlar koʻproq qaytmoqda.",
+   "next_step": "Shu yoʻlni davom ettiring.",
+   "details": ""
+  },
+  "data_quality.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida ma'lumotlarning {pct} foizi yoʻq.",
+   "meaning": "Bu tahlil aniqligini pasaytirishi mumkin.",
+   "next_step": "Ustunni toʻldiring yoki uni tahlildan chiqaring.",
+   "details": ""
+  },
+  "data_quality.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida ma'lumotlarning {pct} foizi yoʻq.",
+   "meaning": "Bu tahlil aniqligini pasaytirishi mumkin.",
+   "next_step": "Ustunni toʻldiring yoki uni tahlildan chiqaring.",
+   "details": "Boʻsh qatorlar soni: {rows}."
+  },
+  "data_quality.neutral.simpler": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida {pct} foiz ma'lumot yoʻq.",
+   "meaning": "Bu natijani buzishi mumkin.",
+   "next_step": "Ustunni toʻldiring.",
+   "details": ""
+  },
+  "funnel_drop.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{stage_from}» bosqichidan «{stage_to}» bosqichiga faqat {rate} foiz oʻtadi (boshqa bosqichlarda odatda {typical} foiz).",
+   "meaning": "Mijozlarning koʻp qismi shu joyda yoʻqolmoqda.",
+   "next_step": "Shu ikki bosqich oraligʻidagi jarayonni tekshiring.",
+   "details": ""
+  },
+  "funnel_drop.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{stage_from}» bosqichidan «{stage_to}» bosqichiga faqat {rate} foiz oʻtadi (boshqa bosqichlarda odatda {typical} foiz).",
+   "meaning": "Mijozlarning koʻp qismi shu joyda yoʻqolmoqda.",
+   "next_step": "Shu ikki bosqich oraligʻidagi jarayonni tekshiring.",
+   "details": "Bosqichga kirgan bitimlar soni: {entered}."
+  },
+  "funnel_drop.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Bosqichlar orasida katta yoʻqotish: «{stage_from}» → «{stage_to}», {rate} foiz.",
+   "meaning": "Mijozlar shu joyda ketmoqda.",
+   "next_step": "Shu qadamni tekshiring.",
+   "details": ""
+  },
+  "stalled.neutral.simple": {
+   "reviewed": false,
+   "headline": "Ochiq bitimlar qiymatining {share} foizi {days} kundan beri oʻzgarmagan.",
+   "meaning": "Bunday bitimlarning yopilish ehtimoli har kuni kamayadi.",
+   "next_step": "Har bir qotib qolgan bitim uchun keyingi qadamni belgilang.",
+   "details": ""
+  },
+  "stalled.neutral.expert": {
+   "reviewed": false,
+   "headline": "Ochiq bitimlar qiymatining {share} foizi {days} kundan beri oʻzgarmagan.",
+   "meaning": "Bunday bitimlarning yopilish ehtimoli har kuni kamayadi.",
+   "next_step": "Har bir qotib qolgan bitim uchun keyingi qadamni belgilang.",
+   "details": "Qotib qolgan bitimlar soni: {deals}. Qiymati: {value}."
+  },
+  "stalled.neutral.simpler": {
+   "reviewed": false,
+   "headline": "{share} foiz bitim uzoq vaqt qotib turibdi.",
+   "meaning": "Ular yopilmasligi mumkin.",
+   "next_step": "Ular bilan bogʻlaning.",
+   "details": ""
+  },
+  "win_rate_gap.neutral.simple": {
+   "reviewed": false,
+   "headline": "Yutib olingan bitimlar ulushi: «{best}» guruhida «{worst}» guruhidagidan {ratio} baravar yuqori.",
+   "meaning": "Demak, savdo usullarida katta farq bor.",
+   "next_step": "Eng yaxshi natijaga erishgan usulni boshqalarga oʻrgating.",
+   "details": ""
+  },
+  "win_rate_gap.neutral.expert": {
+   "reviewed": false,
+   "headline": "Yutib olingan bitimlar ulushi: «{best}» guruhida «{worst}» guruhidagidan {ratio} baravar yuqori.",
+   "meaning": "Demak, savdo usullarida katta farq bor.",
+   "next_step": "Eng yaxshi natijaga erishgan usulni boshqalarga oʻrgating.",
+   "details": "Yopilgan bitimlar soni: {n_best} va {n_worst}."
+  },
+  "win_rate_gap.neutral.simpler": {
+   "reviewed": false,
+   "headline": "Yutib olingan bitimlarda farq katta: {ratio} baravar.",
+   "meaning": "Bir guruh ancha yaxshi sotadi.",
+   "next_step": "Uning usulini oʻrganing.",
+   "details": ""
+  },
+  "cycle_change.up.simple": {
+   "reviewed": false,
+   "headline": "Bitimni yopish muddati {compare} {pct} foizga oshdi: oʻrtacha {days} kun.",
+   "meaning": "Muddat uzaygani sari mijoz qiziqishi soʻnishi mumkin.",
+   "next_step": "Eng sekin bosqichni toping va tezlashtiring.",
+   "details": ""
+  },
+  "cycle_change.up.expert": {
+   "reviewed": false,
+   "headline": "Bitimni yopish muddati {compare} {pct} foizga oshdi: oʻrtacha {days} kun.",
+   "meaning": "Muddat uzaygani sari mijoz qiziqishi soʻnishi mumkin.",
+   "next_step": "Eng sekin bosqichni toping va tezlashtiring.",
+   "details": "Oldingi davrda oʻrtacha: {previous_days} kun."
+  },
+  "cycle_change.up.simpler": {
+   "reviewed": false,
+   "headline": "Bitim muddati oshdi: {days} kun.",
+   "meaning": "Bitimlar sekinlashdi.",
+   "next_step": "Sababini toping.",
+   "details": ""
+  },
+  "cycle_change.down.simple": {
+   "reviewed": false,
+   "headline": "Bitimni yopish muddati {compare} {pct} foizga kamaydi: oʻrtacha {days} kun.",
+   "meaning": "Bitimlar tezroq yopilmoqda, bu yaxshi.",
+   "next_step": "Nima tezlashtirganini aniqlab, mustahkamlang.",
+   "details": ""
+  },
+  "cycle_change.down.expert": {
+   "reviewed": false,
+   "headline": "Bitimni yopish muddati {compare} {pct} foizga kamaydi: oʻrtacha {days} kun.",
+   "meaning": "Bitimlar tezroq yopilmoqda, bu yaxshi.",
+   "next_step": "Nima tezlashtirganini aniqlab, mustahkamlang.",
+   "details": "Oldingi davrda oʻrtacha: {previous_days} kun."
+  },
+  "cycle_change.down.simpler": {
+   "reviewed": false,
+   "headline": "Bitim muddati kamaydi: {days} kun.",
+   "meaning": "Bitimlar tezlashdi.",
+   "next_step": "Shu tarzda davom eting.",
+   "details": ""
+  },
+  "outliers.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida {count} ta qiymat boshqalardan juda farq qiladi ({share} foiz).",
+   "meaning": "Ular xato yozuv boʻlishi yoki natijani buzishi mumkin.",
+   "next_step": "Bu qiymatlarni tekshirib, xatosini tuzating.",
+   "details": ""
+  },
+  "outliers.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida {count} ta qiymat boshqalardan juda farq qiladi ({share} foiz).",
+   "meaning": "Ular xato yozuv boʻlishi yoki natijani buzishi mumkin.",
+   "next_step": "Bu qiymatlarni tekshirib, xatosini tuzating.",
+   "details": "Usul: kvartillar oraligʻi (IQR) qoidasi, chegara {iqr_factor} baravar. Eng chekka qiymat: {extreme}."
+  },
+  "outliers.neutral.simpler": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida {count} ta oʻta yirik yoki kichik qiymat bor.",
+   "meaning": "Ular natijani buzishi mumkin.",
+   "next_step": "Ularni tekshiring.",
+   "details": ""
+  },
+  "correlation.up.simple": {
+   "reviewed": false,
+   "headline": "«{a}» oshganda, «{b}» ham oshadi.",
+   "meaning": "Bu ikki koʻrsatkich odatda birga oʻzgaradi, lekin biri ikkinchisining sababi ekani isbotlanmagan.",
+   "next_step": "Bu bogʻliqlikdan bashorat qilishda foydalaning, lekin sababni alohida tekshiring.",
+   "details": ""
+  },
+  "correlation.up.expert": {
+   "reviewed": false,
+   "headline": "«{a}» oshganda, «{b}» ham oshadi.",
+   "meaning": "Bu ikki koʻrsatkich odatda birga oʻzgaradi, lekin biri ikkinchisining sababi ekani isbotlanmagan.",
+   "next_step": "Bu bogʻliqlikdan bashorat qilishda foydalaning, lekin sababni alohida tekshiring.",
+   "details": "Usul: Spirmen va Pirson korrelyatsiyasi; rho = {rho}, kuzatuvlar soni: {n}."
+  },
+  "correlation.up.simpler": {
+   "reviewed": false,
+   "headline": "«{a}» oshsa, «{b}» ham oshadi.",
+   "meaning": "Ular birga oʻzgaradi. Bu sabab degani emas.",
+   "next_step": "Ehtiyotkorlik bilan foydalaning.",
+   "details": ""
+  },
+  "correlation.down.simple": {
+   "reviewed": false,
+   "headline": "«{a}» yuqori boʻlganda, «{b}» kamayadi.",
+   "meaning": "Bu ikki koʻrsatkich odatda teskari oʻzgaradi, lekin biri ikkinchisining sababi ekani isbotlanmagan.",
+   "next_step": "Bu bogʻliqlikdan bashorat qilishda foydalaning, lekin sababni alohida tekshiring.",
+   "details": ""
+  },
+  "correlation.down.expert": {
+   "reviewed": false,
+   "headline": "«{a}» yuqori boʻlganda, «{b}» kamayadi.",
+   "meaning": "Bu ikki koʻrsatkich odatda teskari oʻzgaradi, lekin biri ikkinchisining sababi ekani isbotlanmagan.",
+   "next_step": "Bu bogʻliqlikdan bashorat qilishda foydalaning, lekin sababni alohida tekshiring.",
+   "details": "Usul: Spirmen va Pirson korrelyatsiyasi; rho = {rho}, kuzatuvlar soni: {n}."
+  },
+  "correlation.down.simpler": {
+   "reviewed": false,
+   "headline": "«{a}» yuqori boʻlsa, «{b}» kamayadi.",
+   "meaning": "Ular teskari oʻzgaradi. Bu sabab degani emas.",
+   "next_step": "Ehtiyotkorlik bilan foydalaning.",
+   "details": ""
+  },
+  "group_difference.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{metric}» guruhlar boʻyicha sezilarli farq qiladi: «{high}» yuqori, «{low}» past, farq {pct} foiz.",
+   "meaning": "Bu farq tasodif emas, aniq qonuniyat koʻrinadi.",
+   "next_step": "Yuqori guruhdagi omillarni past guruhga ham joriy qilib koʻring.",
+   "details": ""
+  },
+  "group_difference.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{metric}» guruhlar boʻyicha sezilarli farq qiladi: «{high}» yuqori, «{low}» past, farq {pct} foiz.",
+   "meaning": "Bu farq tasodif emas, aniq qonuniyat koʻrinadi.",
+   "next_step": "Yuqori guruhdagi omillarni past guruhga ham joriy qilib koʻring.",
+   "details": "Usul: {test}; ta'sir kuchi: {effect}."
+  },
+  "group_difference.neutral.simpler": {
+   "reviewed": false,
+   "headline": "«{high}» va «{low}» orasida farq katta: {pct} foiz.",
+   "meaning": "Bu tasodif emas.",
+   "next_step": "Sababini toping.",
+   "details": ""
+  },
+  "skewness.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida qiymatlarning koʻpi kichik, lekin bir nechtasi juda katta.",
+   "meaning": "Shuning uchun oʻrtacha qiymat chalgʻitishi mumkin.",
+   "next_step": "Oʻrtacha oʻrniga oʻrtadagi qiymatni koʻring.",
+   "details": ""
+  },
+  "skewness.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida qiymatlarning koʻpi kichik, lekin bir nechtasi juda katta.",
+   "meaning": "Shuning uchun oʻrtacha qiymat chalgʻitishi mumkin.",
+   "next_step": "Oʻrtacha oʻrniga oʻrtadagi qiymatni koʻring.",
+   "details": "Usul: assimetriya koeffitsiyenti = {skew}. Kuzatuvlar soni: {n}."
+  },
+  "skewness.neutral.simpler": {
+   "reviewed": false,
+   "headline": "«{column}» ustunida bir nechta juda katta qiymat bor.",
+   "meaning": "Oʻrtacha qiymat chalgʻitadi.",
+   "next_step": "Oʻrtadagi qiymatga qarang.",
+   "details": ""
+  },
+  "missing_pattern.neutral.simple": {
+   "reviewed": false,
+   "headline": "«{column}» ustunidagi boʻsh joylar tasodifiy emas: «{category}» guruhida {pct} foiz.",
+   "meaning": "Bu ma'lumot yigʻish usulida muammo borligini koʻrsatishi mumkin.",
+   "next_step": "Shu guruhdagi ma'lumotlarni kiritish jarayonini tekshiring.",
+   "details": ""
+  },
+  "missing_pattern.neutral.expert": {
+   "reviewed": false,
+   "headline": "«{column}» ustunidagi boʻsh joylar tasodifiy emas: «{category}» guruhida {pct} foiz.",
+   "meaning": "Bu ma'lumot yigʻish usulida muammo borligini koʻrsatishi mumkin.",
+   "next_step": "Shu guruhdagi ma'lumotlarni kiritish jarayonini tekshiring.",
+   "details": "Usul: xi-kvadrat sinovi, Kramer V = {v}, p = {p}."
+  },
+  "missing_pattern.neutral.simpler": {
+   "reviewed": false,
+   "headline": "«{column}» ustunidagi boʻsh joylar «{category}» guruhida koʻp: {pct} foiz.",
+   "meaning": "Bu tasodif emas.",
+   "next_step": "Ma'lumot kiritishni tekshiring.",
+   "details": ""
+  },
+  "trend_regression.up.simple": {
+   "reviewed": false,
+   "headline": "«{column}» vaqt oʻtishi bilan oshib boradi: har oyda taxminan {change} birlikka.",
+   "meaning": "Bu oʻzgarish tasodif emas, barqaror yoʻnalish.",
+   "next_step": "Shu yoʻnalish davom etsa nima boʻlishini rejalashtiring.",
+   "details": ""
+  },
+  "trend_regression.up.expert": {
+   "reviewed": false,
+   "headline": "«{column}» vaqt oʻtishi bilan oshib boradi: har oyda taxminan {change} birlikka.",
+   "meaning": "Bu oʻzgarish tasodif emas, barqaror yoʻnalish.",
+   "next_step": "Shu yoʻnalish davom etsa nima boʻlishini rejalashtiring.",
+   "details": "Usul: chiziqli regressiya; R2 = {r2}, p = {p}."
+  },
+  "trend_regression.up.simpler": {
+   "reviewed": false,
+   "headline": "«{column}» doim oshib bormoqda.",
+   "meaning": "Bu barqaror oʻzgarish.",
+   "next_step": "Rejangizni shunga moslang.",
+   "details": ""
+  },
+  "trend_regression.down.simple": {
+   "reviewed": false,
+   "headline": "«{column}» vaqt oʻtishi bilan kamayib boradi: har oyda taxminan {change} birlikka.",
+   "meaning": "Bu oʻzgarish tasodif emas, barqaror yoʻnalish.",
+   "next_step": "Shu yoʻnalish davom etsa nima boʻlishini rejalashtiring.",
+   "details": ""
+  },
+  "trend_regression.down.expert": {
+   "reviewed": false,
+   "headline": "«{column}» vaqt oʻtishi bilan kamayib boradi: har oyda taxminan {change} birlikka.",
+   "meaning": "Bu oʻzgarish tasodif emas, barqaror yoʻnalish.",
+   "next_step": "Shu yoʻnalish davom etsa nima boʻlishini rejalashtiring.",
+   "details": "Usul: chiziqli regressiya; R2 = {r2}, p = {p}."
+  },
+  "trend_regression.down.simpler": {
+   "reviewed": false,
+   "headline": "«{column}» doim kamayib bormoqda.",
+   "meaning": "Bu barqaror oʻzgarish.",
+   "next_step": "Rejangizni shunga moslang.",
+   "details": ""
+  }
+ }
+}

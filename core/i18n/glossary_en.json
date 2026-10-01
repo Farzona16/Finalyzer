@@ -1,0 +1,1140 @@
+{
+ "locale": "en",
+ "version": 1,
+ "entries": {
+  "churn": {
+   "term": "churn",
+   "plain": "customers who bought before but no longer do",
+   "aliases": [],
+   "reviewed": false
+  },
+  "anomaly": {
+   "term": "anomaly",
+   "plain": "a value that is far from the usual",
+   "aliases": [],
+   "reviewed": false
+  },
+  "concentration": {
+   "term": "concentration",
+   "plain": "depending too much on one thing",
+   "aliases": [],
+   "reviewed": false
+  },
+  "correlation": {
+   "term": "correlation",
+   "plain": "two measures that change together",
+   "aliases": [],
+   "reviewed": false
+  },
+  "median": {
+   "term": "median",
+   "plain": "the middle value when all values are sorted",
+   "aliases": [],
+   "reviewed": false
+  },
+  "standard_deviation": {
+   "term": "standard deviation",
+   "plain": "how spread out the values are",
+   "aliases": [],
+   "reviewed": false
+  },
+  "margin": {
+   "term": "margin",
+   "plain": "the share of sales that remains as profit",
+   "aliases": [],
+   "reviewed": false
+  },
+  "win_rate": {
+   "term": "win rate",
+   "plain": "the share of deals that were won",
+   "aliases": [],
+   "reviewed": false
+  },
+  "average": {
+   "term": "average",
+   "plain": "the sum of values divided by their number",
+   "aliases": [],
+   "reviewed": false
+  },
+  "mode": {
+   "term": "mode",
+   "plain": "the value that appears most often",
+   "aliases": [],
+   "reviewed": false
+  },
+  "variance": {
+   "term": "variance",
+   "plain": "how far values are from their average, squared",
+   "aliases": [],
+   "reviewed": false
+  },
+  "range": {
+   "term": "range",
+   "plain": "the gap between the smallest and the largest value",
+   "aliases": [],
+   "reviewed": false
+  },
+  "quartile": {
+   "term": "quartile",
+   "plain": "one of three points that split sorted values into four equal parts",
+   "aliases": [],
+   "reviewed": false
+  },
+  "percentile": {
+   "term": "percentile",
+   "plain": "the value below which a given share of the data falls",
+   "aliases": [],
+   "reviewed": false
+  },
+  "iqr": {
+   "term": "interquartile range",
+   "plain": "the spread of the middle half of the values",
+   "aliases": [],
+   "reviewed": false
+  },
+  "outlier": {
+   "term": "outlier",
+   "plain": "a value far away from most others",
+   "aliases": [],
+   "reviewed": false
+  },
+  "skewness": {
+   "term": "skewness",
+   "plain": "when most values are small but a few are very large",
+   "aliases": [],
+   "reviewed": false
+  },
+  "distribution": {
+   "term": "distribution",
+   "plain": "how values are spread across their range",
+   "aliases": [],
+   "reviewed": false
+  },
+  "histogram": {
+   "term": "histogram",
+   "plain": "a chart that counts how many values fall in each range",
+   "aliases": [],
+   "reviewed": false
+  },
+  "boxplot": {
+   "term": "box plot",
+   "plain": "a chart that shows the middle half, the middle and the extremes",
+   "aliases": [],
+   "reviewed": false
+  },
+  "p_value": {
+   "term": "p-value",
+   "plain": "how likely a result is to be pure chance",
+   "aliases": [],
+   "reviewed": false
+  },
+  "significance": {
+   "term": "statistical significance",
+   "plain": "a result unlikely to be chance",
+   "aliases": [],
+   "reviewed": false
+  },
+  "confidence_interval": {
+   "term": "confidence interval",
+   "plain": "the range where the true value most likely lies",
+   "aliases": [],
+   "reviewed": false
+  },
+  "confidence_level": {
+   "term": "confidence",
+   "plain": "how sure we are about a finding",
+   "aliases": [],
+   "reviewed": false
+  },
+  "sample": {
+   "term": "sample",
+   "plain": "the part of the data that was examined",
+   "aliases": [],
+   "reviewed": false
+  },
+  "sample_size": {
+   "term": "sample size",
+   "plain": "how many records were examined",
+   "aliases": [],
+   "reviewed": false
+  },
+  "z_score": {
+   "term": "z-score",
+   "plain": "how many typical steps a value is from the average",
+   "aliases": [],
+   "reviewed": false
+  },
+  "regression": {
+   "term": "regression",
+   "plain": "a line that shows how one measure changes with another",
+   "aliases": [],
+   "reviewed": false
+  },
+  "r_squared": {
+   "term": "R-squared",
+   "plain": "how much of the change a trend line explains",
+   "aliases": [],
+   "reviewed": false
+  },
+  "slope": {
+   "term": "slope",
+   "plain": "how much a value changes per step",
+   "aliases": [],
+   "reviewed": false
+  },
+  "trend": {
+   "term": "trend",
+   "plain": "the general direction a value moves over time",
+   "aliases": [],
+   "reviewed": false
+  },
+  "seasonality": {
+   "term": "seasonality",
+   "plain": "a pattern that repeats every year, month or week",
+   "aliases": [],
+   "reviewed": false
+  },
+  "moving_average": {
+   "term": "moving average",
+   "plain": "the average of the latest few periods",
+   "aliases": [],
+   "reviewed": false
+  },
+  "forecast": {
+   "term": "forecast",
+   "plain": "an estimate of future values",
+   "aliases": [],
+   "reviewed": false
+  },
+  "anova": {
+   "term": "ANOVA",
+   "plain": "a test of whether several groups differ",
+   "aliases": [],
+   "reviewed": false
+  },
+  "t_test": {
+   "term": "t-test",
+   "plain": "a test of whether two groups differ",
+   "aliases": [],
+   "reviewed": false
+  },
+  "chi_square": {
+   "term": "chi-square test",
+   "plain": "a test of whether two categories are linked",
+   "aliases": [],
+   "reviewed": false
+  },
+  "effect_size": {
+   "term": "effect size",
+   "plain": "how big a difference is, not only whether it exists",
+   "aliases": [],
+   "reviewed": false
+  },
+  "spearman": {
+   "term": "Spearman correlation",
+   "plain": "a link measure that only looks at ranks",
+   "aliases": [],
+   "reviewed": false
+  },
+  "pearson": {
+   "term": "Pearson correlation",
+   "plain": "a link measure for straight-line relationships",
+   "aliases": [],
+   "reviewed": false
+  },
+  "causation": {
+   "term": "causation",
+   "plain": "when one thing really makes another happen",
+   "aliases": [],
+   "reviewed": false
+  },
+  "null_value": {
+   "term": "missing value",
+   "plain": "an empty cell with no data",
+   "aliases": [],
+   "reviewed": false
+  },
+  "duplicate": {
+   "term": "duplicate",
+   "plain": "a record that appears more than once",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cardinality": {
+   "term": "cardinality",
+   "plain": "how many different values a column has",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cohort": {
+   "term": "cohort",
+   "plain": "a group of customers who started in the same period",
+   "aliases": [],
+   "reviewed": false
+  },
+  "segment": {
+   "term": "segment",
+   "plain": "a group of similar customers, products or records",
+   "aliases": [],
+   "reviewed": false
+  },
+  "benchmark": {
+   "term": "benchmark",
+   "plain": "a standard value used for comparison",
+   "aliases": [],
+   "reviewed": false
+  },
+  "baseline": {
+   "term": "baseline",
+   "plain": "the usual level before a change",
+   "aliases": [],
+   "reviewed": false
+  },
+  "threshold": {
+   "term": "threshold",
+   "plain": "a limit that triggers attention when crossed",
+   "aliases": [],
+   "reviewed": false
+  },
+  "growth_rate": {
+   "term": "growth rate",
+   "plain": "how fast a value grows, as a percentage",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cagr": {
+   "term": "CAGR",
+   "plain": "the average yearly growth over several years",
+   "aliases": [],
+   "reviewed": false
+  },
+  "yoy": {
+   "term": "year over year",
+   "plain": "a comparison with the same period last year",
+   "aliases": [],
+   "reviewed": false
+  },
+  "mom": {
+   "term": "month over month",
+   "plain": "a comparison with the previous month",
+   "aliases": [],
+   "reviewed": false
+  },
+  "ytd": {
+   "term": "year to date",
+   "plain": "from the start of this year until today",
+   "aliases": [],
+   "reviewed": false
+  },
+  "ratio": {
+   "term": "ratio",
+   "plain": "how many times one number is larger than another",
+   "aliases": [],
+   "reviewed": false
+  },
+  "share": {
+   "term": "share",
+   "plain": "a part of the whole, in percent",
+   "aliases": [],
+   "reviewed": false
+  },
+  "pareto": {
+   "term": "Pareto rule",
+   "plain": "a few causes usually bring most of the result",
+   "aliases": [],
+   "reviewed": false
+  },
+  "hhi": {
+   "term": "concentration index (HHI)",
+   "plain": "a number that shows how unevenly something is shared",
+   "aliases": [],
+   "reviewed": false
+  },
+  "gini": {
+   "term": "Gini index",
+   "plain": "a number for how unequal a distribution is",
+   "aliases": [],
+   "reviewed": false
+  },
+  "weighted_average": {
+   "term": "weighted average",
+   "plain": "an average where bigger items count more",
+   "aliases": [],
+   "reviewed": false
+  },
+  "total": {
+   "term": "total",
+   "plain": "all values added together",
+   "aliases": [],
+   "reviewed": false
+  },
+  "count": {
+   "term": "count",
+   "plain": "how many records there are",
+   "aliases": [],
+   "reviewed": false
+  },
+  "minimum": {
+   "term": "minimum",
+   "plain": "the smallest value",
+   "aliases": [],
+   "reviewed": false
+  },
+  "maximum": {
+   "term": "maximum",
+   "plain": "the largest value",
+   "aliases": [],
+   "reviewed": false
+  },
+  "top_n": {
+   "term": "top N",
+   "plain": "the first few items when sorted from largest",
+   "aliases": [],
+   "reviewed": false
+  },
+  "revenue": {
+   "term": "revenue",
+   "plain": "all money received from sales",
+   "aliases": [],
+   "reviewed": false
+  },
+  "profit": {
+   "term": "profit",
+   "plain": "money left after paying all costs",
+   "aliases": [],
+   "reviewed": false
+  },
+  "gross_profit": {
+   "term": "gross profit",
+   "plain": "sales minus the direct cost of goods",
+   "aliases": [],
+   "reviewed": false
+  },
+  "net_profit": {
+   "term": "net profit",
+   "plain": "what remains after every cost and tax",
+   "aliases": [],
+   "reviewed": false
+  },
+  "gross_margin": {
+   "term": "gross margin",
+   "plain": "the share of sales left after the cost of goods",
+   "aliases": [],
+   "reviewed": false
+  },
+  "operating_margin": {
+   "term": "operating margin",
+   "plain": "the share of sales left after running costs",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cost_of_goods": {
+   "term": "cost of goods sold",
+   "plain": "what it cost to buy or make the goods sold",
+   "aliases": [],
+   "reviewed": false
+  },
+  "expense": {
+   "term": "expense",
+   "plain": "money spent to run the business",
+   "aliases": [],
+   "reviewed": false
+  },
+  "fixed_cost": {
+   "term": "fixed cost",
+   "plain": "a cost that stays the same whatever you sell",
+   "aliases": [],
+   "reviewed": false
+  },
+  "variable_cost": {
+   "term": "variable cost",
+   "plain": "a cost that grows with sales",
+   "aliases": [],
+   "reviewed": false
+  },
+  "overhead": {
+   "term": "overhead",
+   "plain": "regular costs not tied to one product",
+   "aliases": [],
+   "reviewed": false
+  },
+  "ebitda": {
+   "term": "EBITDA",
+   "plain": "profit before interest, tax and wear-and-tear",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cash_flow": {
+   "term": "cash flow",
+   "plain": "money coming in minus money going out",
+   "aliases": [],
+   "reviewed": false
+  },
+  "liquidity": {
+   "term": "liquidity",
+   "plain": "how quickly you can turn assets into cash",
+   "aliases": [],
+   "reviewed": false
+  },
+  "receivable": {
+   "term": "accounts receivable",
+   "plain": "money customers still owe you",
+   "aliases": [],
+   "reviewed": false
+  },
+  "payable": {
+   "term": "accounts payable",
+   "plain": "money you still owe suppliers",
+   "aliases": [],
+   "reviewed": false
+  },
+  "working_capital": {
+   "term": "working capital",
+   "plain": "money available for day-to-day running",
+   "aliases": [],
+   "reviewed": false
+  },
+  "balance_sheet": {
+   "term": "balance sheet",
+   "plain": "a list of what a business owns and owes",
+   "aliases": [],
+   "reviewed": false
+  },
+  "asset": {
+   "term": "asset",
+   "plain": "something of value that a business owns",
+   "aliases": [],
+   "reviewed": false
+  },
+  "liability": {
+   "term": "liability",
+   "plain": "money a business owes",
+   "aliases": [],
+   "reviewed": false
+  },
+  "equity": {
+   "term": "equity",
+   "plain": "what is left for owners after paying all debts",
+   "aliases": [],
+   "reviewed": false
+  },
+  "depreciation": {
+   "term": "depreciation",
+   "plain": "the yearly loss in value of equipment",
+   "aliases": [],
+   "reviewed": false
+  },
+  "budget": {
+   "term": "budget",
+   "plain": "a plan for how much to earn and spend",
+   "aliases": [],
+   "reviewed": false
+  },
+  "variance_to_plan": {
+   "term": "variance to plan",
+   "plain": "the gap between actual and planned numbers",
+   "aliases": [],
+   "reviewed": false
+  },
+  "break_even": {
+   "term": "break-even",
+   "plain": "the point where income equals costs",
+   "aliases": [],
+   "reviewed": false
+  },
+  "roi": {
+   "term": "return on investment",
+   "plain": "how much you earn compared with what you put in",
+   "aliases": [],
+   "reviewed": false
+  },
+  "payback": {
+   "term": "payback period",
+   "plain": "the time it takes to earn back an investment",
+   "aliases": [],
+   "reviewed": false
+  },
+  "inflation": {
+   "term": "inflation",
+   "plain": "the general rise of prices over time",
+   "aliases": [],
+   "reviewed": false
+  },
+  "exchange_rate": {
+   "term": "exchange rate",
+   "plain": "the price of one currency in another",
+   "aliases": [],
+   "reviewed": false
+  },
+  "vat": {
+   "term": "VAT",
+   "plain": "a tax added to the price of goods and services",
+   "aliases": [],
+   "reviewed": false
+  },
+  "discount": {
+   "term": "discount",
+   "plain": "a reduction of the normal price",
+   "aliases": [],
+   "reviewed": false
+  },
+  "markup": {
+   "term": "markup",
+   "plain": "the amount added to cost to get the price",
+   "aliases": [],
+   "reviewed": false
+  },
+  "npl": {
+   "term": "non-performing loan",
+   "plain": "a loan that is not being repaid on time",
+   "aliases": [],
+   "reviewed": false
+  },
+  "interest_rate": {
+   "term": "interest rate",
+   "plain": "the price of borrowing money, in percent",
+   "aliases": [],
+   "reviewed": false
+  },
+  "overdue": {
+   "term": "overdue",
+   "plain": "not paid by the agreed date",
+   "aliases": [],
+   "reviewed": false
+  },
+  "deposit": {
+   "term": "deposit",
+   "plain": "money a customer keeps in a bank",
+   "aliases": [],
+   "reviewed": false
+  },
+  "loan": {
+   "term": "loan",
+   "plain": "money borrowed that must be paid back",
+   "aliases": [],
+   "reviewed": false
+  },
+  "pipeline": {
+   "term": "pipeline",
+   "plain": "all open deals and their expected value",
+   "aliases": [],
+   "reviewed": false
+  },
+  "funnel": {
+   "term": "funnel",
+   "plain": "the steps a customer passes from first contact to purchase",
+   "aliases": [],
+   "reviewed": false
+  },
+  "conversion_rate": {
+   "term": "conversion rate",
+   "plain": "the share that moves on to the next step",
+   "aliases": [],
+   "reviewed": false
+  },
+  "lead": {
+   "term": "lead",
+   "plain": "a person who may become a customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "qualified_lead": {
+   "term": "qualified lead",
+   "plain": "a lead that is likely to buy",
+   "aliases": [],
+   "reviewed": false
+  },
+  "deal": {
+   "term": "deal",
+   "plain": "a possible sale being worked on",
+   "aliases": [],
+   "reviewed": false
+  },
+  "open_deal": {
+   "term": "open deal",
+   "plain": "a deal that is not yet won or lost",
+   "aliases": [],
+   "reviewed": false
+  },
+  "stalled_deal": {
+   "term": "stalled deal",
+   "plain": "a deal with no progress for a long time",
+   "aliases": [],
+   "reviewed": false
+  },
+  "sales_cycle": {
+   "term": "sales cycle",
+   "plain": "the time from first contact to a closed deal",
+   "aliases": [],
+   "reviewed": false
+  },
+  "deal_size": {
+   "term": "average deal size",
+   "plain": "the average value of a won deal",
+   "aliases": [],
+   "reviewed": false
+  },
+  "quota": {
+   "term": "quota",
+   "plain": "the sales target set for a person or team",
+   "aliases": [],
+   "reviewed": false
+  },
+  "attainment": {
+   "term": "quota attainment",
+   "plain": "how much of the target has been reached",
+   "aliases": [],
+   "reviewed": false
+  },
+  "forecast_sales": {
+   "term": "sales forecast",
+   "plain": "the expected sales for a coming period",
+   "aliases": [],
+   "reviewed": false
+  },
+  "upsell": {
+   "term": "upsell",
+   "plain": "selling a more expensive version to an existing customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cross_sell": {
+   "term": "cross-sell",
+   "plain": "selling an extra product to an existing customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "retention": {
+   "term": "retention",
+   "plain": "the share of customers who stay",
+   "aliases": [],
+   "reviewed": false
+  },
+  "loyalty": {
+   "term": "customer loyalty",
+   "plain": "how willing customers are to buy again",
+   "aliases": [],
+   "reviewed": false
+  },
+  "repeat_purchase": {
+   "term": "repeat purchase",
+   "plain": "a purchase by a customer who bought before",
+   "aliases": [],
+   "reviewed": false
+  },
+  "ltv": {
+   "term": "customer lifetime value",
+   "plain": "all money a customer is expected to bring",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cac": {
+   "term": "customer acquisition cost",
+   "plain": "what it costs to win one new customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "arpu": {
+   "term": "average revenue per user",
+   "plain": "the average income from one customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "average_check": {
+   "term": "average check",
+   "plain": "the average amount of one purchase",
+   "aliases": [],
+   "reviewed": false
+  },
+  "basket": {
+   "term": "basket size",
+   "plain": "how many items are in one purchase",
+   "aliases": [],
+   "reviewed": false
+  },
+  "sku": {
+   "term": "product code (SKU)",
+   "plain": "a unique code for each product variant",
+   "aliases": [],
+   "reviewed": false
+  },
+  "inventory": {
+   "term": "inventory",
+   "plain": "goods currently in stock",
+   "aliases": [],
+   "reviewed": false
+  },
+  "turnover": {
+   "term": "inventory turnover",
+   "plain": "how often stock is sold and replaced",
+   "aliases": [],
+   "reviewed": false
+  },
+  "stockout": {
+   "term": "stockout",
+   "plain": "when a product is sold out",
+   "aliases": [],
+   "reviewed": false
+  },
+  "returns": {
+   "term": "returns",
+   "plain": "goods that customers send back",
+   "aliases": [],
+   "reviewed": false
+  },
+  "refund": {
+   "term": "refund",
+   "plain": "money given back to a customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "channel": {
+   "term": "sales channel",
+   "plain": "the way customers buy, such as shop or online",
+   "aliases": [],
+   "reviewed": false
+  },
+  "territory": {
+   "term": "territory",
+   "plain": "the area or customers one seller is responsible for",
+   "aliases": [],
+   "reviewed": false
+  },
+  "owner": {
+   "term": "owner",
+   "plain": "the person responsible for a deal or customer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "source": {
+   "term": "source",
+   "plain": "where a customer or deal came from",
+   "aliases": [],
+   "reviewed": false
+  },
+  "promotion": {
+   "term": "promotion",
+   "plain": "a short offer to boost sales",
+   "aliases": [],
+   "reviewed": false
+  },
+  "campaign": {
+   "term": "campaign",
+   "plain": "a planned set of marketing actions",
+   "aliases": [],
+   "reviewed": false
+  },
+  "ctr": {
+   "term": "click-through rate",
+   "plain": "the share of people who click after seeing",
+   "aliases": [],
+   "reviewed": false
+  },
+  "roas": {
+   "term": "return on ad spend",
+   "plain": "how much sales each advertising sum brings",
+   "aliases": [],
+   "reviewed": false
+  },
+  "nps": {
+   "term": "net promoter score",
+   "plain": "a score showing how likely customers are to recommend you",
+   "aliases": [],
+   "reviewed": false
+  },
+  "sla": {
+   "term": "service level agreement",
+   "plain": "a promise about how fast you will respond",
+   "aliases": [],
+   "reviewed": false
+  },
+  "backlog": {
+   "term": "backlog",
+   "plain": "work or orders waiting to be handled",
+   "aliases": [],
+   "reviewed": false
+  },
+  "throughput": {
+   "term": "throughput",
+   "plain": "how much work is finished in a period",
+   "aliases": [],
+   "reviewed": false
+  },
+  "utilization": {
+   "term": "utilization",
+   "plain": "the share of available capacity that is used",
+   "aliases": [],
+   "reviewed": false
+  },
+  "headcount": {
+   "term": "headcount",
+   "plain": "the number of employees",
+   "aliases": [],
+   "reviewed": false
+  },
+  "attrition": {
+   "term": "attrition",
+   "plain": "employees leaving the company",
+   "aliases": [],
+   "reviewed": false
+  },
+  "tenure": {
+   "term": "tenure",
+   "plain": "how long a person has worked here",
+   "aliases": [],
+   "reviewed": false
+  },
+  "dataset": {
+   "term": "dataset",
+   "plain": "a table or set of tables with your data",
+   "aliases": [],
+   "reviewed": false
+  },
+  "column": {
+   "term": "column",
+   "plain": "one field of a table, such as date or amount",
+   "aliases": [],
+   "reviewed": false
+  },
+  "row": {
+   "term": "row",
+   "plain": "one record of a table",
+   "aliases": [],
+   "reviewed": false
+  },
+  "schema": {
+   "term": "schema",
+   "plain": "the list of columns and their types",
+   "aliases": [],
+   "reviewed": false
+  },
+  "metric": {
+   "term": "metric",
+   "plain": "a number that measures something, such as revenue",
+   "aliases": [],
+   "reviewed": false
+  },
+  "dimension": {
+   "term": "dimension",
+   "plain": "a way to split numbers, such as by region",
+   "aliases": [],
+   "reviewed": false
+  },
+  "filter": {
+   "term": "filter",
+   "plain": "a rule that keeps only some of the data",
+   "aliases": [],
+   "reviewed": false
+  },
+  "drill_down": {
+   "term": "drill down",
+   "plain": "looking at the details behind a number",
+   "aliases": [],
+   "reviewed": false
+  },
+  "cross_filter": {
+   "term": "cross-filter",
+   "plain": "clicking one chart to filter all the others",
+   "aliases": [],
+   "reviewed": false
+  },
+  "dashboard": {
+   "term": "dashboard",
+   "plain": "a page with the key numbers and charts",
+   "aliases": [],
+   "reviewed": false
+  },
+  "kpi_tile": {
+   "term": "KPI card",
+   "plain": "a small tile showing one key number",
+   "aliases": [],
+   "reviewed": false
+  },
+  "gauge": {
+   "term": "gauge",
+   "plain": "a dial chart that shows progress toward a target",
+   "aliases": [],
+   "reviewed": false
+  },
+  "treemap": {
+   "term": "treemap",
+   "plain": "a chart of nested rectangles sized by value",
+   "aliases": [],
+   "reviewed": false
+  },
+  "heatmap": {
+   "term": "heatmap",
+   "plain": "a grid where color shows the size of a value",
+   "aliases": [],
+   "reviewed": false
+  },
+  "waterfall": {
+   "term": "waterfall chart",
+   "plain": "a chart that shows how steps add up to a total",
+   "aliases": [],
+   "reviewed": false
+  },
+  "scatter": {
+   "term": "scatter plot",
+   "plain": "a chart of dots comparing two measures",
+   "aliases": [],
+   "reviewed": false
+  },
+  "stacked_chart": {
+   "term": "stacked chart",
+   "plain": "a chart where parts are piled up to a total",
+   "aliases": [],
+   "reviewed": false
+  },
+  "donut": {
+   "term": "donut chart",
+   "plain": "a ring chart that shows shares of a whole",
+   "aliases": [],
+   "reviewed": false
+  },
+  "legend": {
+   "term": "legend",
+   "plain": "the key that explains colors in a chart",
+   "aliases": [],
+   "reviewed": false
+  },
+  "axis": {
+   "term": "axis",
+   "plain": "the line with numbers or labels along a chart",
+   "aliases": [],
+   "reviewed": false
+  },
+  "tooltip": {
+   "term": "tooltip",
+   "plain": "a small note that appears when you point at something",
+   "aliases": [],
+   "reviewed": false
+  },
+  "grain": {
+   "term": "granularity",
+   "plain": "how detailed the data is, such as daily or monthly",
+   "aliases": [],
+   "reviewed": false
+  },
+  "aggregation": {
+   "term": "aggregation",
+   "plain": "combining many rows into one number",
+   "aliases": [],
+   "reviewed": false
+  },
+  "join": {
+   "term": "join",
+   "plain": "linking two tables through a common column",
+   "aliases": [],
+   "reviewed": false
+  },
+  "primary_key": {
+   "term": "unique id",
+   "plain": "a value that identifies one row only",
+   "aliases": [],
+   "reviewed": false
+  },
+  "data_quality": {
+   "term": "data quality",
+   "plain": "how complete and correct your data is",
+   "aliases": [],
+   "reviewed": false
+  },
+  "data_cleaning": {
+   "term": "data cleaning",
+   "plain": "fixing mistakes and gaps in data",
+   "aliases": [],
+   "reviewed": false
+  },
+  "pii": {
+   "term": "personal data",
+   "plain": "information that identifies a person, such as a phone number",
+   "aliases": [],
+   "reviewed": false
+  },
+  "masking": {
+   "term": "masking",
+   "plain": "hiding part of a value to protect privacy",
+   "aliases": [],
+   "reviewed": false
+  },
+  "privacy_mode": {
+   "term": "privacy mode",
+   "plain": "the setting that decides what leaves your computer",
+   "aliases": [],
+   "reviewed": false
+  },
+  "audit_log": {
+   "term": "audit log",
+   "plain": "a record of who did what and when",
+   "aliases": [],
+   "reviewed": false
+  },
+  "verified_answer": {
+   "term": "verified answer",
+   "plain": "an answer that passed our automatic check",
+   "aliases": [],
+   "reviewed": false
+  },
+  "unverified_answer": {
+   "term": "unverified answer",
+   "plain": "an answer that did not pass the check",
+   "aliases": [],
+   "reviewed": false
+  },
+  "sql": {
+   "term": "SQL",
+   "plain": "the language used to ask a database a question",
+   "aliases": [],
+   "reviewed": false
+  },
+  "llm": {
+   "term": "language model",
+   "plain": "an AI that writes text",
+   "aliases": [],
+   "reviewed": false
+  },
+  "export": {
+   "term": "export",
+   "plain": "saving a result as a file",
+   "aliases": [],
+   "reviewed": false
+  },
+  "retention_policy": {
+   "term": "retention period",
+   "plain": "how long data is kept before deletion",
+   "aliases": [],
+   "reviewed": false
+  },
+  "template": {
+   "term": "template",
+   "plain": "a ready layout you can start from",
+   "aliases": [],
+   "reviewed": false
+  },
+  "domain": {
+   "term": "business area",
+   "plain": "the kind of data, such as retail or banking",
+   "aliases": [],
+   "reviewed": false
+  },
+  "period": {
+   "term": "period",
+   "plain": "a stretch of time such as a week or a month",
+   "aliases": [],
+   "reviewed": false
+  },
+  "fiscal_year": {
+   "term": "fiscal year",
+   "plain": "the twelve months a company uses for accounts",
+   "aliases": [],
+   "reviewed": false
+  },
+  "quarter": {
+   "term": "quarter",
+   "plain": "three months",
+   "aliases": [],
+   "reviewed": false
+  }
+ }
+}

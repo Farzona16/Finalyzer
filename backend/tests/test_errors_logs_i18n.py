@@ -52,6 +52,16 @@ def test_every_error_code_has_a_title_and_detail_in_both_languages() -> None:
                 assert f"errors.{code}.{part}" in catalog(locale), (locale, code, part)
 
 
+def test_no_catalog_key_is_unused() -> None:
+    """Every key belongs to a known error code (a removed code must not leave text behind)."""
+    for locale in ("uz", "en"):
+        for key, value in catalog(locale).items():
+            match = re.fullmatch(r"errors\.(\w+)\.(title|detail)", key)
+            assert match, f"{locale}: {key} is not used by any code"
+            assert match.group(1) in ERROR_STATUS, (locale, key)
+            assert value.strip(), (locale, key)
+
+
 def test_uzbek_text_uses_the_right_apostrophes() -> None:
     """oʻ and gʻ use U+02BB; a plain or typographic apostrophe after o or g is wrong."""
     wrong = re.compile(r"[oOgG][\u0027\u2018\u2019\u0060\u00b4]")

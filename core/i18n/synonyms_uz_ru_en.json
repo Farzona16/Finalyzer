@@ -1,0 +1,373 @@
+{
+ "version": 1,
+ "note": "Matching uses core.nlu.normalize.match_key: apostrophes are ignored and Cyrillic is turned into Latin. 'won' and 'lost' are the last two stages (tied).",
+ "roles": {
+  "date": {
+   "uz": [
+    "sana",
+    "vaqt",
+    "sanasi",
+    "yaratilgan_sana",
+    "sotuv_sanasi",
+    "kun",
+    "davr",
+    "oy",
+    "buyurtma_sanasi",
+    "toʻlov_sanasi",
+    "tranzaksiya_sanasi"
+   ],
+   "ru": [
+    "дата",
+    "дата_продажи",
+    "день",
+    "период",
+    "время",
+    "дата_заказа",
+    "дата_платежа"
+   ],
+   "en": [
+    "date",
+    "order_date",
+    "sale_date",
+    "txn_date",
+    "transaction_date",
+    "created_at",
+    "timestamp",
+    "day",
+    "period"
+   ]
+  },
+  "amount": {
+   "uz": [
+    "summa",
+    "jami",
+    "tushum",
+    "savdo",
+    "narx_jami",
+    "qiymat",
+    "umumiy_summa",
+    "toʻlov_summasi",
+    "daromad"
+   ],
+   "ru": [
+    "сумма",
+    "выручка",
+    "итого",
+    "оборот",
+    "стоимость",
+    "доход"
+   ],
+   "en": [
+    "amount",
+    "revenue",
+    "total",
+    "sales",
+    "total_amount",
+    "price_total",
+    "value",
+    "sum",
+    "turnover"
+   ]
+  },
+  "cost": {
+   "uz": [
+    "xarajat",
+    "tannarx",
+    "chiqim",
+    "sarf"
+   ],
+   "ru": [
+    "себестоимость",
+    "затраты",
+    "расход",
+    "расходы"
+   ],
+   "en": [
+    "cost",
+    "cogs",
+    "cost_amount",
+    "expense",
+    "unit_cost_total"
+   ]
+  },
+  "quantity": {
+   "uz": [
+    "miqdor",
+    "soni",
+    "dona",
+    "hajm",
+    "son"
+   ],
+   "ru": [
+    "количество",
+    "шт",
+    "кол_во",
+    "объем"
+   ],
+   "en": [
+    "quantity",
+    "qty",
+    "units",
+    "count_items"
+   ]
+  },
+  "customer_id": {
+   "uz": [
+    "mijoz",
+    "mijoz_id",
+    "xaridor",
+    "mijoz_raqami",
+    "mijoz_kodi"
+   ],
+   "ru": [
+    "клиент",
+    "клиент_id",
+    "покупатель",
+    "код_клиента",
+    "id_клиента"
+   ],
+   "en": [
+    "customer_id",
+    "client_id",
+    "cust_id",
+    "customer",
+    "client",
+    "user_id",
+    "account_id"
+   ]
+  },
+  "order_id": {
+   "uz": [
+    "buyurtma",
+    "buyurtma_id",
+    "chek",
+    "bitim_id",
+    "buyurtma_raqami",
+    "chek_raqami",
+    "tranzaksiya_id"
+   ],
+   "ru": [
+    "заказ",
+    "номер_заказа",
+    "сделка",
+    "чек",
+    "номер_чека",
+    "id_заказа"
+   ],
+   "en": [
+    "order_id",
+    "sale_id",
+    "deal_id",
+    "txn_id",
+    "transaction_id",
+    "invoice_id",
+    "id"
+   ]
+  },
+  "status": {
+   "uz": [
+    "holat",
+    "status",
+    "toʻlov_holati",
+    "bosqich_holati"
+   ],
+   "ru": [
+    "статус",
+    "состояние",
+    "статус_оплаты"
+   ],
+   "en": [
+    "status",
+    "state",
+    "payment_status",
+    "txn_status"
+   ]
+  },
+  "stage": {
+   "uz": [
+    "bosqich",
+    "etap",
+    "savdo_bosqichi",
+    "voronka_bosqichi"
+   ],
+   "ru": [
+    "этап",
+    "стадия",
+    "этап_сделки",
+    "стадия_сделки"
+   ],
+   "en": [
+    "stage",
+    "pipeline_stage",
+    "deal_stage"
+   ]
+  },
+  "owner": {
+   "uz": [
+    "mas'ul",
+    "menejer",
+    "sotuvchi",
+    "mas'ul_menejer",
+    "xodim",
+    "agent"
+   ],
+   "ru": [
+    "ответственный",
+    "менеджер",
+    "продавец",
+    "сотрудник",
+    "агент"
+   ],
+   "en": [
+    "owner",
+    "manager",
+    "rep",
+    "sales_rep"
+   ]
+  },
+  "source": {
+   "uz": [
+    "manba",
+    "kanal_manba",
+    "kelib_chiqish",
+    "reklama_manbasi"
+   ],
+   "ru": [
+    "источник",
+    "канал_источник",
+    "откуда"
+   ],
+   "en": [
+    "source",
+    "lead_source",
+    "channel"
+   ]
+  },
+  "target": {
+   "uz": [
+    "reja",
+    "maqsad",
+    "kvota",
+    "oylik_reja",
+    "savdo_rejasi"
+   ],
+   "ru": [
+    "план",
+    "цель",
+    "квота",
+    "план_продаж"
+   ],
+   "en": [
+    "target",
+    "quota",
+    "plan"
+   ]
+  }
+ },
+ "stage_order": [
+  {
+   "stage": "lead",
+   "rank": 0,
+   "uz": [
+    "soʻrov",
+    "murojaat",
+    "potensial"
+   ],
+   "ru": [
+    "лид",
+    "обращение"
+   ],
+   "en": [
+    "lead",
+    "new",
+    "prospect"
+   ]
+  },
+  {
+   "stage": "qualified",
+   "rank": 1,
+   "uz": [
+    "saralangan",
+    "tasdiqlangan_mijoz"
+   ],
+   "ru": [
+    "квалификация",
+    "квалифицирован"
+   ],
+   "en": [
+    "qualified",
+    "qualification"
+   ]
+  },
+  {
+   "stage": "proposal",
+   "rank": 2,
+   "uz": [
+    "taklif",
+    "tijoriy_taklif"
+   ],
+   "ru": [
+    "предложение",
+    "кп",
+    "коммерческое_предложение"
+   ],
+   "en": [
+    "proposal",
+    "quote",
+    "offer"
+   ]
+  },
+  {
+   "stage": "negotiation",
+   "rank": 3,
+   "uz": [
+    "muzokara",
+    "kelishuv"
+   ],
+   "ru": [
+    "переговоры",
+    "согласование"
+   ],
+   "en": [
+    "negotiation",
+    "negotiating"
+   ]
+  },
+  {
+   "stage": "won",
+   "rank": 4,
+   "uz": [
+    "yutildi",
+    "yutuq",
+    "yopildi"
+   ],
+   "ru": [
+    "выиграно",
+    "успешно",
+    "закрыто_успешно"
+   ],
+   "en": [
+    "won",
+    "closed_won"
+   ]
+  },
+  {
+   "stage": "lost",
+   "rank": 4,
+   "uz": [
+    "yutqazildi",
+    "yoʻqotildi",
+    "rad_etildi"
+   ],
+   "ru": [
+    "проиграно",
+    "потеряно",
+    "отказ"
+   ],
+   "en": [
+    "lost",
+    "closed_lost"
+   ]
+  }
+ ]
+}
