@@ -1,0 +1,62 @@
+pack: retail
+primary_metric: revenue
+metrics:
+  - id: revenue
+    label: Revenue
+    expr: "SUM({amount}) FILTER (WHERE {status} = 'paid')"
+    requires: [amount, status]
+    requires_values:
+      status: [paid]
+    fallback_expr: "SUM({amount})"
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Sales amount of paid sales. Uses all sales when there is no 'paid' status."
+  - id: orders
+    label: Orders
+    expr: "COUNT(DISTINCT {order_id})"
+    requires: [order_id]
+    unit: count
+    good_direction: up
+    additive: true
+    description: "Number of different orders."
+  - id: avg_order_value
+    label: Average order value
+    expr: "SUM({amount}) / NULLIF(COUNT(DISTINCT {order_id}), 0)"
+    requires: [amount, order_id]
+    unit: currency
+    good_direction: up
+    additive: false
+    description: "Sales amount divided by the number of orders."
+  - id: units
+    label: Units sold
+    expr: "SUM({quantity})"
+    requires: [quantity]
+    unit: count
+    good_direction: up
+    additive: true
+    description: "Total quantity sold."
+  - id: gross_profit
+    label: Gross profit
+    expr: "SUM({amount}) - SUM({cost})"
+    requires: [amount, cost]
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Sales amount minus cost."
+  - id: gross_margin_pct
+    label: Gross margin %
+    expr: "100.0 * (SUM({amount}) - SUM({cost})) / NULLIF(SUM({amount}), 0)"
+    requires: [amount, cost]
+    unit: percent
+    good_direction: up
+    additive: false
+    description: "Gross profit as a percentage of the sales amount."
+  - id: active_customers
+    label: Active customers
+    expr: "COUNT(DISTINCT {customer_id})"
+    requires: [customer_id]
+    unit: count
+    good_direction: up
+    additive: false
+    description: "Number of different customers who bought."

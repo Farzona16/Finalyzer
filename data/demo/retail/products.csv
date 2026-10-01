@@ -1,0 +1,121 @@
+product_id,product_name,category,unit_cost
+1,Gadget 001,Electronics,389.31
+2,Gadget 002,Electronics,196.30
+3,Gadget 003,Electronics,472.37
+4,Gadget 004,Electronics,348.57
+5,Gadget 005,Electronics,115.63
+6,Gadget 006,Electronics,495.65
+7,Gadget 007,Electronics,358.25
+8,Gadget 008,Electronics,340.88
+9,Gadget 009,Electronics,107.57
+10,Gadget 010,Electronics,214.74
+11,Gadget 011,Electronics,188.54
+12,Gadget 012,Electronics,533.40
+13,Gadget 013,Electronics,281.64
+14,Gadget 014,Electronics,391.87
+15,Gadget 015,Electronics,202.87
+16,Gadget 016,Electronics,129.51
+17,Gadget 017,Electronics,229.69
+18,Gadget 018,Electronics,102.89
+19,Gadget 019,Electronics,382.97
+20,Gadget 020,Electronics,296.35
+21,Home 001,Home & Garden,47.94
+22,Home 002,Home & Garden,109.05
+23,Home 003,Home & Garden,82.46
+24,Home 004,Home & Garden,34.30
+25,Home 005,Home & Garden,97.05
+26,Home 006,Home & Garden,100.28
+27,Home 007,Home & Garden,39.42
+28,Home 008,Home & Garden,33.35
+29,Home 009,Home & Garden,84.28
+30,Home 010,Home & Garden,23.42
+31,Home 011,Home & Garden,25.56
+32,Home 012,Home & Garden,17.87
+33,Home 013,Home & Garden,93.59
+34,Home 014,Home & Garden,78.13
+35,Home 015,Home & Garden,83.28
+36,Home 016,Home & Garden,102.38
+37,Home 017,Home & Garden,50.51
+38,Home 018,Home & Garden,60.40
+39,Home 019,Home & Garden,26.46
+40,Home 020,Home & Garden,21.87
+41,Home 021,Home & Garden,68.44
+42,Home 022,Home & Garden,45.75
+43,Home 023,Home & Garden,64.04
+44,Home 024,Home & Garden,92.67
+45,Apparel 001,Apparel,15.75
+46,Apparel 002,Apparel,30.69
+47,Apparel 003,Apparel,15.06
+48,Apparel 004,Apparel,46.06
+49,Apparel 005,Apparel,28.85
+50,Apparel 006,Apparel,25.47
+51,Apparel 007,Apparel,20.81
+52,Apparel 008,Apparel,39.07
+53,Apparel 009,Apparel,23.94
+54,Apparel 010,Apparel,14.85
+55,Apparel 011,Apparel,13.86
+56,Apparel 012,Apparel,67.70
+57,Apparel 013,Apparel,56.58
+58,Apparel 014,Apparel,43.04
+59,Apparel 015,Apparel,19.09
+60,Apparel 016,Apparel,64.59
+61,Apparel 017,Apparel,45.49
+62,Apparel 018,Apparel,45.26
+63,Apparel 019,Apparel,25.60
+64,Apparel 020,Apparel,21.83
+65,Apparel 021,Apparel,14.87
+66,Apparel 022,Apparel,59.97
+67,Apparel 023,Apparel,28.37
+68,Apparel 024,Apparel,15.89
+69,Grocery 001,Grocery,16.00
+70,Grocery 002,Grocery,5.79
+71,Grocery 003,Grocery,11.72
+72,Grocery 004,Grocery,2.36
+73,Grocery 005,Grocery,5.19
+74,Grocery 006,Grocery,6.22
+75,Grocery 007,Grocery,15.08
+76,Grocery 008,Grocery,6.21
+77,Grocery 009,Grocery,5.56
+78,Grocery 010,Grocery,3.32
+79,Grocery 011,Grocery,4.24
+80,Grocery 012,Grocery,6.52
+81,Grocery 013,Grocery,4.87
+82,Grocery 014,Grocery,2.12
+83,Grocery 015,Grocery,11.82
+84,Grocery 016,Grocery,14.57
+85,Grocery 017,Grocery,2.41
+86,Grocery 018,Grocery,7.21
+87,Grocery 019,Grocery,2.20
+88,Grocery 020,Grocery,7.84
+89,Sports 001,Sports,30.83
+90,Sports 002,Sports,129.32
+91,Sports 003,Sports,88.82
+92,Sports 004,Sports,64.27
+93,Sports 005,Sports,97.66
+94,Sports 006,Sports,103.86
+95,Sports 007,Sports,38.01
+96,Sports 008,Sports,24.44
+97,Sports 009,Sports,77.03
+98,Sports 010,Sports,62.07
+99,Sports 011,Sports,29.08
+100,Sports 012,Sports,14.14
+101,Sports 013,Sports,61.60
+102,Sports 014,Sports,21.22
+103,Sports 015,Sports,98.07
+104,Sports 016,Sports,22.22
+105,Beauty 001,Beauty,6.01
+106,Beauty 002,Beauty,14.87
+107,Beauty 003,Beauty,17.93
+108,Beauty 004,Beauty,16.05
+109,Beauty 005,Beauty,7.56
+110,Beauty 006,Beauty,22.79
+111,Beauty 007,Beauty,19.22
+112,Beauty 008,Beauty,21.44
+113,Beauty 009,Beauty,7.04
+114,Beauty 010,Beauty,6.44
+115,Beauty 011,Beauty,34.81
+116,Beauty 012,Beauty,11.66
+117,Beauty 013,Beauty,8.96
+118,Beauty 014,Beauty,13.96
+119,Beauty 015,Beauty,16.80
+120,Beauty 016,Beauty,30.96

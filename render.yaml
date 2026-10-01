@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: finalyzer
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    # Plan is a setting, not a constant: see DEPLOY.md ("Memory") before choosing one.
+    plan: standard
+    healthCheckPath: /_stcore/health
+    autoDeploy: true
+    envVars:
+      - key: PRIVACY_MODE
+        value: demo
+      - key: LLM_MODE
+        value: live
+      - key: LLM_MODEL
+        sync: false
+      - key: LLM_API_KEY
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: SESSION_TOKEN_BUDGET
+        value: "200000"
+      - key: MAX_FILE_MB
+        value: "50"
+      - key: MAX_ROWS
+        value: "1000000"
+      - key: DUCKDB_MEMORY_LIMIT
+        value: 1GB
+      - key: LOG_LEVEL
+        value: INFO

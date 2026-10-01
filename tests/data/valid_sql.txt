@@ -1,0 +1,36 @@
+SELECT COUNT(*) AS n FROM data
+SELECT SUM(amount) AS revenue FROM data
+SELECT AVG(amount) AS avg_amount FROM data WHERE channel = 'online'
+SELECT category, SUM(amount) AS revenue FROM data GROUP BY category ORDER BY revenue DESC
+SELECT category, SUM(amount) AS revenue FROM data GROUP BY 1 ORDER BY 2 DESC LIMIT 5
+SELECT date_trunc('month', sale_date) AS month, SUM(amount) AS revenue FROM data GROUP BY 1 ORDER BY 1
+SELECT strftime(sale_date, '%Y-%m') AS ym, COUNT(DISTINCT sale_id) AS orders FROM data GROUP BY 1 ORDER BY 1
+SELECT store_name, SUM(amount) AS revenue FROM data GROUP BY store_name HAVING SUM(amount) > 1000 ORDER BY revenue DESC
+SELECT channel, COUNT(*) AS n, AVG(amount) AS avg_amount FROM data GROUP BY channel
+SELECT SUM(amount) FILTER (WHERE payment_status = 'paid') AS paid_revenue FROM data
+SELECT 100.0 * SUM(amount) FILTER (WHERE category = 'Electronics') / NULLIF(SUM(amount), 0) AS share_pct FROM data
+SELECT region, category, SUM(amount) AS revenue FROM data GROUP BY region, category ORDER BY region, revenue DESC
+SELECT MIN(sale_date) AS first_day, MAX(sale_date) AS last_day FROM data
+SELECT * FROM data LIMIT 10
+SELECT sale_id, amount FROM data WHERE amount > 100 ORDER BY amount DESC LIMIT 20
+SELECT DISTINCT channel FROM data ORDER BY channel
+SELECT CASE WHEN amount >= 100 THEN 'large' ELSE 'small' END AS size, COUNT(*) AS n FROM data GROUP BY 1
+WITH monthly AS (SELECT date_trunc('month', sale_date) AS month, SUM(amount) AS revenue FROM data GROUP BY 1) SELECT month, revenue, LAG(revenue) OVER (ORDER BY month) AS prev FROM monthly ORDER BY month
+WITH by_store AS (SELECT store_name, SUM(amount) AS revenue FROM data GROUP BY 1) SELECT store_name, revenue, revenue / SUM(revenue) OVER () AS share FROM by_store ORDER BY revenue DESC
+WITH a AS (SELECT category, SUM(amount) AS r FROM data GROUP BY 1), b AS (SELECT category, COUNT(*) AS n FROM data GROUP BY 1) SELECT a.category, a.r, b.n FROM a JOIN b ON a.category = b.category
+SELECT category, SUM(amount) AS revenue FROM data WHERE sale_date >= DATE '2026-01-01' AND sale_date < DATE '2026-04-01' GROUP BY 1
+SELECT category FROM data GROUP BY category UNION ALL SELECT 'total'
+SELECT category, SUM(amount) AS revenue FROM data GROUP BY 1 EXCEPT SELECT category, 0 FROM data GROUP BY 1
+(SELECT COUNT(*) AS n FROM data)
+SELECT ROUND(SUM(amount), 2) AS revenue, COUNT(DISTINCT customer_id) AS customers FROM data
+SELECT customer_id, SUM(amount) AS spent FROM data GROUP BY 1 ORDER BY spent DESC LIMIT 10
+SELECT dayname(sale_date) AS weekday, AVG(amount) AS avg_amount FROM data GROUP BY 1
+SELECT quantile_cont(amount, 0.5) AS median_amount FROM data
+SELECT category, RANK() OVER (ORDER BY SUM(amount) DESC) AS rnk FROM data GROUP BY category
+SELECT COALESCE(discount, 0) AS discount FROM data LIMIT 5
+SELECT * FROM (SELECT category, SUM(amount) AS revenue FROM data GROUP BY 1) AS t WHERE revenue > 0
+SELECT SUM(amount) AS revenue FROM data d WHERE d.channel = 'store'
+SELECT "amount" FROM "data" LIMIT 3
+SELECT sale_date + INTERVAL 7 DAY AS next_week FROM data LIMIT 3
+SELECT generate_series AS n FROM generate_series(1, 5)
+SELECT i FROM range(3) AS t(i)

@@ -1,0 +1,10 @@
+[theme]
+# Same primary color as app/theme.py (PRIMARY). Background and text follow the light/dark choice.
+primaryColor = "#3B6FE0"
+
+[server]
+maxUploadSize = 50
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false

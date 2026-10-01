@@ -1,0 +1,57 @@
+pack: bank
+primary_metric: txn_volume
+metrics:
+  - id: txn_count
+    label: Transactions
+    expr: "COUNT(*)"
+    requires: []
+    unit: count
+    good_direction: up
+    additive: true
+    description: "Number of transactions."
+  - id: txn_volume
+    label: Transaction volume
+    expr: "SUM({amount}) FILTER (WHERE {status} = 'completed')"
+    requires: [amount, status]
+    requires_values:
+      status: [completed]
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Total amount of completed transactions."
+  - id: avg_ticket
+    label: Average ticket
+    expr: "AVG({amount}) FILTER (WHERE {status} = 'completed')"
+    requires: [amount, status]
+    requires_values:
+      status: [completed]
+    unit: currency
+    good_direction: up
+    additive: false
+    description: "Average amount of a completed transaction."
+  - id: failed_rate_pct
+    label: Failed rate %
+    expr: "100.0 * COUNT(*) FILTER (WHERE {status} = 'failed') / NULLIF(COUNT(*), 0)"
+    requires: [status]
+    requires_values:
+      status: [failed]
+    unit: percent
+    good_direction: down
+    additive: false
+    description: "Share of transactions with status 'failed'."
+  - id: active_customers
+    label: Active customers
+    expr: "COUNT(DISTINCT {customer_id})"
+    requires: [customer_id]
+    unit: count
+    good_direction: up
+    additive: false
+    description: "Number of different customers who made a transaction."
+  - id: fee_income
+    label: Fee income
+    expr: "SUM(fee)"
+    requires: ["column:fee"]
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Total of the column named fee."

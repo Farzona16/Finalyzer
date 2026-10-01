@@ -1,0 +1,105 @@
+DROP TABLE data
+DROP VIEW data
+DELETE FROM data
+DELETE FROM data WHERE 1=1
+UPDATE data SET amount = 0
+INSERT INTO data VALUES (1)
+INSERT INTO data SELECT * FROM data
+CREATE TABLE evil AS SELECT * FROM data
+CREATE VIEW evil AS SELECT * FROM data
+CREATE OR REPLACE VIEW data AS SELECT 1 AS x
+ALTER TABLE data ADD COLUMN x INTEGER
+TRUNCATE TABLE data
+COPY data TO 'out.csv'
+COPY (SELECT * FROM data) TO 'out.csv' (FORMAT CSV)
+COPY data FROM 'in.csv'
+EXPORT DATABASE 'out_dir'
+IMPORT DATABASE 'out_dir'
+ATTACH 'other.db' AS other
+ATTACH ':memory:' AS mem
+DETACH other
+PRAGMA database_list
+PRAGMA table_info('data')
+PRAGMA enable_external_access = true
+SET enable_external_access = true
+SET lock_configuration = false
+SET memory_limit = '100GB'
+RESET enable_external_access
+INSTALL httpfs
+LOAD httpfs
+INSTALL 'evil.duckdb_extension'
+CALL pragma_database_size()
+SELECT * FROM read_csv('secrets.csv')
+SELECT * FROM read_csv_auto('secrets.csv')
+SELECT * FROM read_parquet('x.parquet')
+SELECT * FROM read_json('x.json')
+SELECT * FROM read_json_auto('x.json')
+SELECT * FROM read_text('.env')
+SELECT * FROM read_blob('.env')
+SELECT * FROM glob('*')
+SELECT * FROM 'secrets.csv'
+SELECT * FROM '.env'
+SELECT * FROM 'https://example.com/data.csv'
+SELECT * FROM "secrets.csv"
+SELECT * FROM duckdb_tables()
+SELECT * FROM duckdb_settings()
+SELECT * FROM duckdb_extensions()
+SELECT * FROM duckdb_views()
+SELECT * FROM pragma_table_info('data')
+SELECT * FROM information_schema.tables
+SELECT * FROM information_schema.columns
+SELECT * FROM sqlite_master
+SELECT * FROM pg_catalog.pg_tables
+SELECT * FROM main.data
+SELECT * FROM memory.main.data
+SELECT * FROM system.main.data
+SELECT * FROM base
+SELECT * FROM sales
+SELECT * FROM customers
+SELECT * FROM data d, customers c
+SELECT * FROM data JOIN customers ON 1=1
+SELECT * FROM data UNION SELECT * FROM customers
+SELECT * FROM data WHERE amount IN (SELECT amount FROM customers)
+SELECT (SELECT COUNT(*) FROM customers) AS n
+SELECT * FROM data; DROP TABLE data
+SELECT 1; SELECT 2
+SELECT 1; DELETE FROM data
+SELECT * FROM data INTO OUTFILE 'x'
+SELECT * INTO evil FROM data
+SELECT getenv('HOME')
+SELECT getenv('OPENAI_API_KEY')
+SELECT current_setting('enable_external_access')
+SELECT nextval('seq')
+SELECT * FROM query('SELECT 1')
+SELECT * FROM query_table('data')
+SELECT * FROM sniff_csv('x.csv')
+SELECT load_extension('x')
+WITH t AS (SELECT * FROM read_csv('x.csv')) SELECT * FROM t
+WITH t AS (DELETE FROM data RETURNING *) SELECT * FROM t
+WITH t AS (SELECT 1) INSERT INTO data SELECT * FROM t
+EXPLAIN ANALYZE DELETE FROM data
+DESCRIBE data
+SHOW TABLES
+SHOW ALL TABLES
+SUMMARIZE data
+CHECKPOINT
+FORCE CHECKPOINT
+VACUUM
+BEGIN TRANSACTION
+COMMIT
+ROLLBACK
+USE memory
+CALL duckdb_tables()
+SELECT 1 /* x */; SELECT 2
+EXECUTE stmt
+PREPARE stmt AS SELECT * FROM data
+SELECT * FROM iceberg_scan('x')
+SELECT * FROM delta_scan('x')
+SELECT * FROM parquet_scan('x')
+SELECT * FROM parquet_metadata('x.parquet')
+SELECT * FROM scan_csv('x')
+SELECT * FROM postgres_scan('host=x', 'public', 't')
+SELECT * FROM which_secret('a', 'b')
+SELECT * FROM list_files('.')
+SELECT setseed(0.5)
+GRANT ALL ON data TO PUBLIC

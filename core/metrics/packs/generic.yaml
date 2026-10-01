@@ -1,0 +1,35 @@
+pack: generic
+primary_metric: row_count
+metrics:
+  - id: row_count
+    label: Rows
+    expr: "COUNT(*)"
+    requires: []
+    unit: count
+    good_direction: up
+    additive: true
+    description: "Number of rows in the data."
+  - id: total_amount
+    label: Total amount
+    expr: "SUM({amount})"
+    requires: [amount]
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Sum of the amount column."
+  - id: avg_amount
+    label: Average amount
+    expr: "AVG({amount})"
+    requires: [amount]
+    unit: currency
+    good_direction: neutral
+    additive: false
+    description: "Average of the amount column."
+  - id: distinct_customers
+    label: Distinct customers
+    expr: "COUNT(DISTINCT {customer_id})"
+    requires: [customer_id]
+    unit: count
+    good_direction: up
+    additive: false
+    description: "Number of different customers."

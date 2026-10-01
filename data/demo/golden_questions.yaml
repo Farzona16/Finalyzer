@@ -1,0 +1,251 @@
+# Golden question set: 20 retail + 20 bank questions.
+# expected_sql runs against the flat view "data" (column names as in Appendix A).
+# These questions must never be used in a prompt or a few-shot example.
+questions:
+  - id: retail_01
+    dataset: retail
+    question: What is the total revenue from paid sales?
+    expected_sql: "SELECT SUM(amount) AS revenue FROM data WHERE payment_status = 'paid'"
+  - id: retail_02
+    dataset: retail
+    question: How many orders were placed in total?
+    expected_sql: "SELECT COUNT(DISTINCT sale_id) AS orders FROM data"
+  - id: retail_03
+    dataset: retail
+    question: What is the revenue by product category?
+    expected_sql: >-
+      SELECT category, SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' GROUP BY category ORDER BY revenue DESC
+  - id: retail_04
+    dataset: retail
+    question: Which 5 stores have the highest revenue?
+    expected_sql: >-
+      SELECT store_name, SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' GROUP BY store_name ORDER BY revenue DESC LIMIT 5
+  - id: retail_05
+    dataset: retail
+    question: Show the monthly revenue over time.
+    expected_sql: >-
+      SELECT date_trunc('month', sale_date) AS month, SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' GROUP BY 1 ORDER BY 1
+  - id: retail_06
+    dataset: retail
+    question: What was the revenue in September 2026?
+    expected_sql: >-
+      SELECT SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' AND sale_date >= DATE '2026-09-01' AND sale_date < DATE '2026-10-01'
+  - id: retail_07
+    dataset: retail
+    question: What is the average order value for online versus in-store sales?
+    expected_sql: >-
+      SELECT channel, SUM(amount) / NULLIF(COUNT(DISTINCT sale_id), 0) AS avg_order_value
+      FROM data GROUP BY channel ORDER BY channel
+  - id: retail_08
+    dataset: retail
+    question: What percentage of sales were refunded?
+    expected_sql: >-
+      SELECT 100.0 * COUNT(*) FILTER (WHERE payment_status = 'refunded') / NULLIF(COUNT(*), 0)
+      AS refunded_pct FROM data
+  - id: retail_09
+    dataset: retail
+    question: What is the gross margin percentage by category?
+    expected_sql: >-
+      SELECT category, 100.0 * (SUM(amount) - SUM(cost_amount)) / NULLIF(SUM(amount), 0)
+      AS gross_margin_pct FROM data GROUP BY category ORDER BY gross_margin_pct DESC
+  - id: retail_10
+    dataset: retail
+    question: How many distinct customers bought something in 2026?
+    expected_sql: >-
+      SELECT COUNT(DISTINCT customer_id) AS customers FROM data
+      WHERE EXTRACT(year FROM sale_date) = 2026
+  - id: retail_11
+    dataset: retail
+    question: Which regions have more than 20000 sales?
+    expected_sql: >-
+      SELECT region, COUNT(*) AS sales_count FROM data
+      GROUP BY region HAVING COUNT(*) > 20000 ORDER BY sales_count DESC
+  - id: retail_12
+    dataset: retail
+    question: What is the month-over-month change in revenue?
+    expected_sql: >-
+      WITH monthly AS (
+        SELECT date_trunc('month', sale_date) AS month, SUM(amount) AS revenue FROM data
+        WHERE payment_status = 'paid' GROUP BY 1)
+      SELECT month, revenue,
+        100.0 * (revenue - LAG(revenue) OVER (ORDER BY month))
+        / NULLIF(LAG(revenue) OVER (ORDER BY month), 0) AS mom_pct
+      FROM monthly ORDER BY month
+  - id: retail_13
+    dataset: retail
+    question: What is the year-over-year revenue growth by month?
+    expected_sql: >-
+      WITH monthly AS (
+        SELECT date_trunc('month', sale_date) AS month, SUM(amount) AS revenue FROM data
+        WHERE payment_status = 'paid' GROUP BY 1)
+      SELECT month, revenue,
+        100.0 * (revenue - LAG(revenue, 12) OVER (ORDER BY month))
+        / NULLIF(LAG(revenue, 12) OVER (ORDER BY month), 0) AS yoy_pct
+      FROM monthly ORDER BY month
+  - id: retail_14
+    dataset: retail
+    question: Which day of the week has the highest revenue?
+    expected_sql: >-
+      SELECT strftime(sale_date, '%A') AS weekday, SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' GROUP BY 1 ORDER BY revenue DESC
+  - id: retail_15
+    dataset: retail
+    question: How many units were sold in each category?
+    expected_sql: >-
+      SELECT category, SUM(quantity) AS units FROM data GROUP BY category ORDER BY units DESC
+  - id: retail_16
+    dataset: retail
+    question: What is the average discount on Electronics sales?
+    expected_sql: "SELECT AVG(discount) AS avg_discount FROM data WHERE category = 'Electronics'"
+  - id: retail_17
+    dataset: retail
+    question: What are the top 10 products by revenue?
+    expected_sql: >-
+      SELECT product_name, SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' GROUP BY product_name ORDER BY revenue DESC LIMIT 10
+  - id: retail_18
+    dataset: retail
+    question: How many customers buy in each customer segment?
+    expected_sql: >-
+      SELECT segment, COUNT(DISTINCT customer_id) AS customers FROM data GROUP BY segment
+      ORDER BY customers DESC
+  - id: retail_19
+    dataset: retail
+    question: What share of revenue comes from each region?
+    expected_sql: >-
+      SELECT region, 100.0 * SUM(amount) / SUM(SUM(amount)) OVER () AS revenue_share_pct
+      FROM data WHERE payment_status = 'paid' GROUP BY region ORDER BY revenue_share_pct DESC
+  - id: retail_20
+    dataset: retail
+    question: Which 3 cities generate the most revenue?
+    expected_sql: >-
+      SELECT city, SUM(amount) AS revenue FROM data
+      WHERE payment_status = 'paid' GROUP BY city ORDER BY revenue DESC LIMIT 3
+  - id: bank_01
+    dataset: bank
+    question: What is the total value of completed transactions?
+    expected_sql: "SELECT SUM(amount) AS txn_volume FROM data WHERE status = 'completed'"
+  - id: bank_02
+    dataset: bank
+    question: How many transactions were made in total?
+    expected_sql: "SELECT COUNT(*) AS txn_count FROM data"
+  - id: bank_03
+    dataset: bank
+    question: What is the overall failed transaction rate?
+    expected_sql: >-
+      SELECT 100.0 * COUNT(*) FILTER (WHERE status = 'failed') / NULLIF(COUNT(*), 0)
+      AS failed_rate_pct FROM data
+  - id: bank_04
+    dataset: bank
+    question: What is the transaction volume by channel?
+    expected_sql: >-
+      SELECT channel, SUM(amount) AS txn_volume FROM data WHERE status = 'completed'
+      GROUP BY channel ORDER BY txn_volume DESC
+  - id: bank_05
+    dataset: bank
+    question: Which 5 branches have the highest transaction volume?
+    expected_sql: >-
+      SELECT branch_name, SUM(amount) AS txn_volume FROM data WHERE status = 'completed'
+      GROUP BY branch_name ORDER BY txn_volume DESC LIMIT 5
+  - id: bank_06
+    dataset: bank
+    question: Show the number of transactions per month.
+    expected_sql: >-
+      SELECT date_trunc('month', txn_date) AS month, COUNT(*) AS txn_count FROM data
+      GROUP BY 1 ORDER BY 1
+  - id: bank_07
+    dataset: bank
+    question: What is the failed transaction rate for each channel?
+    expected_sql: >-
+      SELECT channel, 100.0 * COUNT(*) FILTER (WHERE status = 'failed') / NULLIF(COUNT(*), 0)
+      AS failed_rate_pct FROM data GROUP BY channel ORDER BY failed_rate_pct DESC
+  - id: bank_08
+    dataset: bank
+    question: What is the average ticket for premium versus standard customers?
+    expected_sql: >-
+      SELECT segment, AVG(amount) AS avg_ticket FROM data WHERE status = 'completed'
+      GROUP BY segment ORDER BY segment
+  - id: bank_09
+    dataset: bank
+    question: How many distinct customers made a transaction in September 2026?
+    expected_sql: >-
+      SELECT COUNT(DISTINCT customer_id) AS customers FROM data
+      WHERE txn_date >= DATE '2026-09-01' AND txn_date < DATE '2026-10-01'
+  - id: bank_10
+    dataset: bank
+    question: How much fee income was collected for each transaction type?
+    expected_sql: >-
+      SELECT txn_type, SUM(fee) AS fee_income FROM data GROUP BY txn_type ORDER BY fee_income DESC
+  - id: bank_11
+    dataset: bank
+    question: Which regions have more than 30000 transactions?
+    expected_sql: >-
+      SELECT region, COUNT(*) AS txn_count FROM data
+      GROUP BY region HAVING COUNT(*) > 30000 ORDER BY txn_count DESC
+  - id: bank_12
+    dataset: bank
+    question: What is the month-over-month change in transaction volume?
+    expected_sql: >-
+      WITH monthly AS (
+        SELECT date_trunc('month', txn_date) AS month, SUM(amount) AS txn_volume FROM data
+        WHERE status = 'completed' GROUP BY 1)
+      SELECT month, txn_volume,
+        100.0 * (txn_volume - LAG(txn_volume) OVER (ORDER BY month))
+        / NULLIF(LAG(txn_volume) OVER (ORDER BY month), 0) AS mom_pct
+      FROM monthly ORDER BY month
+  - id: bank_13
+    dataset: bank
+    question: What is the year-over-year change in the number of transactions by month?
+    expected_sql: >-
+      WITH monthly AS (
+        SELECT date_trunc('month', txn_date) AS month, COUNT(*) AS txn_count FROM data GROUP BY 1)
+      SELECT month, txn_count,
+        100.0 * (txn_count - LAG(txn_count, 12) OVER (ORDER BY month))
+        / NULLIF(LAG(txn_count, 12) OVER (ORDER BY month), 0) AS yoy_pct
+      FROM monthly ORDER BY month
+  - id: bank_14
+    dataset: bank
+    question: Which day of the week has the most transactions?
+    expected_sql: >-
+      SELECT strftime(txn_date, '%A') AS weekday, COUNT(*) AS txn_count FROM data
+      GROUP BY 1 ORDER BY txn_count DESC
+  - id: bank_15
+    dataset: bank
+    question: What is the average amount of completed transactions by transaction type?
+    expected_sql: >-
+      SELECT txn_type, AVG(amount) AS avg_amount FROM data WHERE status = 'completed'
+      GROUP BY txn_type ORDER BY avg_amount DESC
+  - id: bank_16
+    dataset: bank
+    question: How many reversed transactions does each branch have?
+    expected_sql: >-
+      SELECT branch_name, COUNT(*) AS reversed_count FROM data WHERE status = 'reversed'
+      GROUP BY branch_name ORDER BY reversed_count DESC
+  - id: bank_17
+    dataset: bank
+    question: What is the total value of completed mobile transfers?
+    expected_sql: >-
+      SELECT SUM(amount) AS txn_volume FROM data
+      WHERE status = 'completed' AND channel = 'mobile' AND txn_type = 'transfer'
+  - id: bank_18
+    dataset: bank
+    question: What share of transaction volume comes from each channel?
+    expected_sql: >-
+      SELECT channel, 100.0 * SUM(amount) / SUM(SUM(amount)) OVER () AS volume_share_pct
+      FROM data WHERE status = 'completed' GROUP BY channel ORDER BY volume_share_pct DESC
+  - id: bank_19
+    dataset: bank
+    question: Which 3 cities have the most active customers?
+    expected_sql: >-
+      SELECT city, COUNT(DISTINCT customer_id) AS customers FROM data
+      GROUP BY city ORDER BY customers DESC LIMIT 3
+  - id: bank_20
+    dataset: bank
+    question: What is the transaction volume per quarter?
+    expected_sql: >-
+      SELECT date_trunc('quarter', txn_date) AS quarter, SUM(amount) AS txn_volume FROM data
+      WHERE status = 'completed' GROUP BY 1 ORDER BY 1
