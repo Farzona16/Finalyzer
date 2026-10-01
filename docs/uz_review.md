@@ -7,6 +7,7 @@ What to look for: natural wording, the letters `oʻ` and `gʻ` (U+02BB), the apo
 * Frames: 78
 * Glossary entries: 189
 * Backend messages: 50
+* Frontend messages: 22
 
 ## Message frames
 
@@ -341,3 +342,32 @@ File: `backend/app/locales/uz.json`
 | `errors.server_error.detail` | Xatolik yuz berdi. Qayta urinib koʻring. Yordam soʻrasangiz, shu kodni ayting: {correlation_id} |
 | `errors.service_unavailable.title` | Xizmat vaqtincha ishlamayapti |
 | `errors.service_unavailable.detail` | Birozdan keyin qayta urinib koʻring. |
+
+## Frontend messages
+
+File: `frontend/src/i18n/uz.json`
+
+| Key | Text |
+|---|---|
+| `app.name` | Finalyzer |
+| `app.tagline` | Ma'lumotlaringizni oddiy tilda tushuning |
+| `nav.home` | Bosh sahifa |
+| `nav.menu` | Asosiy menyu |
+| `theme.label` | Mavzu |
+| `theme.light` | Yorugʻ |
+| `theme.dark` | Qorongʻi |
+| `theme.system` | Avtomatik |
+| `language.label` | Til |
+| `language.uz` | UZ |
+| `language.en` | EN |
+| `common.loading` | Yuklanmoqda… |
+| `common.retry` | Qayta urinish |
+| `errors.generic` | Nimadir xato ketdi. Iltimos, qayta urinib koʻring. |
+| `errors.network` | Internet aloqasi yoʻq yoki server javob bermayapti. |
+| `errors.not_found` | Bunday sahifa topilmadi. |
+| `errors.reference` | Xato raqami: {id} |
+| `home.title` | Xush kelibsiz |
+| `home.subtitle` | Ma'lumot faylini yuklang yoki namunani sinab koʻring. |
+| `home.status.ok` | Server ishlayapti (versiya {version}) |
+| `home.status.down` | Serverga ulanib boʻlmadi |
+| `home.letters_check` | Harflar tekshiruvi: oʻqish, gʻoya, ma'lumot |

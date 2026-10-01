@@ -58,9 +58,9 @@ One line per decision that the specification left open (what, why).
 - P8: The model named in the local `.env` (`gemini/gemini-1.5-flash`) is retired by the provider and every call was rejected; that run was deleted. The evaluation was run once with `gemini/gemini-flash-latest`, which the same key accepts. The key hit the provider's rate limit after 4 questions, so the stored report is inconclusive (see KNOWN_LIMITATIONS.md).
 
 ## Finalyzer v3
-- U0: The v2 Streamlit app and tests stay in place (root .venv); the v3 backend lives in ackend/ with its own venv. Both have a package called pp, so the two suites run in separate processes (see docs/ARCHITECTURE.md).
-- U0: load_dotenv(override=True) was removed from core/config.py and pp/main.py. It let a local .env override real environment variables and broke the smoke tests; settings still read .env through pydantic.
-- U1: Frontend uses React 18 (not 19) because the pinned component libraries are tested with 18; Tailwind v4 through @tailwindcss/vite; lint with oxlint now, ESLint security rules are added with the frontend wiring.
+- U0: The v2 Streamlit app and tests stay in place (root .venv); the v3 backend lives in backend/ with its own venv. Both have a package called app, so the two suites run in separate processes (see docs/ARCHITECTURE.md).
+- U0: load_dotenv(override=True) was removed from core/config.py and app/main.py. It let a local .env override real environment variables and broke the smoke tests; settings still read .env through pydantic.
+- U1: Frontend uses React 18 (not 19) because the pinned component libraries are tested with 18; Tailwind v4 through @tailwindcss/vite; lint with ESLint (typescript-eslint, react-hooks, security plugin); oxlint was removed so there is one linter.
 - U1: Sign-in attempts are counted per address even when the caller has a valid cookie, so one's own account gives no extra attempts against others. Failure counters are forgotten after 60 quiet minutes, otherwise rare typos would add up to a lock.
 - U1: The password check also rejects a listed password with digits or symbols appended; the embedded top-10,000 list has only 10 entries of 12+ characters, so a plain lookup would let password1234 pass.
 - U1: The OpenAPI document is available in test and development and switched off in production; Swagger UI is not served because it loads scripts from a CDN, which the CSP forbids.
@@ -72,3 +72,9 @@ One line per decision that the specification left open (what, why).
 - U4: Direction words are checked with patterns (`oshdi`, `oshadi`, `oshib` ... ), not only the four listed forms, because frames also use present and continuous tenses. The patterns live in `core/i18n/polarity.py` and will also serve the grounding check in U6.
 - U4: The glossary has 189 entries per language (spec: at least 150). Glossary tokens in text are written `[[key|visible text]]`; the jargon lint ignores what is inside them. Everything the agent wrote is `reviewed: false` and listed in `docs/uz_review.md` (regenerate with `python scripts/gen_uz_review.py`; a test fails if the file is stale).
 - U4: `match_key` removes apostrophes completely, so `mas'ul` and `masul` are the same word; Russian and Uzbek Cyrillic are transliterated with one table used on both sides of every comparison (`ж` becomes `j`, `х` becomes `x`).
+- U0/U8: The theme is set before first paint by an external `/theme-init.js`, not an inline script, because the CSP is `default-src 'self'`. A test compares its storage keys (`fz_theme`, `fz_lang`) with the app's.
+- U0: The Vite dev proxy rewrites the `Origin` header to the backend origin, so the backend's CSRF Origin check passes in development without weakening it.
+- U0: Dynamic i18n keys such as `t(`theme.${option}`)` are allowed; the unused-key test treats the text before `${` as a prefix. Keys must all be used, and every `t('...')` key must exist.
+- U0: `security/detect-object-injection` is off in ESLint (false positives on typed lookup tables; `noUncheckedIndexedAccess` covers the real risk). Two regex warnings in `format.ts` are suppressed with a stated reason (digit runs only).
+- U0: Inter's main latin subset covers U+02BB and U+202F (checked by a test), so oʻ, gʻ and digit groups render in the same font as the other text.
+- U0: Light-theme amber was darkened from #c98312 to #b87410 after `scripts/check_contrast.py` found 2.75:1 against surface-2; accents need 3:1, text 4.5:1 in both themes.
