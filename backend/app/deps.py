@@ -9,13 +9,16 @@ from sqlalchemy.orm import Session
 
 from app.config import BackendSettings
 from app.errors import AppError
-from app.models import User
+from app.jobs.runner import JobRunner
+from app.models import Dataset, User
 from app.security import csrf as csrf_module
 from app.security.cookies import ACCESS_COOKIE
 from app.security.passwords import PasswordService
 from app.security.permissions import Permission, has_permission
 from app.security.ratelimit import RateLimiter
 from app.security.tokens import decode_access_token
+from app.services import datasets
+from app.services.datasets import Services
 
 # Routes an anonymous visitor may call. A test compares this set with the OpenAPI document,
 # so a new public route must be listed here on purpose (S6).
@@ -55,6 +58,35 @@ def get_db(request: Request) -> Iterator[Session]:
     finally:
         session.rollback()
         session.close()
+
+
+def get_services(request: Request) -> Services:
+    """Dataset store, DuckDB handle cache and job runner of the running app."""
+    return request.app.state.services
+
+
+def get_jobs(request: Request) -> JobRunner:
+    """The background job runner."""
+    return request.app.state.jobs
+
+
+def dataset_of(permission: Permission) -> Callable[..., Dataset]:
+    """Dependency factory: the dataset in the path, if the user may use it (404 otherwise).
+
+    It runs before the request body is validated, so an id from another workspace is "not
+    found" even when the body is wrong (S6, IDOR).
+    """
+
+    def load(
+        dataset_id: str,
+        user: User = Depends(require(permission)),
+        db: Session = Depends(get_db),
+    ) -> Dataset:
+        dataset = datasets.get_dataset(db, user.workspace_id, dataset_id)
+        datasets.touch(db, dataset)
+        return dataset
+
+    return load
 
 
 def client_ip(request: Request, settings: BackendSettings) -> str:

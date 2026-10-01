@@ -48,5 +48,13 @@
   "errors.server_error.title": "Unexpected error",
   "errors.server_error.detail": "Something went wrong. Try again. If you ask for help, quote this code: {correlation_id}",
   "errors.service_unavailable.title": "Service temporarily unavailable",
-  "errors.service_unavailable.detail": "Please try again shortly."
+  "errors.service_unavailable.detail": "Please try again shortly.",
+  "errors.upload_invalid.title": "The file could not be read",
+  "errors.upload_invalid.detail": "The file is empty or damaged. Check the CSV or XLSX file and upload it again.",
+  "errors.upload_unsafe.title": "The file is not safe",
+  "errors.upload_unsafe.detail": "This file does not look like a table file, or it expands to an extreme size. Upload another file.",
+  "errors.dataset_busy.title": "Data is busy",
+  "errors.dataset_busy.detail": "This dataset is being processed right now. Try again in a moment.",
+  "errors.model_invalid.title": "The choice was not accepted",
+  "errors.model_invalid.detail": "The chosen table, column or join does not fit. Change the selection."
 }

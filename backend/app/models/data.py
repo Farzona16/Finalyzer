@@ -49,6 +49,8 @@ class Dataset(Base):
     model_json: Mapped[str] = mapped_column(Text, default="{}")
     created_by: Mapped[str] = mapped_column(String(32))
     created_at: Mapped[datetime] = mapped_column(UtcDateTime, default=clock.now)
+    # Drives the idle purge of ephemeral datasets (S17).
+    last_accessed_at: Mapped[datetime] = mapped_column(UtcDateTime, default=clock.now)
 
 
 class Dashboard(Base):

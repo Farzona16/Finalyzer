@@ -6,7 +6,7 @@ What to look for: natural wording, the letters `oʻ` and `gʻ` (U+02BB), the apo
 
 * Frames: 78
 * Glossary entries: 189
-* Backend messages: 50
+* Backend messages: 58
 * Frontend messages: 22
 
 ## Message frames
@@ -342,6 +342,14 @@ File: `backend/app/locales/uz.json`
 | `errors.server_error.detail` | Xatolik yuz berdi. Qayta urinib koʻring. Yordam soʻrasangiz, shu kodni ayting: {correlation_id} |
 | `errors.service_unavailable.title` | Xizmat vaqtincha ishlamayapti |
 | `errors.service_unavailable.detail` | Birozdan keyin qayta urinib koʻring. |
+| `errors.upload_invalid.title` | Faylni oʻqib boʻlmadi |
+| `errors.upload_invalid.detail` | Fayl boʻsh yoki buzilgan. CSV yoki XLSX faylni tekshirib, qayta yuklang. |
+| `errors.upload_unsafe.title` | Fayl xavfsiz emas |
+| `errors.upload_unsafe.detail` | Bu fayl jadval fayliga oʻxshamaydi yoki ochilganda juda katta hajmga yetadi. Boshqa fayl yuklang. |
+| `errors.dataset_busy.title` | Ma'lumotlar band |
+| `errors.dataset_busy.detail` | Bu ma'lumotlar hozir qayta ishlanmoqda. Birozdan keyin urinib koʻring. |
+| `errors.model_invalid.title` | Tanlov qabul qilinmadi |
+| `errors.model_invalid.detail` | Tanlangan jadval, ustun yoki bogʻlanish mos kelmaydi. Tanlovni oʻzgartiring. |
 
 ## Frontend messages
 

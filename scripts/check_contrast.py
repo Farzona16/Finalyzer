@@ -23,7 +23,7 @@ _TOKEN = re.compile(r"--([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})\s*;")
 
 
 def themes(css: str) -> dict[str, dict[str, str]]:
-    """Token values per theme. `:root, [data-theme='dark']` is dark; `[data-theme='light']` is light."""
+    """Token values per theme (`:root` and the dark selector are dark)."""
     result: dict[str, dict[str, str]] = {}
     for block in _BLOCK.finditer(css):
         selector = block["selector"]
@@ -70,7 +70,9 @@ def check(css: str) -> list[str]:
                         continue
                     value = ratio(tokens[fg], tokens[bg])
                     if value < minimum:
-                        problems.append(f"{theme}: {fg} on {bg} is {value:.2f}:1, needs {minimum}:1")
+                        problems.append(
+                            f"{theme}: {fg} on {bg} is {value:.2f}:1, needs {minimum}:1"
+                        )
     return problems
 
 

@@ -12,6 +12,7 @@ from app.deps import (
     get_app_settings,
     get_db,
     get_passwords,
+    get_services,
     limit,
 )
 from app.models import User
@@ -35,7 +36,8 @@ from app.security.cookies import (
 )
 from app.security.passwords import PasswordService
 from app.security.permissions import ROLE_PERMISSIONS, Role
-from app.services import sessions, users
+from app.services import datasets, sessions, users
+from app.services.datasets import Services
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -131,9 +133,11 @@ def logout(
     user: User = Depends(current_user),
     db: Session = Depends(get_db),
     settings: BackendSettings = Depends(get_app_settings),
+    services: Services = Depends(get_services),
 ) -> Response:
-    """Sign out on every device."""
+    """Sign out on every device (ephemeral datasets of this user are deleted)."""
     sessions.logout(db, user)
+    datasets.purge_for_logout(services, db, user)
     out = Response(status_code=204)
     clear_auth_cookies(out, settings)
     return out

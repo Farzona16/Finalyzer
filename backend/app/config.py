@@ -56,6 +56,20 @@ class BackendSettings(BaseSettings):
     data_dir: Path = REPO_ROOT / "data" / "runtime"
     session_idle_minutes: int = 30
 
+    # Uploads (S9). Per-file and per-request byte limits; zip bombs are refused by ratio and size.
+    max_upload_mb: int = 50
+    max_request_mb: int = 200
+    max_upload_files: int = 10
+    max_rows: int = 1_000_000
+    max_zip_expansion: int = 20
+    max_uncompressed_mb: int = 500
+    # DuckDB manager: how many datasets stay open, and the memory each connection may use.
+    max_open_datasets: int = 3
+    duckdb_memory_limit: str = "512MB"
+    # Seconds between idle/retention sweeps (0 turns the background sweep off).
+    purge_interval_seconds: int = 60
+    job_workers: int = 2
+
     privacy_mode: Literal["demo", "cloud", "local"] = "demo"
     allowed_privacy_modes: str = "demo,cloud,local"
 

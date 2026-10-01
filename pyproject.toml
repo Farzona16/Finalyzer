@@ -13,7 +13,8 @@ extend-exclude = [".venv", "reports", "data/tmp"]
 select = ["E", "F", "W", "I", "B", "UP"]
 
 [tool.ruff.lint.flake8-bugbear]
-extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "app.deps.require"]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.File", "fastapi.Form",
+    "app.deps.require", "app.deps.dataset_of", "app.deps.limit"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

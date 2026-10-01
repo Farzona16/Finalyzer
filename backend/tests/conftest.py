@@ -34,6 +34,8 @@ def make_settings(tmp_path: Path) -> SettingsFactory:
             "data_dir": tmp_path / "data",
             "rate_limit_login_per_min": 1000,
             "rate_limit_api_per_min": 100000,
+            "rate_limit_upload_per_hour": 100000,
+            "purge_interval_seconds": 0,  # tests call the sweep themselves
         }
         values.update(overrides)
         return BackendSettings(_env_file=None, **values)  # type: ignore[arg-type]
@@ -132,3 +134,52 @@ def insert_workspace_with_admin(client: TestClient, email: str) -> str:
         db.add_all([workspace, user])
         db.flush()
         return user.id
+
+
+# ---------------------------------------------------------------- datasets and jobs
+
+
+def sales_csv(rows: int = 120, canary: str = "") -> bytes:
+    """A small sales table with a date, a category, a numeric amount and a personal e-mail."""
+    lines = ["order_date,store,customer_id,amount,email,note"]
+    for i in range(rows):
+        day = 1 + i % 28
+        lines.append(
+            f"2026-03-{day:02d},Store {i % 3},C{i % 10:03d},{100 + (i * 7) % 50}.5,"
+            f"person{i}@example.com,{canary or 'ok'}"
+        )
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def customers_csv() -> bytes:
+    """A dimension table whose key matches ``sales_csv().customer_id``."""
+    lines = ["customer_id,region"] + [f"C{i:03d},Region {i % 2}" for i in range(10)]
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def upload(client: TestClient, files: list[tuple[str, bytes]], **form: str):
+    """POST /datasets with the given (filename, bytes) pairs; returns the raw response."""
+    parts = [("files", (name, data, "application/octet-stream")) for name, data in files]
+    return client.post("/api/v1/datasets", files=parts, data=form)
+
+
+def wait_job(client: TestClient, job_id: str, timeout: float = 60.0) -> dict:
+    """Poll a job until it is finished; returns its final JSON."""
+    import time
+
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        body = client.get(f"/api/v1/jobs/{job_id}").json()
+        if body["status"] in ("done", "failed"):
+            return body
+        time.sleep(0.05)
+    raise AssertionError("the job did not finish in time")
+
+
+def upload_ready(client: TestClient, files: list[tuple[str, bytes]] | None = None) -> str:
+    """Upload, wait for the ingest job and return the new dataset id."""
+    response = upload(client, files or [("sales.csv", sales_csv())])
+    assert response.status_code == 202, response.text
+    job = wait_job(client, response.json()["id"])
+    assert job["status"] == "done", job
+    return job["result"]["dataset_id"]

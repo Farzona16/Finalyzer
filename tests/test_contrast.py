@@ -29,7 +29,10 @@ def test_the_shipped_tokens_pass() -> None:
 
 
 def test_a_weak_token_is_reported() -> None:
-    css = ":root, [data-theme='dark'] { --bg: #000000; --surface: #000000; --surface-2: #000000; --text: #ffffff; --muted: #222222; }"
+    css = (
+        ":root, [data-theme='dark'] { --bg: #000000; --surface: #000000; "
+        "--surface-2: #000000; --text: #ffffff; --muted: #222222; }"
+    )
     problems = contrast.check(css)
     assert any("muted on bg" in p for p in problems)
     assert any(p.startswith("light:") for p in problems)
