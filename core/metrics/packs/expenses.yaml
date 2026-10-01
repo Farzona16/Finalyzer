@@ -6,7 +6,7 @@ roles_core: [date, amount]
 column_hints: [expense, xarajat, расход, vendor, supplier, ta'minotchi, поставщик, category, kategoriya, категория, receipt, invoice, hisob, счёт, department, boʻlim]
 value_hints: [approved, rejected, reimbursed, travel, office, rent, salary, tasdiqlangan, rad etilgan, ijara, maosh, аренда, зарплата]
 dimensions_priority: [category, department, vendor, status]
-detectors: [trend_regression, outliers, group_difference, skewness, missing_pattern]
+detectors: [outliers, missing_pattern]
 dashboard_template: generic
 demo_dataset: null
 suggested_questions:

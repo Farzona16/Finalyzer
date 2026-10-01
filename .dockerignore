@@ -1,4 +1,7 @@
 .venv/
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
 .git/
 .env
 __pycache__/
@@ -6,7 +9,11 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 data/tmp/
+data/runtime/
 reports/
 tests/
-Finalyzer_Agent_Spec_EN.md
+app/
+legacy/
 .cursor/
+*.md
+!README.md

@@ -16,7 +16,7 @@ const NO_RAW_HTML = [
 ]
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'node_modules'] },
+  { ignores: ['dist', 'coverage', 'node_modules', 'e2e', 'playwright.config.ts', 'src/api/schema.ts', 'src/api/openapi.json'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   security.configs.recommended,

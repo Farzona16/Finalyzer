@@ -1,0 +1,32 @@
+{
+  "uz": {
+    "headline.kpi": "{metric} {period}: {value}.",
+    "headline.table": "{metric} {n} qator.",
+    "explanation.kpi": "Bu son shu ma'lumotlardan hisoblandi.",
+    "explanation.table": "Natija {n} qatordan iborat.",
+    "so_what.up": "Bu yaxshi tomonga ketayotganini bildiradi.",
+    "so_what.down": "Bu e'tibor talab qilishi mumkin.",
+    "so_what.neutral": "Bu hozirgi holat.",
+    "next_step.kpi": "Shu ko'rsatkichni oylar bo'yicha ham ko'ring.",
+    "next_step.table": "Eng katta guruhni alohida tekshiring.",
+    "badge.verified": "Tasdiqlangan",
+    "badge.unverified": "Tasdiqlanmagan",
+    "period.all": "barcha ma'lumot",
+    "offline": "Hozir faqat aniq tushunarli savollarga javob bera olaman."
+  },
+  "en": {
+    "headline.kpi": "{metric} {period}: {value}.",
+    "headline.table": "{metric}: {n} rows.",
+    "explanation.kpi": "This number was computed from this dataset.",
+    "explanation.table": "The result has {n} rows.",
+    "so_what.up": "This is moving in a good direction.",
+    "so_what.down": "This may need attention.",
+    "so_what.neutral": "This is the current picture.",
+    "next_step.kpi": "Also look at this figure by month.",
+    "next_step.table": "Inspect the largest group on its own.",
+    "badge.verified": "Verified",
+    "badge.unverified": "Unverified",
+    "period.all": "all data",
+    "offline": "I can only answer clearly worded questions right now."
+  }
+}

@@ -102,7 +102,8 @@ async function send(path: string, init: RequestInit, retried: boolean): Promise<
   const method = (init.method ?? 'GET').toUpperCase()
   const headers = baseHeaders()
   new Headers(init.headers).forEach((value, key) => headers.set(key, value))
-  if (init.body !== undefined && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
+  if (init.body instanceof FormData) headers.delete('Content-Type')
+  else if (init.body !== undefined && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
   if (UNSAFE.has(method)) headers.set('X-CSRF-Token', await ensureCsrf())
   let response: Response
   try {
@@ -147,6 +148,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const get = <T>(path: string, signal?: AbortSignal) => api<T>(path, { signal: signal ?? null })
 export const post = <T>(path: string, body?: unknown) =>
   api<T>(path, { method: 'POST', body: body === undefined ? null : JSON.stringify(body) })
+export const postForm = <T>(path: string, body: FormData) => api<T>(path, { method: 'POST', body })
 export const patch = <T>(path: string, body: unknown) =>
   api<T>(path, { method: 'PATCH', body: JSON.stringify(body) })
 export const put = <T>(path: string, body: unknown) => api<T>(path, { method: 'PUT', body: JSON.stringify(body) })

@@ -1,0 +1,453 @@
+# Uzbek golden questions for Ask v2 (15 per demo dataset).
+# expected_sql is produced by the deterministic compiler; result-set equality is the test.
+questions:
+  - id: retail_01
+    dataset: retail
+    question: "Jami daromad qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data
+    router_expected: true
+    intent: total
+    english: "What is the total revenue?"
+  - id: retail_02
+    dataset: retail
+    question: "Daromad kategoriya boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "category" AS "category", SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data WHERE "category" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+    english: "What is the revenue by category?"
+  - id: retail_03
+    dataset: retail
+    question: "Qaysi 5 ta doʻkon daromadi eng yuqori?"
+    expected_sql: >-
+      SELECT "store_name" AS "store_name", SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data WHERE "store_name" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST LIMIT 5
+    router_expected: true
+    intent: top_n
+    english: "Which 5 stores have the highest revenue?"
+  - id: retail_04
+    dataset: retail
+    question: "Daromad oylar boʻyicha qanday oʻzgardi?"
+    expected_sql: >-
+      SELECT date_trunc('month', "sale_date") AS period, SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS value FROM data WHERE "sale_date" IS NOT NULL GROUP BY 1 ORDER BY 1
+    router_expected: true
+    intent: trend
+    english: "Show the monthly revenue over time."
+  - id: retail_05
+    dataset: retail
+    question: "2026-yil sentabrda daromad qancha boʻldi?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data WHERE "sale_date" >= DATE '2026-09-01' AND "sale_date" < DATE '2026-10-01'
+    router_expected: true
+    intent: period_value
+    english: "What was the revenue in September 2026?"
+  - id: retail_06
+    dataset: retail
+    question: "Oxirgi oyda daromad qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data WHERE "sale_date" >= DATE '2026-09-01' AND "sale_date" < DATE '2026-10-01'
+    router_expected: true
+    intent: last_month
+    english: "What was the revenue last month?"
+  - id: retail_07
+    dataset: retail
+    question: "Oʻrtacha buyurtma summasi kanal boʻyicha qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") / NULLIF(COUNT(DISTINCT "sale_id"), 0) AS "avg_order_value" FROM data
+    router_expected: true
+    intent: average
+  - id: retail_08
+    dataset: retail
+    question: "Yalpi foyda ulushi kategoriya boʻyicha qancha?"
+    expected_sql: >-
+      WITH g AS (SELECT "category" AS category, 100.0 * (SUM("amount") - SUM("cost_amount")) / NULLIF(SUM("amount"), 0) AS value FROM data WHERE "category" IS NOT NULL GROUP BY 1) SELECT category, value, 100.0 * value / NULLIF(SUM(value) OVER (), 0) AS share_pct FROM g ORDER BY value DESC NULLS LAST
+    router_expected: true
+    intent: share
+  - id: retail_09
+    dataset: retail
+    question: "2026 yilda nechta turli mijoz xarid qildi?"
+    expected_sql: >-
+      SELECT COUNT(DISTINCT "customer_id") AS n FROM data WHERE "sale_date" >= DATE '2026-01-01' AND "sale_date" < DATE '2027-01-01'
+    router_expected: true
+    intent: distinct
+    english: "How many distinct customers bought in 2026?"
+  - id: retail_10
+    dataset: retail
+    question: "Daromad oʻtgan yilga nisbatan qanday oʻzgardi?"
+    expected_sql: >-
+      WITH s AS (SELECT date_trunc('month', "sale_date") AS period, SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS value FROM data WHERE "sale_date" IS NOT NULL GROUP BY 1 ORDER BY 1) SELECT cur.period AS period, cur.value AS value, prev.value AS previous_year_value, 100.0 * (cur.value - prev.value) / NULLIF(prev.value, 0) AS yoy_pct FROM s cur LEFT JOIN s prev ON prev.period = CAST(cur.period - INTERVAL 1 YEAR AS DATE) ORDER BY cur.period
+    router_expected: true
+    intent: yoy
+    english: "What is the year-over-year revenue growth by month?"
+  - id: retail_11
+    dataset: retail
+    question: "Qaysi doʻkon eng yaxshi natija koʻrsatdi?"
+    expected_sql: >-
+      SELECT "store_name" AS "store_name", SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data WHERE "store_name" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST LIMIT 1
+    router_expected: true
+    intent: best
+    english: "Which store performed best?"
+  - id: retail_12
+    dataset: retail
+    question: "Jami sotilgan dona qancha?"
+    expected_sql: >-
+      SELECT SUM("quantity") AS "units" FROM data
+    router_expected: true
+    intent: total
+  - id: retail_13
+    dataset: retail
+    question: "Store 03 da daromad qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS "revenue" FROM data WHERE "store_name" = 'Store 03'
+    router_expected: true
+    intent: filter_value
+  - id: retail_14
+    dataset: retail
+    question: "Daromad oyma-oy qanday oʻzgardi?"
+    expected_sql: >-
+      WITH monthly AS (SELECT date_trunc('month', "sale_date") AS period, SUM("amount") FILTER (WHERE "payment_status" = 'paid') AS value FROM data WHERE "sale_date" IS NOT NULL GROUP BY 1 ORDER BY 1) SELECT period, value, 100.0 * (value - LAG(value) OVER (ORDER BY period)) / NULLIF(LAG(value) OVER (ORDER BY period), 0) AS mom_pct FROM monthly ORDER BY period
+    router_expected: true
+    intent: mom
+    english: "What is the month-over-month change in revenue?"
+  - id: retail_15
+    dataset: retail
+    question: "Jami buyurtmalar qancha?"
+    expected_sql: >-
+      SELECT COUNT(DISTINCT "sale_id") AS "orders" FROM data
+    router_expected: true
+    intent: total
+    english: "How many orders were placed in total?"
+  - id: bank_01
+    dataset: bank
+    question: "Jami tranzaksiyalar hajmi qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data
+    router_expected: true
+    intent: total
+    english: "What is the total transaction volume?"
+  - id: bank_02
+    dataset: bank
+    question: "Tranzaksiyalar soni qancha?"
+    expected_sql: >-
+      SELECT COUNT(*) AS "txn_count" FROM data
+    router_expected: true
+    intent: total
+    english: "How many transactions are there?"
+  - id: bank_03
+    dataset: bank
+    question: "Hajm filial boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "branch_name" AS "branch_name", SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "branch_name" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+    english: "What is volume by branch?"
+  - id: bank_04
+    dataset: bank
+    question: "Qaysi 5 ta filial hajmi eng yuqori?"
+    expected_sql: >-
+      SELECT "branch_name" AS "branch_name", SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "branch_name" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST LIMIT 5
+    router_expected: true
+    intent: top_n
+    english: "Which 5 branches have the highest volume?"
+  - id: bank_05
+    dataset: bank
+    question: "Hajm oylar boʻyicha qanday oʻzgardi?"
+    expected_sql: >-
+      SELECT date_trunc('month', "txn_date") AS period, SUM("amount") FILTER (WHERE "status" = 'completed') AS value FROM data WHERE "txn_date" IS NOT NULL GROUP BY 1 ORDER BY 1
+    router_expected: true
+    intent: trend
+    english: "Show monthly transaction volume."
+  - id: bank_06
+    dataset: bank
+    question: "Oxirgi oyda hajm qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "txn_date" >= DATE '2026-09-01' AND "txn_date" < DATE '2026-10-01'
+    router_expected: true
+    intent: last_month
+    english: "What was the volume last month?"
+  - id: bank_07
+    dataset: bank
+    question: "Muvaffaqiyatsiz tranzaksiyalar ulushi qancha?"
+    expected_sql: >-
+      SELECT 100.0 * COUNT(*) FILTER (WHERE "status" = 'failed') / NULLIF(COUNT(*), 0) AS "failed_rate_pct" FROM data
+    router_expected: true
+    intent: share
+    english: "What share of transactions failed?"
+  - id: bank_08
+    dataset: bank
+    question: "Hajm kanal boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "channel" AS "channel", SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "channel" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+  - id: bank_09
+    dataset: bank
+    question: "Oʻrtacha tranzaksiya summasi qancha?"
+    expected_sql: >-
+      SELECT AVG("amount") FILTER (WHERE "status" = 'completed') AS "avg_ticket" FROM data
+    router_expected: true
+    intent: average
+  - id: bank_10
+    dataset: bank
+    question: "2026-yil sentabrda hajm qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "txn_date" >= DATE '2026-09-01' AND "txn_date" < DATE '2026-10-01'
+    router_expected: true
+    intent: period_value
+  - id: bank_11
+    dataset: bank
+    question: "Qaysi filial eng yaxshi natija koʻrsatdi?"
+    expected_sql: >-
+      SELECT "branch_name" AS "branch_name", SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "branch_name" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST LIMIT 1
+    router_expected: true
+    intent: best
+    english: "Which branch performed best?"
+  - id: bank_12
+    dataset: bank
+    question: "Muvaffaqiyatsiz ulushi kanal boʻyicha qancha?"
+    expected_sql: >-
+      WITH g AS (SELECT "channel" AS category, SUM("amount") FILTER (WHERE "status" = 'completed') AS value FROM data WHERE "channel" IS NOT NULL GROUP BY 1) SELECT category, value, 100.0 * value / NULLIF(SUM(value) OVER (), 0) AS share_pct FROM g ORDER BY value DESC NULLS LAST
+    router_expected: true
+    intent: share
+  - id: bank_13
+    dataset: bank
+    question: "Hajm oʻtgan yilga nisbatan qanday oʻzgardi?"
+    expected_sql: >-
+      WITH s AS (SELECT date_trunc('month', "txn_date") AS period, SUM("amount") FILTER (WHERE "status" = 'completed') AS value FROM data WHERE "txn_date" IS NOT NULL GROUP BY 1 ORDER BY 1) SELECT cur.period AS period, cur.value AS value, prev.value AS previous_year_value, 100.0 * (cur.value - prev.value) / NULLIF(prev.value, 0) AS yoy_pct FROM s cur LEFT JOIN s prev ON prev.period = CAST(cur.period - INTERVAL 1 YEAR AS DATE) ORDER BY cur.period
+    router_expected: true
+    intent: yoy
+  - id: bank_14
+    dataset: bank
+    question: "Branch 07 da hajm qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'completed') AS "txn_volume" FROM data WHERE "branch_name" = 'Branch 07'
+    router_expected: true
+    intent: filter_value
+  - id: bank_15
+    dataset: bank
+    question: "Jami tranzaksiyalar soni qancha?"
+    expected_sql: >-
+      SELECT COUNT(*) AS "txn_count" FROM data
+    router_expected: true
+    intent: total
+  - id: sales_01
+    dataset: sales
+    question: "Yutilgan bitimlar daromadi qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'won') AS "won_revenue" FROM data
+    router_expected: true
+    intent: total
+    english: "What is the won revenue?"
+  - id: sales_02
+    dataset: sales
+    question: "Yutish ulushi qancha?"
+    expected_sql: >-
+      SELECT 100.0 * COUNT(*) FILTER (WHERE "status" = 'won') / NULLIF(COUNT(*) FILTER (WHERE "status" IN ('won', 'lost')), 0) AS "win_rate_pct" FROM data
+    router_expected: true
+    intent: win_rate
+    english: "What is the win rate?"
+  - id: sales_03
+    dataset: sales
+    question: "Yutilgan bitimlar egasi boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "owner_id" AS "owner_id", COUNT(*) FILTER (WHERE "status" = 'won') AS "deals_won" FROM data WHERE "owner_id" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+  - id: sales_04
+    dataset: sales
+    question: "Yutish ulushi oylar boʻyicha qanday oʻzgardi?"
+    expected_sql: >-
+      SELECT 100.0 * COUNT(*) FILTER (WHERE "status" = 'won') / NULLIF(COUNT(*) FILTER (WHERE "status" IN ('won', 'lost')), 0) AS "win_rate_pct" FROM data
+    router_expected: true
+    intent: win_rate
+    english: "How did the win rate change by month?"
+  - id: sales_05
+    dataset: sales
+    question: "Ochiq bitimlar summasi qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'open') AS "pipeline_value" FROM data
+    router_expected: true
+    intent: total
+    english: "What is the pipeline value?"
+  - id: sales_06
+    dataset: sales
+    question: "Nechta bitim toʻxtab qolgan?"
+    expected_sql: >-
+      SELECT COUNT(*) AS deals, SUM("amount") AS value FROM data WHERE "status" = 'open' AND "created_date" < (SELECT MAX("created_date") FROM data) - INTERVAL 90 DAY
+    router_expected: true
+    intent: stalled
+    english: "How many deals are stalled?"
+  - id: sales_07
+    dataset: sales
+    question: "Bosqichlar boʻyicha nechta bitim?"
+    expected_sql: >-
+      SELECT "stage" AS stage, COUNT(*) AS deals FROM data WHERE "stage" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC
+    router_expected: true
+    intent: funnel
+  - id: sales_08
+    dataset: sales
+    question: "Oxirgi oyda yutilgan bitimlar daromadi qancha?"
+    expected_sql: >-
+      SELECT SUM("amount") FILTER (WHERE "status" = 'won') AS "won_revenue" FROM data WHERE "created_date" >= DATE '2026-09-01' AND "created_date" < DATE '2026-10-01'
+    router_expected: true
+    intent: last_month
+  - id: sales_09
+    dataset: sales
+    question: "Yutilgan bitimlar daromadi manba boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "source" AS "source", SUM("amount") FILTER (WHERE "status" = 'won') AS "won_revenue" FROM data WHERE "source" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+  - id: sales_10
+    dataset: sales
+    question: "Yutilgan bitimlar daromadi mahsulot boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "product" AS "product", SUM("amount") FILTER (WHERE "status" = 'won') AS "won_revenue" FROM data WHERE "product" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+  - id: sales_11
+    dataset: sales
+    question: "Oʻrtacha bitim summasi qancha?"
+    expected_sql: >-
+      SELECT AVG("amount") FILTER (WHERE "status" = 'won') AS "avg_deal_size" FROM data
+    router_expected: true
+    intent: average
+  - id: sales_12
+    dataset: sales
+    question: "Yutqazilgan bitimlar qancha?"
+    expected_sql: >-
+      SELECT COUNT(*) FILTER (WHERE "status" = 'lost') AS "deals_lost" FROM data
+    router_expected: true
+    intent: total
+  - id: sales_13
+    dataset: sales
+    question: "Nega yutilgan bitimlar daromadi tushdi?"
+    expected_sql: >-
+      SELECT "region" AS "region", SUM("amount") FILTER (WHERE "status" = 'won') AS "won_revenue" FROM data WHERE "region" IS NOT NULL GROUP BY 1 ORDER BY 2 ASC NULLS LAST LIMIT 8
+    router_expected: true
+    intent: why_drop
+    english: "Why did won revenue drop?"
+  - id: sales_14
+    dataset: sales
+    question: "Qaysi 3 ta egasi eng koʻp yutgan?"
+    expected_sql: >-
+      SELECT "owner_id" AS "owner_id", SUM("amount") FILTER (WHERE "status" = 'won') AS "won_revenue" FROM data WHERE "owner_id" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST LIMIT 3
+    router_expected: true
+    intent: top_n
+  - id: sales_15
+    dataset: sales
+    question: "Yutish ulushi manba boʻyicha qancha?"
+    expected_sql: >-
+      SELECT 100.0 * COUNT(*) FILTER (WHERE "status" = 'won') / NULLIF(COUNT(*) FILTER (WHERE "status" IN ('won', 'lost')), 0) AS "win_rate_pct" FROM data
+    router_expected: true
+    intent: win_rate
+  - id: statistics_01
+    dataset: statistics
+    question: "Namunalar soni qancha?"
+    expected_sql: >-
+      SELECT COUNT(*) AS "row_count" FROM data
+    router_expected: true
+    intent: total
+    english: "How many samples are there?"
+  - id: statistics_02
+    dataset: statistics
+    question: "Tekshiruvdan oʻtganlar ulushi qancha?"
+    expected_sql: >-
+      SELECT 100.0 * AVG(CASE WHEN "passed" THEN 1.0 ELSE 0.0 END) AS "pass_rate_pct" FROM data
+    router_expected: true
+    intent: share
+    english: "What is the pass rate?"
+  - id: statistics_03
+    dataset: statistics
+    question: "Harorat qanday tarqalgan?"
+    expected_sql: >-
+      SELECT MIN("temperature") AS min_value, AVG("temperature") AS avg_value, MAX("temperature") AS max_value, STDDEV_SAMP("temperature") AS stddev FROM data
+    router_expected: true
+    intent: distribution
+    english: "How is temperature distributed?"
+  - id: statistics_04
+    dataset: statistics
+    question: "Harorat va bosim bogʻliqmi?"
+    expected_sql: >-
+      SELECT corr("temperature", "pressure") AS pearson FROM data WHERE "temperature" IS NOT NULL AND "pressure" IS NOT NULL
+    router_expected: true
+    intent: correlation
+    english: "Are temperature and pressure correlated?"
+  - id: statistics_05
+    dataset: statistics
+    question: "Namunalar soni liniya boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "line" AS "line", COUNT(*) AS "row_count" FROM data WHERE "line" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+  - id: statistics_06
+    dataset: statistics
+    question: "Namunalar soni smena boʻyicha qancha?"
+    expected_sql: >-
+      SELECT "shift" AS "shift", COUNT(*) AS "row_count" FROM data WHERE "shift" IS NOT NULL GROUP BY 1 ORDER BY 2 DESC NULLS LAST
+    router_expected: true
+    intent: by_dimension
+  - id: statistics_07
+    dataset: statistics
+    question: "defects ustunida yetishmayotgan qiymatlar qancha?"
+    expected_sql: >-
+      SELECT COUNT(*) FILTER (WHERE "defects" IS NULL) AS missing, COUNT(*) AS rows FROM data
+    router_expected: true
+    intent: missing
+  - id: statistics_08
+    dataset: statistics
+    question: "Maksimal harorat qancha?"
+    expected_sql: >-
+      SELECT MAX("temperature") AS max_value FROM data
+    router_expected: true
+    intent: maximum
+    english: "What is the maximum temperature?"
+  - id: statistics_09
+    dataset: statistics
+    question: "Namunalar soni oylar boʻyicha qanday oʻzgardi?"
+    expected_sql: >-
+      SELECT date_trunc('month', "measured_at") AS period, COUNT(*) AS value FROM data WHERE "measured_at" IS NOT NULL GROUP BY 1 ORDER BY 1
+    router_expected: true
+    intent: trend
+  - id: statistics_10
+    dataset: statistics
+    question: "Tekshiruvdan oʻtganlar ulushi liniya boʻyicha qancha?"
+    expected_sql: >-
+      WITH g AS (SELECT "line" AS category, 100.0 * AVG(CASE WHEN "passed" THEN 1.0 ELSE 0.0 END) AS value FROM data WHERE "line" IS NOT NULL GROUP BY 1) SELECT category, value, 100.0 * value / NULLIF(SUM(value) OVER (), 0) AS share_pct FROM g ORDER BY value DESC NULLS LAST
+    router_expected: true
+    intent: share
+  - id: statistics_11
+    dataset: statistics
+    question: "Qalinlikning oʻrtadagi qiymati qancha?"
+    expected_sql: >-
+      SELECT median("thickness_mm") AS median_value FROM data
+    router_expected: true
+    intent: median
+  - id: statistics_12
+    dataset: statistics
+    question: "Minimal harorat qancha?"
+    expected_sql: >-
+      SELECT MIN("temperature") AS min_value FROM data
+    router_expected: true
+    intent: minimum
+  - id: statistics_13
+    dataset: statistics
+    question: "Oʻrtacha harorat qancha?"
+    expected_sql: >-
+      SELECT AVG("temperature") AS avg_value FROM data
+    router_expected: true
+    intent: average
+  - id: statistics_14
+    dataset: statistics
+    question: "Maksimal bosim qancha?"
+    expected_sql: >-
+      SELECT MAX("pressure") AS max_value FROM data
+    router_expected: true
+    intent: maximum
+  - id: statistics_15
+    dataset: statistics
+    question: "Namunalar soni oxirgi oyda qancha?"
+    expected_sql: >-
+      SELECT COUNT(*) AS "row_count" FROM data WHERE "measured_at" >= DATE '2026-09-01' AND "measured_at" < DATE '2026-10-01'
+    router_expected: true
+    intent: last_month

@@ -21,6 +21,7 @@ def test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.sql_candidates == 3
     assert settings.result_row_limit == 10_000
     assert settings.k_anon_min == 5
+    assert settings.uz_polish is False
 
 
 def test_local_mode_requires_api_base(monkeypatch: pytest.MonkeyPatch) -> None:

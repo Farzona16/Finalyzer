@@ -6,7 +6,7 @@ roles_core: [date, amount, order_id, quantity, customer_id, cost]
 column_hints: [sale, sotuv, savdo, product, mahsulot, tovar, товар, store, doʻkon, магазин, sku, basket, chek, чек]
 value_hints: [paid, refunded, returned, pending, toʻlangan, qaytarilgan, оплачено, возврат]
 dimensions_priority: [category, store_name, channel, region, segment]
-detectors: [trend_regression, outliers, group_difference, skewness, missing_pattern, correlation]
+detectors: []
 dashboard_template: retail
 demo_dataset: retail
 suggested_questions:

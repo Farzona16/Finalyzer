@@ -1,0 +1,35 @@
+{
+  "reviewed": false,
+  "uz": {
+    "missing.cost": "Tannarx ustuni yoʻq, shuning uchun yalpi foydani hisoblab boʻlmadi. Uni koʻrish uchun ustun qoʻshing.",
+    "missing.quantity": "Miqdor ustuni yoʻq, shuning uchun sotilgan dona sonini hisoblab boʻlmadi. Uni koʻrish uchun ustun qoʻshing.",
+    "missing.customer_id": "Mijoz raqami ustuni yoʻq, shuning uchun faol mijozlar va qaytmaslik ulushini hisoblab boʻlmadi. Ularni koʻrish uchun ustun qoʻshing.",
+    "missing.date": "Sana ustuni yoʻq, shuning uchun oʻzgarishlar, keskin sakrashlar va davrlarni solishtirishni hisoblab boʻlmadi. Ularni koʻrish uchun ustun qoʻshing.",
+    "missing.amount": "Summa ustuni yoʻq, shuning uchun daromad va boshqa pul koʻrsatkichlarini hisoblab boʻlmadi. Ularni koʻrish uchun ustun qoʻshing.",
+    "missing.status": "Holat ustuni yoʻq, shuning uchun bajarilgan yoki toʻlangan qatorlarga bogʻliq koʻrsatkichlar barcha qatorlarni hisoblaydi. Aniqroq natija uchun ustun qoʻshing.",
+    "missing.metric": "«{metric}» hisoblanmadi: kerakli ustun yoki qiymat topilmadi.",
+    "track.primary": "«{metric}»: asosiy koʻrsatkichingiz, shuning uchun uni har oy tekshiring.",
+    "track.trend": "«{metric}»: boshqa koʻrsatkichlar orasida eng katta oʻzgarish shunda boʻldi.",
+    "track.churn": "Mijozlarning qaytmaslik ulushi: keskin oʻzgardi, shuning uchun u joyiga tushishini kuzating.",
+    "track.rate": "«{metric}»: pasayishi yaxshi boʻlgan ulush; erta ogohlantirish belgisi.",
+    "quality.column": "«{column}» ustunining {pct} foizi boʻsh: uni toʻldiring yoki tuzatilguncha qarorlarda foydalanmang.",
+    "quality.gaps": "Ma'lumotlarda ba'zi kunlar yoʻq: eksport paytida ular tushib qolmaganini tekshiring.",
+    "quality.pii": "Shaxsiy ma'lumotlar ustunlari tahlildan chiqarildi: {columns}."
+  },
+  "en": {
+    "missing.cost": "No cost column: gross profit could not be computed. Add one to unlock it.",
+    "missing.quantity": "No quantity column: units sold could not be computed. Add one to unlock it.",
+    "missing.customer_id": "No customer ID column: active customers and the share of customers who do not return could not be computed. Add one to unlock them.",
+    "missing.date": "No date column: changes over time, sudden jumps and period comparisons could not be computed. Add one to unlock them.",
+    "missing.amount": "No amount column: revenue and other money figures could not be computed. Add one to unlock them.",
+    "missing.status": "No status column: figures that depend on completed or paid rows count all rows. Add one for a more exact result.",
+    "missing.metric": "“{metric}” is unavailable: {reason}.",
+    "track.primary": "“{metric}”: your main figure, so check it every month.",
+    "track.trend": "“{metric}”: it moved the most among the other figures.",
+    "track.churn": "Share of customers who do not return: it changed sharply, so watch whether it settles.",
+    "track.rate": "“{metric}”: a share where lower is better; an early warning.",
+    "quality.column": "“{column}” is {pct}% empty: fill it in, or leave it out of decisions until it is fixed.",
+    "quality.gaps": "Some days are missing in the data: check whether an export step dropped them.",
+    "quality.pii": "Personal data columns were removed from the analysis: {columns}."
+  }
+}

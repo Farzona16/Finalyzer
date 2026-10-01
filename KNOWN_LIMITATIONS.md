@@ -100,3 +100,28 @@ shown; nothing here is an estimate unless it says so.
 - The AI metric suggestions are only as good as the model; the DSL limits what can go wrong (no SQL, at most 5 filters, known columns and values only, no personal-data columns), and anything that fails the parity check is dropped, but a valid and boring metric can still be suggested.
 - Heuristic Uzbek labels are templates (`core/autopilot/labels.json`) and have not been reviewed by a native speaker; they are listed in `docs/uz_review.md`.
 - The record of what was sent to the AI during the autopilot is kept in memory and is lost on restart; the Privacy page that shows it arrives in phase U11.
+
+## Insights v3 (phase U6)
+
+- The outliers detector uses 3×IQR (the v2 rule), not the spec's 1.5×IQR, so only extreme tails are flagged. Left-skew is not reported. Boolean dimensions are left out of `group_difference`.
+- `lost_reason` "37% empty" on the sales demo is structural (open and won deals have no lost reason), not a data defect.
+- `outliers` and `correlation` on derived columns (for example amount vs cost_amount) can be trivial; retail and bank therefore run only the v2 detectors.
+- The v2 `segment_momentum` detector can still produce one false positive on a noise dataset. The v2 percent-trend 2-percentage-point rule is tightened only for the sales win rate (a chi-squared guard).
+- Optional `UZ_POLISH` is off. A rewrite is accepted only when numbers, polarity, quoted names, jargon and length all pass; otherwise the frame text is kept.
+
+## Ask v2 (phase U7)
+
+- Router accuracy is measured on the 60 Uzbek golden questions whose SQL the compiler itself produced; that is a regression lock, not an independent field study. Live-model accuracy on LLM-expected questions is not claimed until `scripts/eval_uzbek.py --model <live>` is run with a key.
+- Follow-up inheritance (`shu filial boʻyicha-chi?`) only kicks in when the new question is not already confident, so a fully specified follow-up is routed on its own.
+- Russian questions are detected and understood best-effort; answers are still in the UI language (uz or en).
+
+## Product UI (v3)
+
+- The v3 interface is Uzbek and English. The v2 Streamlit app remains English-only.
+- Accounts, roles and encrypted storage apply to the FastAPI app. Streamlit still uses an optional shared `APP_PASSWORD` and session memory.
+- Dashboard filter presets (Bu oy, …), brush-to-date, PNG export, print PDF, drag-resize layout and axe-core in CI are not all implemented. Cross-filter chips and view-as-table are.
+- Playwright in CI is the theme-init check; the first-admin demo walk is the backend smoke test plus UI unit tests. Axe scores are not stored.
+- v3 container memory has not been re-measured; `DEPLOY.md` quotes v2 figures as a lower bound.
+- Render was not deployed from this machine; `render.yaml` health is `/healthz`.
+- `openapi-typescript` is not used; `frontend/src/api/schema.ts` is a generated path list.
+- No in-place rotation job for `APP_MASTER_KEY`.

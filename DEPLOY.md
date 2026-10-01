@@ -1,93 +1,82 @@
-# Deploying Finalyzer to Render
+# Deploying Finalyzer
 
-The app is one Docker web service. `render.yaml` describes it; the `Dockerfile` builds it.
+The product is one Docker web service that serves the API and the built SPA.
+`render.yaml` describes the Render blueprint. `Dockerfile` builds a non-root image
+with **one Uvicorn worker**. Streamlit is not in the image.
 
-## 1. Before you start
+## Generate keys
 
-- A GitHub account and a Render account.
-- Optional: an LLM API key and a model name that the key can use. Test the pair first:
-  `python scripts/eval_golden.py --model <model>` should get answers, not "rejected" errors.
-  Providers retire model names (the `gemini-1.5-flash` name in an older `.env` was rejected),
-  so prefer a current name.
-- The demo datasets are synthetic and are built into the image. Do not point the public
-  service at real personal data: `PRIVACY_MODE=demo` means "synthetic data only".
+```bash
+python -c "import secrets,base64; print('APP_SECRET_KEY=' + secrets.token_urlsafe(48)); print('APP_MASTER_KEY=' + base64.b64encode(secrets.token_bytes(32)).decode())"
+```
 
-## 2. Steps
+`APP_MASTER_KEY` is required only for `STORAGE_MODE=persistent`.
 
-1. Push the repository to GitHub. `.env` is ignored by git and by `.dockerignore`; check that
-   it is not in the commit.
-2. In Render choose **New > Blueprint** and select the repository. Render reads `render.yaml`
-   and proposes the `finalyzer` web service.
-3. Fill in the three variables that have no value in `render.yaml` (they are declared with
-   `sync: false`, so they are entered in the dashboard and never stored in git):
-   - `LLM_MODEL`: LiteLLM model string, for example `provider/model-name`
-   - `LLM_API_KEY`: the key (leave empty for offline mode)
-   - `APP_PASSWORD`: optional shared password; empty means no password gate
-4. Check the plan (see "Memory" below) and create the service. Render builds the image
-   (about 4 minutes the first time) and waits for `/_stcore/health` to answer `ok`.
-5. Open the service URL and run the smoke test.
+## Local Docker Compose
 
-## 3. Smoke test
+```bash
+export APP_SECRET_KEY=...   # from the command above
+docker compose up --build
+```
 
-- [ ] The page opens; the sidebar says which AI mode is active.
-- [ ] Choose **Demo: Retail**: KPI cards and charts appear, no error box.
-- [ ] Insights tab: press the button; cards appear, each with numbers and a badge.
-- [ ] Ask tab: click a suggested question; the answer is marked Verified.
-- [ ] Audit tab: "Bytes sent outside" matches what you expect (0 in offline mode).
-- [ ] Choose **Demo: Bank**, then **Clear session**; the page returns to the start.
-- [ ] If `APP_PASSWORD` is set, the page asks for it first.
+Open http://localhost:8000/healthz then http://localhost:8000/setup.
+Postgres is required by the compose file (accounts). Dataset files stay ephemeral
+unless you add a volume and set `STORAGE_MODE=persistent`.
 
-## 4. Memory
+On-prem TLS: set `SITE_ADDRESS` and run `docker compose --profile tls up`.
+Caddy in `deploy/Caddyfile` terminates TLS and proxies to the app.
 
-Measured in the built image (Docker 29, Linux, Python 3.12, offline mode, one session):
+## Render
 
-| Situation | Memory |
+1. Push the repository. Confirm `.env` is not in git (it is gitignored).
+2. New > Blueprint, select the repo. `render.yaml` proposes the web service.
+3. Set secrets in the dashboard (`sync: false` vars): `APP_SECRET_KEY`,
+   `APP_MASTER_KEY` (if persistent), `DATABASE_URL` (Render Postgres URL),
+   optional `LLM_MODEL` / `LLM_API_KEY`.
+4. Health check is **`/healthz`** (not the old Streamlit `/_stcore/health`).
+5. Default: `STORAGE_MODE=ephemeral`, `PRIVACY_MODE=demo`, `LLM_MODE=offline`.
+   Ephemeral disk means uploaded datasets disappear on sleep or redeploy.
+   Persistent mode needs a disk **and** `APP_MASTER_KEY`.
+
+## Smoke test
+
+- [ ] `/healthz` returns ok.
+- [ ] `/setup`: create the first admin.
+- [ ] Home: load the retail demo → dashboard tiles appear.
+- [ ] Insights: cards with numbers.
+- [ ] Ask: a suggested Uzbek question, badge Tasdiqlangan.
+- [ ] Privacy: bytes sent outside is 0 in offline mode.
+
+## Memory (plan size = peak × 1.3)
+
+Measured on the v2 image (see `KNOWN_LIMITATIONS.md`); v3 adds the SPA in memory
+of the same process. Until a fresh `docker stats` run is stored, treat these as
+**lower bounds** and size up:
+
+| Situation | Memory (v2, recorded) |
 | --- | --- |
-| Idle container, server started, no visitor yet | about 67-70 MiB |
-| One session on the demo path (retail, insights, one question, bank) | peak 355 MiB (process peak, `ru_maxrss`); container sampled at 299 MiB |
-| One session with 1,000,000 fact rows (`scripts/perf_check.py`, includes building the table) | peak 754 MiB |
+| Idle container | about 70 MiB |
+| Demo path (retail, insights, one question) | peak about 355 MiB |
+| 1,000,000 fact rows (`scripts/perf_check.py`) | peak 754 MiB |
 
-The session figures do not include the idle server, so a safe estimate is the session peak
-plus about 70 MiB: roughly **425 MiB** for the demo path and **825 MiB** for a 1,000,000-row
-dataset. Each additional visitor adds a session of their own.
+Safe estimates: demo path **≥ 553 MiB**; 1M rows **≥ 1.1 GiB**.
+`render.yaml` uses `plan: standard` (2 GB). Lower `MAX_ROWS` on a smaller plan.
+This is not a capacity guarantee.
 
-The rule is: plan RAM should be at least peak x 1.3.
-
-- Demo path: 425 x 1.3 = about 553 MiB. **Plans with 512 MB (free, starter) are below this
-  and may be killed for running out of memory.**
-- 1,000,000 rows: 825 x 1.3 = about 1,075 MiB. A 2 GB plan is enough for one or two
-  visitors.
-
-`render.yaml` therefore sets `plan: standard` (2 GB). It is a setting: change it there, and
-also lower `MAX_ROWS` and `DUCKDB_MEMORY_LIMIT` if you must use a smaller plan.
-
-To repeat the measurement:
+To remasure:
 
 ```bash
 docker build -t finalyzer .
-docker run -d --name fz -p 8501:8501 -e LLM_MODE=offline finalyzer
+docker run -d --name fz -p 8000:8000 -e APP_ENV=production -e APP_SECRET_KEY=... -e LLM_MODE=offline finalyzer
 docker stats fz --no-stream
-docker exec -w /app -e PYTHONPATH=/app fz python scripts/perf_check.py
 ```
 
-## 5. Rollback
+## Rollback
 
-In the Render dashboard open the service, choose **Events**, pick the last good deploy and
-press **Rollback**. Or push a revert commit; `autoDeploy` redeploys it.
+Render dashboard → Events → last good deploy → Rollback, or revert the git commit.
 
-## 6. The LLM key fails or the quota is used up
+## No LLM key
 
-The app keeps working: without a usable key it falls back to template-written insights and
-answers only the built-in demo questions. To force this for everyone, set `LLM_MODE=offline`
-in the Render dashboard (Environment) and redeploy; clear `LLM_API_KEY` if the key was leaked
-(and revoke it at the provider). Users see a friendly message, never the provider's error.
-
-## 7. Running the container locally
-
-```bash
-docker build -t finalyzer .
-docker run --rm -p 8501:8501 --env-file .env finalyzer
-```
-
-The container reads `PORT` (default 8501), so `-e PORT=10000 -p 10000:10000` also works, as
-on Render.
+The app stays up: insights use frames, Ask uses the deterministic router and the
+golden offline answers. Set `LLM_MODE=offline` and clear `LLM_API_KEY` if a key leaked
+(and revoke it at the provider).

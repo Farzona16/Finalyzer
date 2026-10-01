@@ -113,7 +113,11 @@ def test_pack_fields_follow_the_spec(name: str) -> None:
     assert set(pack.suggested_questions) == {"uz", "en"}
     assert len(pack.suggested_questions["uz"]) >= 3
     assert pack.primary_metric in {m.id for m in pack.metrics}
-    assert pack.detectors
+    from core.insights.runner import SALES_DETECTORS
+    from core.insights.stats_detectors import DETECTORS as STAT_DETECTORS
+
+    known = set(SALES_DETECTORS) | set(STAT_DETECTORS)
+    assert isinstance(pack.detectors, list) and set(pack.detectors) <= known
     ids = [m.id for m in pack.metrics]
     assert len(ids) == len(set(ids))
     for metric in pack.metrics:

@@ -7,7 +7,7 @@ What to look for: natural wording, the letters `oʻ` and `gʻ` (U+02BB), the apo
 * Frames: 78
 * Glossary entries: 189
 * Backend messages: 63
-* Frontend messages: 22
+* Frontend messages: 88
 
 ## Message frames
 
@@ -366,6 +366,9 @@ File: `frontend/src/i18n/uz.json`
 | `app.tagline` | Ma'lumotlaringizni oddiy tilda tushuning |
 | `nav.home` | Bosh sahifa |
 | `nav.menu` | Asosiy menyu |
+| `nav.datasets` | Ma'lumotlar |
+| `nav.privacy` | Maxfiylik |
+| `nav.admin` | Boshqaruv |
 | `theme.label` | Mavzu |
 | `theme.light` | Yorugʻ |
 | `theme.dark` | Qorongʻi |
@@ -375,6 +378,10 @@ File: `frontend/src/i18n/uz.json`
 | `language.en` | EN |
 | `common.loading` | Yuklanmoqda… |
 | `common.retry` | Qayta urinish |
+| `common.save` | Saqlash |
+| `common.cancel` | Bekor qilish |
+| `common.close` | Yopish |
+| `common.empty` | Hozircha koʻrsatiladigan narsa yoʻq. |
 | `errors.generic` | Nimadir xato ketdi. Iltimos, qayta urinib koʻring. |
 | `errors.network` | Internet aloqasi yoʻq yoki server javob bermayapti. |
 | `errors.not_found` | Bunday sahifa topilmadi. |
@@ -384,10 +391,69 @@ File: `frontend/src/i18n/uz.json`
 | `home.status.ok` | Server ishlayapti (versiya {version}) |
 | `home.status.down` | Serverga ulanib boʻlmadi |
 | `home.letters_check` | Harflar tekshiruvi: oʻqish, gʻoya, ma'lumot |
+| `home.demos` | Namuna ma'lumotlar |
+| `home.upload` | Fayl yuklash |
+| `home.viewer_hint` | Fayl yuklash uchun tahlilchi yoki administrator huquqi kerak. |
+| `auth.login_title` | Tizimga kirish |
+| `auth.setup_title` | Birinchi administrator |
+| `auth.setup_hint` | Ish joyini va administrator hisobini yarating. |
+| `auth.login` | Kirish |
+| `auth.logout` | Chiqish |
+| `auth.email` | Elektron pochta |
+| `auth.password` | Parol |
+| `auth.display_name` | Ism |
+| `auth.workspace` | Ish joyi nomi |
+| `auth.create` | Yaratish |
+| `auth.first_admin` | Birinchi administratorni yaratish |
+| `jobs.queued` | Navbatda |
+| `jobs.running` | Bajarilmoqda |
+| `jobs.reading` | Fayl oʻqilmoqda |
+| `jobs.cleaning` | Tozalanmoqda |
+| `jobs.profiling` | Tahlil qilinmoqda |
+| `jobs.modeling` | Model tuzilmoqda |
+| `jobs.saving` | Saqlanmoqda |
+| `jobs.building` | Yigʻilmoqda |
+| `jobs.autopilot` | Koʻrsatkichlar tanlanmoqda |
+| `jobs.done` | Tayyor |
+| `jobs.failed` | Xatolik |
+| `jobs.progress` | Jarayon: {label} ({n}%) |
+| `dataset.summary` | Xulosa |
+| `dataset.dashboard` | Panel |
+| `dataset.insights` | Tushunchalar |
+| `dataset.ask` | Savol |
+| `dataset.kpis` | Koʻrsatkichlar |
+| `dataset.pii` | Olib tashlangan shaxsiy ustunlar |
+| `dataset.domain` | Soha |
+| `dataset.build` | Panelni yigʻish |
+| `dataset.change_domain` | Sohani oʻzgartirish |
+| `dataset.advanced` | Kengaytirilgan |
+| `ask.placeholder` | Savolingizni yozing… |
+| `ask.send` | Soʻrash |
+| `ask.suggested` | Tavsiya etilgan savollar |
+| `ask.verified` | Tasdiqlangan |
+| `ask.unverified` | Tasdiqlanmagan |
+| `ask.clarification` | Aniqlashtirish |
+| `insights.simpler` | Soddaroq tushuntir |
+| `insights.mark_done` | Bajarildi |
+| `insights.status_open` | Yangi |
+| `privacy.title` | Maxfiylik |
+| `privacy.bytes` | Tashqariga yuborilgan baytlar: {n} |
+| `admin.title` | Foydalanuvchilar |
+| `admin.create` | Foydalanuvchi qoʻshish |
+| `admin.role` | Rol |
+| `level.simple` | Oddiy |
+| `level.expert` | Mutaxassis |
+| `view.table` | Jadval koʻrinishi |
+| `view.chart` | Grafik koʻrinishi |
+| `export.csv` | CSV yuklab olish |
+| `filters.clear` | Tozalash |
+| `filters.active` | Faol filtrlar |
+| `kpis.enabled` | Yoqilgan |
+| `kpis.disabled` | Oʻchirilgan |
 
 ## KPI packs, labels and dashboards
 
-Strings: 310
+Strings: 343
 
 | Source | Key | Text |
 |---|---|---|
@@ -651,6 +717,39 @@ Strings: 310
 | label template | `days_between` | {a} dan {b} gacha oʻrtacha kunlar |
 | label template | `rate` | {col} rost boʻlgan qatorlar ulushi |
 | label template | `pass_rate` | Oʻtganlar ulushi ({col}) |
+| next steps | `missing.cost` | Tannarx ustuni yoʻq, shuning uchun yalpi foydani hisoblab boʻlmadi. Uni koʻrish uchun ustun qoʻshing. |
+| next steps | `missing.quantity` | Miqdor ustuni yoʻq, shuning uchun sotilgan dona sonini hisoblab boʻlmadi. Uni koʻrish uchun ustun qoʻshing. |
+| next steps | `missing.customer_id` | Mijoz raqami ustuni yoʻq, shuning uchun faol mijozlar va qaytmaslik ulushini hisoblab boʻlmadi. Ularni koʻrish uchun ustun qoʻshing. |
+| next steps | `missing.date` | Sana ustuni yoʻq, shuning uchun oʻzgarishlar, keskin sakrashlar va davrlarni solishtirishni hisoblab boʻlmadi. Ularni koʻrish uchun ustun qoʻshing. |
+| next steps | `missing.amount` | Summa ustuni yoʻq, shuning uchun daromad va boshqa pul koʻrsatkichlarini hisoblab boʻlmadi. Ularni koʻrish uchun ustun qoʻshing. |
+| next steps | `missing.status` | Holat ustuni yoʻq, shuning uchun bajarilgan yoki toʻlangan qatorlarga bogʻliq koʻrsatkichlar barcha qatorlarni hisoblaydi. Aniqroq natija uchun ustun qoʻshing. |
+| next steps | `missing.metric` | «{metric}» hisoblanmadi: kerakli ustun yoki qiymat topilmadi. |
+| next steps | `track.primary` | «{metric}»: asosiy koʻrsatkichingiz, shuning uchun uni har oy tekshiring. |
+| next steps | `track.trend` | «{metric}»: boshqa koʻrsatkichlar orasida eng katta oʻzgarish shunda boʻldi. |
+| next steps | `track.churn` | Mijozlarning qaytmaslik ulushi: keskin oʻzgardi, shuning uchun u joyiga tushishini kuzating. |
+| next steps | `track.rate` | «{metric}»: pasayishi yaxshi boʻlgan ulush; erta ogohlantirish belgisi. |
+| next steps | `quality.column` | «{column}» ustunining {pct} foizi boʻsh: uni toʻldiring yoki tuzatilguncha qarorlarda foydalanmang. |
+| next steps | `quality.gaps` | Ma'lumotlarda ba'zi kunlar yoʻq: eksport paytida ular tushib qolmaganini tekshiring. |
+| next steps | `quality.pii` | Shaxsiy ma'lumotlar ustunlari tahlildan chiqarildi: {columns}. |
+| ask frames | `headline.kpi` | {metric} {period}: {value}. |
+| ask frames | `headline.table` | {metric} {n} qator. |
+| ask frames | `explanation.kpi` | Bu son shu ma'lumotlardan hisoblandi. |
+| ask frames | `explanation.table` | Natija {n} qatordan iborat. |
+| ask frames | `so_what.up` | Bu yaxshi tomonga ketayotganini bildiradi. |
+| ask frames | `so_what.down` | Bu e'tibor talab qilishi mumkin. |
+| ask frames | `so_what.neutral` | Bu hozirgi holat. |
+| ask frames | `next_step.kpi` | Shu ko'rsatkichni oylar bo'yicha ham ko'ring. |
+| ask frames | `next_step.table` | Eng katta guruhni alohida tekshiring. |
+| ask frames | `badge.verified` | Tasdiqlangan |
+| ask frames | `badge.unverified` | Tasdiqlanmagan |
+| ask frames | `period.all` | barcha ma'lumot |
+| ask frames | `offline` | Hozir faqat aniq tushunarli savollarga javob bera olaman. |
+| ask followups | `trend` | {metric} oylar boʻyicha qanday oʻzgardi? |
+| ask followups | `last` | Oxirgi oyda {metric} qancha boʻldi? |
+| ask followups | `by` | {metric} {dimension} boʻyicha qancha? |
+| ask followups | `top` | Qaysi {dimension} {metric} boʻyicha eng yuqori? |
+| ask followups | `share` | {metric} ning {dimension} kesimidagi ulushi qancha? |
+| ask followups | `yoy` | {metric} oʻtgan yilga nisbatan qanday oʻzgardi? |
 | dashboard bank | `kpi_row` | Asosiy koʻrsatkichlar |
 | dashboard bank | `volume_trend` | Tranzaksiyalar hajmi dinamikasi |
 | dashboard bank | `volume_by_channel` | Kanallar boʻyicha hajm |

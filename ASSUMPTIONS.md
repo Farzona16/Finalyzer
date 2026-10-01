@@ -89,3 +89,16 @@ One line per decision that the specification left open (what, why).
 - U5: In the sales pack a lost deal keeps its last stage; "stalled" means no date in the last 90 days relative to the latest date in the data, not relative to today.
 - U5: KPI label rule: the glossary label wins over an AI label; an AI label without a reviewed glossary entry is marked `ai_translated`. User renames are plain text, max 100 characters, no control characters, per language.
 - U5: Expert details (definition and SQL) of a KPI are returned only to roles with SEE_SQL (analyst, admin).
+- U6: Sales outcome metrics (`won_revenue`, `deals_won`, `deals_lost`, `avg_deal_size`, `win_rate_pct`) are trended on `close_date`; `new_deals` is trended on the created-date axis. `avg_cycle_days` is reported only by `cycle_change`, not as a monthly trend.
+- U6: The sales demo generator plants win-rate by close month (S1), so the close-axis trend detector can see it. Pack `detectors:` lists: sales and statistics list the extra detectors; retail and bank list none (v2 detectors already fire there, and `outliers`/`correlation` on derived columns were trivial); expenses and project list `outliers` and `missing_pattern`.
+- U6: `UZ_POLISH` stays off (env default `false`) until `scripts/eval_uzbek.py` shows it improves a human-rated Uzbek sample.
+- U6: Metric labels that contain a glossary term are wrapped as `[[key|visible text]]` so the jargon lint can pass and the UI can show a tooltip; the reader still sees the label.
+- U7: The Ask router has 35 intents. A question with no matching pattern is a clarification, not a guessed total. Category filters and named months that ride on a total question are promoted to `filter_value` / `period_value`. Conversation inherit (`shu X boʻyicha-chi?`) is best-effort.
+- U7: `scripts/gen_uz_golden.py` writes `data/demo/golden_questions_uz.yaml` from the compiler so the stored SQL matches the router; the test still checks result-set equality, not the SQL string.
+- U8: Dialog, Select, Tabs and Tooltip are native HTML, not Radix/shadcn, so the initial JS budget stays under 350 KB gzipped. ECharts is loaded only with the dashboard route (`echarts/core` plus Bar/Line/Pie).
+- U8: OpenAPI TypeScript is produced by `scripts/export_openapi.py` (path+method list + checked-in `openapi.json`), not `openapi-typescript`, so the frontend has no extra codegen npm dependency (D22 deviation).
+- U8/U9: Playwright covers theme-init before first paint. First-admin → demo → dashboard is asserted by `backend/tests/test_e2e_smoke.py` and by UI unit tests; a full headed browser walk of that path is not required for CI.
+- U10: Layout editing with `react-grid-layout` is skipped (Should). Cross-filter uses `extra_column` / `extra_value` on tile queries. Gauge, funnel, heatmap, scatter, boxplot and treemap reuse pie/bar/line wrappers.
+- U11: Insight status is stored per dataset (`PATCH /datasets/{id}/insights/{finding_id}`), not as a global `/insights/{id}`, so one workspace cannot guess another’s ids. Finding status is not per-user.
+- U12: Streamlit (`app/`) stays in the git tree for v2 tests and is excluded from the Docker context (`.dockerignore`). The image CMD is Uvicorn, one worker.
+- U13: `docker compose` requires `APP_SECRET_KEY` in the environment; there is no default secret in the compose file.

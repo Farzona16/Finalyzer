@@ -6,7 +6,7 @@ roles_core: [status, date]
 column_hints: [project, loyiha, проект, budget, byudjet, бюджет, task, vazifa, задача, deadline, muddat, срок, planned, rejalashtirilgan, manager, rahbar]
 value_hints: [completed, in_progress, on_hold, planned, yakunlangan, jarayonda, toʻxtatilgan, завершён, в работе]
 dimensions_priority: [status, priority, manager, department]
-detectors: [trend_regression, group_difference, outliers, missing_pattern, correlation]
+detectors: [outliers, missing_pattern]
 dashboard_template: project
 demo_dataset: null
 suggested_questions:

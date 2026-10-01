@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from app.config import REPO_ROOT, BackendSettings
+from app.models import Dataset
+from app.schemas.datasets import StoredModel
 from core.config import Settings as CoreSettings
 
 
@@ -20,3 +22,11 @@ def core_settings(settings: BackendSettings, privacy_mode: str | None = None) ->
     if settings.app_env == "test":
         return CoreSettings(_env_file=None, llm_mode="offline", **values)  # type: ignore[arg-type]
     return CoreSettings(_env_file=REPO_ROOT / ".env", **values)  # type: ignore[arg-type]
+
+
+def domain_pack(row: Dataset, stored: StoredModel) -> str | None:
+    """The domain pack to use: a user override, then the autopilot guess."""
+    if stored.domain_source == "user" and row.domain:
+        return row.domain
+    domain = (stored.autopilot or {}).get("domain") or {}
+    return domain.get("pack") or row.domain

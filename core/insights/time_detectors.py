@@ -304,6 +304,7 @@ def detect_churn(ctx: InsightContext, bounds: tuple[date, date]) -> list[Finding
         "baseline_churn_pct": round(baseline * 100, 2),
         "change_pp": round(change_pp, 2),
         "new_customer_share_pct": round(new_share * 100, 2),
+        "customers": float(active_previous),
         "direction": direction,
         "assessment": assessment(direction, "down"),
     }

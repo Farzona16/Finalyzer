@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     sql_candidates: int = 3
     session_token_budget: int = 200_000
     send_category_values: bool = False
+    uz_polish: bool = False  # UZ_POLISH: optional AI rephrasing of Uzbek insight cards (off)
     max_file_mb: int = 50
     max_rows: int = 1_000_000
     query_timeout_s: int = 10

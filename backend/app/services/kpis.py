@@ -61,7 +61,7 @@ def run_for_build(
     """Run the autopilot on an open dataset and keep its result in ``stored``."""
     settings = core_settings(services.settings)
     override = row.domain if stored.domain_source == "user" else None
-    result = run_autopilot(model, con, settings, LLMGateway(settings), override)
+    result = run_autopilot(model, con, settings, LLMGateway(settings, services.audit), override)
     stored.autopilot = result.to_dict()
     if stored.domain_source != "user":
         row.domain = result.classification.pack

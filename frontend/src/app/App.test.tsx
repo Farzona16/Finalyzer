@@ -13,14 +13,26 @@ import { TestApp } from './App'
 function serverUp(up: boolean) {
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () =>
-      up
-        ? new Response(JSON.stringify({ version: '3.0.0', first_run_required: true }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        : Promise.reject(new TypeError('offline')),
-    ),
+    vi.fn(async (url: string) => {
+      const path = String(url)
+      if (!up) return Promise.reject(new TypeError('offline'))
+      if (path.includes('/auth/me')) {
+        return new Response(JSON.stringify({ code: 'not_authenticated', title: 'x', detail: 'x', status: 401 }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/problem+json' },
+        })
+      }
+      if (path.includes('/auth/csrf')) {
+        return new Response(JSON.stringify({ csrf_token: 'tok' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+      return new Response(JSON.stringify({ version: '3.0.0', first_run_required: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }),
   )
 }
 

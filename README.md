@@ -1,16 +1,17 @@
-<<<<<<< HEAD
 # Finalyzer
 
-Upload tabular data (CSV or Excel), check how it was read, and get a private interactive
-dashboard, insights whose numbers are checked against the data, and answers to questions in
-plain English. Every number on screen comes from a DuckDB query; an AI model only writes text
-and SQL, and its output is validated before anything is shown.
+Private, Uzbek-first analytics: upload CSV or Excel, get a dashboard, plain-language
+insights, and answers to questions. Numbers come from DuckDB. The model never invents
+figures and never writes SQL for KPIs.
+
+v3 is a FastAPI API plus a React SPA. The v2 Streamlit UI remains at `app/` for
+regression tests; it is **not** in the Docker image.
 
 ## Prerequisites
 
 - Python 3.12
-- Optional: Docker (to run the container), an LLM API key (without one the app runs in
-  offline mode and answers only the built-in demo questions)
+- Node 22+
+- Optional: Docker, PostgreSQL, an LLM API key (without one the app runs offline)
 
 ## Setup
 
@@ -20,99 +21,101 @@ Windows (PowerShell):
 py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.lock.txt
+py -3.12 -m venv backend\.venv
+backend\.venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
+cd frontend; npm ci; cd ..
 Copy-Item .env.example .env
 ```
 
-macOS / Linux:
+Generate signing keys and put them in `.env`:
 
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.lock.txt
-cp .env.example .env
+```powershell
+python -c "import secrets,base64; print(secrets.token_urlsafe(48)); print(base64.b64encode(secrets.token_bytes(32)).decode())"
 ```
 
-`requirements.txt` holds the loose ranges; `requirements.lock.txt` holds the exact versions
-that were tested. Edit `.env` to set the privacy mode, model and key (see the comments in
-`.env.example`). Never commit `.env`.
+macOS / Linux: the same commands with `python3.12` and `source .venv/bin/activate`.
 
-## Run the tests and the linter
+Never commit `.env`.
+
+## Run locally (two processes)
+
+Backend (from `backend/`):
 
 ```bash
-ruff check .
-pytest
+uvicorn app.main:create_app --factory --reload --port 8000
 ```
 
-The suite needs no network and no API key.
+Frontend:
 
-## Generate demo data
+```bash
+cd frontend
+npm run dev
+```
+
+Open http://localhost:5173. The Vite proxy forwards `/api` to the API.
+
+Or run API + built SPA from one origin after `npm run build` in `frontend/`:
+
+```bash
+cd backend
+uvicorn app.main:create_app --factory --port 8000
+```
+
+Open http://localhost:8000. First visit: `/setup` (or `/first-run`) to create the admin.
+
+## Tests
+
+```bash
+# v2 engine + Streamlit (from the repository root)
+.venv\Scripts\python.exe -m pytest tests
+ruff check core tests app scripts
+
+# v3 API (from backend/)
+backend\.venv\Scripts\python.exe -m pytest
+
+# v3 UI
+cd frontend
+npm test
+npm run typecheck
+npm run lint
+npm run build
+python ..\scripts\check_contrast.py
+python ..\scripts\check_js_budget.py
+npx playwright test
+```
+
+The suites need no network and no API key.
+
+## Demo data
 
 ```bash
 python scripts/generate_demo_data.py
 ```
 
-This writes two deterministic synthetic datasets (retail and bank, with planted patterns) to
-`data/demo/`. Running it twice gives identical files.
+Writes retail, bank, sales and statistics CSVs under `data/demo/`.
 
-## Start the app
+## Docker
 
 ```bash
-streamlit run app/main.py
+export APP_SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(48))")
+docker compose up --build
 ```
 
-Open http://localhost:8501. Choose a demo dataset in the sidebar or upload your own files.
+The app listens on port 8000 (`/healthz`). Streamlit is not in the image.
+TLS example: `docker compose --profile tls up` with `deploy/Caddyfile`.
 
-### Privacy modes (`PRIVACY_MODE`)
+Render: see `DEPLOY.md`. Health check path is `/healthz`.
+
+## Privacy modes (`PRIVACY_MODE`)
 
 | Mode | Model | What may leave the machine |
 | --- | --- | --- |
 | `demo` | cloud | synthetic data only (the demo datasets) |
-| `cloud` | cloud | schema and aggregates; no result rows; category values masked unless `SEND_CATEGORY_VALUES=true` |
+| `cloud` | cloud | schema and aggregates; no result rows |
 | `local` | Ollama (`LLM_API_BASE`) | nothing |
 
-With `LLM_MODE=offline`, or when there is no key outside local mode, the app uses templates
-and the golden demo questions only.
+`LLM_MODE=offline` uses templates and the golden demo questions only.
 
-## Run with Docker
-
-```bash
-docker build -t finalyzer .
-docker run --rm -p 8501:8501 --env-file .env finalyzer
-```
-
-The container listens on `$PORT` (default 8501) and runs as a non-root user. The demo
-datasets are generated while the image is built. To run fully offline:
-
-```bash
-docker run --rm -p 8501:8501 -e LLM_MODE=offline finalyzer
-```
-
-See `DEPLOY.md` for Render.
-
-## Evaluate the question answering
-
-```bash
-python scripts/eval_golden.py --model offline                      # must give 40/40
-python scripts/eval_golden.py --model provider/model-name          # uses LLM_API_KEY from .env
-python scripts/check_payloads.py exported_audit.jsonl              # scan an exported audit log
-python scripts/perf_check.py --json reports/perf.json              # timings on 1,000,000 rows
-```
-
-Reports are written to `reports/`. The model name must be one your key can use; a run where
-the provider rejects or throttles the calls is not an accuracy measurement.
-
-## Layout
-
-```
-app/       Streamlit UI (tabs, sidebar, theme, texts)
-core/      ingest, semantic model, DuckDB layer, dashboard queries, insights, NL->SQL, LLM gateway
-scripts/   demo data, evaluation, payload scan, performance check
-tests/     pytest suite
-reports/   generated reports (planted patterns, evaluation, performance)
-```
-
-Read `KNOWN_LIMITATIONS.md` before relying on the output and `ASSUMPTIONS.md` for the
-decisions made while building.
-=======
-# Finalyzer
->>>>>>> 113ba5e61a032fb1159699159563d4b7f00601ef
+Read `KNOWN_LIMITATIONS.md` and `ASSUMPTIONS.md` before relying on the output.
+Guides: `docs/USER_GUIDE_uz.md`, `docs/USER_GUIDE_en.md`, `docs/ADMIN_GUIDE.md`, `docs/SECURITY.md`.

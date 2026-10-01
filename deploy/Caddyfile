@@ -1,0 +1,12 @@
+# On-prem TLS terminator (S20). Point this at the app service.
+# Usage: docker compose --profile tls up
+# Set SITE_ADDRESS (e.g. analytics.example.uz) before starting.
+
+{$SITE_ADDRESS:localhost} {
+	encode gzip
+	reverse_proxy app:8000
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+}

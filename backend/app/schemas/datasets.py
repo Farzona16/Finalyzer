@@ -43,6 +43,10 @@ class StoredModel(BaseModel):
     autopilot: dict[str, Any] | None = None
     domain_source: Literal["auto", "user"] = "auto"
     kpi_prefs: dict[str, KpiPref] = Field(default_factory=dict)
+    insight_status: dict[str, str] = Field(
+        default_factory=dict
+    )  # finding id -> open|done|dismissed
+    layout: list[dict[str, Any]] | None = None  # user tile positions; None = template layout
 
 
 class JobError(BaseModel):
@@ -122,8 +126,9 @@ class DemoOut(BaseModel):
     tables: list[str]
 
 
-KpiLabel = Annotated[str, Str(strip_whitespace=True, min_length=1, max_length=100,
-                              pattern=r"^[^\x00-\x1f\x7f]+$")]
+KpiLabel = Annotated[
+    str, Str(strip_whitespace=True, min_length=1, max_length=100, pattern=r"^[^\x00-\x1f\x7f]+$")
+]
 
 
 class KpiPatchIn(StrictModel):

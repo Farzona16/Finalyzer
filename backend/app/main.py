@@ -20,7 +20,7 @@ from app.deps import api_rate_limit, csrf_protect
 from app.errors import install_error_handlers
 from app.jobs.runner import JobRunner
 from app.logging_setup import setup_logging
-from app.routers import admin, auth, datasets, jobs, kpis, meta
+from app.routers import admin, ask, auth, dashboard, datasets, insights, jobs, kpis, meta, privacy
 from app.security.bodylimit import BodyLimitMiddleware
 from app.security.middleware import RequestContextMiddleware, SecurityHeadersMiddleware
 from app.security.passwords import PasswordService, calibrated_hasher, fast_hasher
@@ -47,6 +47,10 @@ def build_api_router() -> APIRouter:
     api.include_router(datasets.router)
     api.include_router(datasets.demo_router)
     api.include_router(kpis.router)
+    api.include_router(ask.router)
+    api.include_router(dashboard.router)
+    api.include_router(insights.router)
+    api.include_router(privacy.router)
     api.include_router(jobs.router)
     return api
 

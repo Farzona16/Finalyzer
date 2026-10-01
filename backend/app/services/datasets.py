@@ -33,6 +33,7 @@ from core.ingest.flatten import (
     pick_fact_table,
     propose,
 )
+from core.llm.audit import AuditLog
 from core.models import Relationship
 
 logger = logging.getLogger("finalyzer.datasets")
@@ -54,6 +55,7 @@ class Services:
         self.factory = factory
         self.store = store
         self.handles = handles
+        self.audit = AuditLog()
 
 
 # ---------------------------------------------------------------------- lookups

@@ -6,7 +6,7 @@ roles_core: [date, amount, status, customer_id, order_id]
 column_hints: [txn, tranzaksiya, транзакция, branch, filial, филиал, fee, komissiya, комиссия, atm, card, karta, balance, qoldiq]
 value_hints: [completed, failed, reversed, yakunlangan, muvaffaqiyatsiz, bekor, успешно, отклонено]
 dimensions_priority: [channel, branch_name, txn_type, region, segment]
-detectors: [trend_regression, outliers, group_difference, skewness, missing_pattern, correlation]
+detectors: []
 dashboard_template: bank
 demo_dataset: bank
 suggested_questions:
