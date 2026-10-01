@@ -71,6 +71,18 @@ def bank_flat() -> pd.DataFrame:
     )
 
 
+def sales_flat() -> pd.DataFrame:
+    """Sales deals joined to owners with pandas (the owner name is personal data, so dropped)."""
+    deals = read_demo_csv("sales/deals.csv", ["created_date", "close_date"])
+    owners = read_demo_csv("sales/owners.csv", []).drop(columns=["owner_name"])
+    return deals.merge(owners, on="owner_id", how="left")
+
+
+def statistics_flat() -> pd.DataFrame:
+    """Quality measurements with the date column read as dates."""
+    return read_demo_csv("statistics/measurements.csv", ["measured_at"])
+
+
 def build_demo(name: str) -> DemoDataset:
     """Load, clean, join and describe one demo dataset."""
     workspace = workspace_from_raw(load_folder(DEMO_DIR / name))

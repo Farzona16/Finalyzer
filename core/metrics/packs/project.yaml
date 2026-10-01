@@ -1,0 +1,173 @@
+pack: project
+primary_metric: total_projects
+priority: 60
+labels: {uz: "Loyihalar", en: "Projects"}
+roles_core: [status, date]
+column_hints: [project, loyiha, проект, budget, byudjet, бюджет, task, vazifa, задача, deadline, muddat, срок, planned, rejalashtirilgan, manager, rahbar]
+value_hints: [completed, in_progress, on_hold, planned, yakunlangan, jarayonda, toʻxtatilgan, завершён, в работе]
+dimensions_priority: [status, priority, manager, department]
+detectors: [trend_regression, group_difference, outliers, missing_pattern, correlation]
+dashboard_template: project
+demo_dataset: null
+suggested_questions:
+  uz:
+    - "Nechta loyiha muddatida bajarildi?"
+    - "Qaysi loyiha byudjetdan oshib ketdi?"
+    - "Qaysi rahbarda eng koʻp loyiha bor?"
+    - "Bajarilgan vazifalar ulushi qancha?"
+  en:
+    - "How many projects met the deadline?"
+    - "Which project went over budget?"
+    - "Which manager has the most projects?"
+    - "What share of tasks is completed?"
+metrics:
+  - id: total_projects
+    label: Total projects
+    expr: "COUNT(DISTINCT \"project_id\")"
+    requires: ["column:project_id"]
+    unit: count
+    good_direction: neutral
+    additive: false
+    description: "Number of different projects."
+    priority: 100
+    i18n:
+      uz:
+        label: "Loyihalar soni"
+        label_gen: "Loyihalar sonining"
+        short: "Loyihalar"
+        description_plain: "Jami loyihalar soni."
+        synonyms: [jami loyihalar]
+  - id: completed
+    label: Completed projects
+    expr: "COUNT(DISTINCT \"project_id\") FILTER (WHERE {status} = 'completed')"
+    requires: ["column:project_id", status]
+    requires_values:
+      status: [completed]
+    unit: count
+    good_direction: up
+    additive: false
+    description: "Projects with status 'completed'."
+    priority: 85
+    i18n:
+      uz:
+        label: "Yakunlangan loyihalar"
+        label_gen: "Yakunlangan loyihalarning"
+        short: "Yakunlangan"
+        description_plain: "Tugallangan loyihalar soni."
+        synonyms: [tugallangan loyihalar, bajarilgan loyihalar]
+  - id: in_progress
+    label: In progress
+    expr: "COUNT(DISTINCT \"project_id\") FILTER (WHERE {status} = 'in_progress')"
+    requires: ["column:project_id", status]
+    requires_values:
+      status: [in_progress]
+    unit: count
+    good_direction: neutral
+    additive: false
+    description: "Projects with status 'in_progress'."
+    priority: 75
+    i18n:
+      uz:
+        label: "Jarayondagi loyihalar"
+        label_gen: "Jarayondagi loyihalarning"
+        short: "Jarayonda"
+        description_plain: "Hozir bajarilayotgan loyihalar soni."
+        synonyms: [davom etayotgan loyihalar]
+  - id: on_hold
+    label: On hold
+    expr: "COUNT(DISTINCT \"project_id\") FILTER (WHERE {status} = 'on_hold')"
+    requires: ["column:project_id", status]
+    requires_values:
+      status: [on_hold]
+    unit: count
+    good_direction: down
+    additive: false
+    description: "Projects with status 'on_hold'."
+    priority: 65
+    i18n:
+      uz:
+        label: "Toʻxtatilgan loyihalar"
+        label_gen: "Toʻxtatilgan loyihalarning"
+        short: "Toʻxtatilgan"
+        description_plain: "Vaqtincha toʻxtatib qoʻyilgan loyihalar soni."
+        synonyms: [kutilayotgan loyihalar]
+  - id: total_budget
+    label: Total budget
+    expr: "SUM(\"budget\")"
+    requires: ["column:budget"]
+    unit: currency
+    good_direction: neutral
+    additive: true
+    description: "Sum of the budget column."
+    priority: 80
+    i18n:
+      uz:
+        label: "Umumiy byudjet"
+        label_gen: "Umumiy byudjetning"
+        short: "Byudjet"
+        description_plain: "Barcha loyihalar byudjetining yigʻindisi."
+        synonyms: [jami byudjet]
+  - id: actual_cost
+    label: Actual cost
+    expr: "SUM(\"actual_cost\")"
+    requires: ["column:actual_cost"]
+    unit: currency
+    good_direction: neutral
+    additive: true
+    description: "Sum of the actual_cost column."
+    priority: 78
+    i18n:
+      uz:
+        label: "Haqiqiy xarajat"
+        label_gen: "Haqiqiy xarajatning"
+        short: "Xarajat"
+        description_plain: "Loyihalarga amalda sarflangan summa."
+        synonyms: [sarflangan summa, amaldagi xarajat]
+  - id: cost_variance
+    label: Cost variance
+    expr: "SUM(\"actual_cost\") - SUM(\"budget\")"
+    requires: ["column:actual_cost", "column:budget"]
+    unit: currency
+    good_direction: down
+    additive: true
+    description: "Actual cost minus budget. Positive means over budget."
+    priority: 82
+    i18n:
+      uz:
+        label: "Xarajat farqi"
+        label_gen: "Xarajat farqining"
+        short: "Farq"
+        description_plain: "Haqiqiy xarajat byudjetdan qancha farq qilishi. Musbat son byudjetdan oshganini bildiradi."
+        synonyms: [byudjetdan oshish, xarajat farqi]
+  - id: tasks_completed_pct
+    label: Tasks completed %
+    expr: "100.0 * SUM(\"tasks_done\") / NULLIF(SUM(\"tasks_total\"), 0)"
+    requires: ["column:tasks_done", "column:tasks_total"]
+    unit: percent
+    good_direction: up
+    additive: false
+    description: "Completed tasks as a percentage of all tasks."
+    priority: 76
+    i18n:
+      uz:
+        label: "Bajarilgan vazifalar ulushi"
+        label_gen: "Bajarilgan vazifalar ulushining"
+        short: "Vazifalar %"
+        description_plain: "Barcha vazifalarning necha foizi bajarilgani."
+        synonyms: [vazifalar bajarilishi]
+  - id: deadline_met_pct
+    label: Deadline met %
+    expr: "100.0 * COUNT(*) FILTER (WHERE \"actual_end\" <= \"planned_end\") / NULLIF(COUNT(*) FILTER (WHERE \"actual_end\" IS NOT NULL), 0)"
+    requires: ["column:actual_end", "column:planned_end"]
+    unit: percent
+    good_direction: up
+    additive: false
+    description: "Finished projects that ended on or before the planned end date."
+    priority: 84
+    i18n:
+      uz:
+        label: "Muddatida bajarilganlar ulushi"
+        label_gen: "Muddatida bajarilganlar ulushining"
+        short: "Muddatida %"
+        description_plain: "Tugagan loyihalarning necha foizi rejadagi muddatda tugagani."
+        synonyms: [muddatga rioya, oʻz vaqtida bajarilganlar]

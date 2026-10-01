@@ -17,7 +17,7 @@ from core.metrics.registry import (
     primary_metric,
     unavailable_metrics,
 )
-from tests.helpers import DemoDataset, bank_flat, retail_flat
+from tests.helpers import DemoDataset, bank_flat, retail_flat, sales_flat, statistics_flat
 
 Roles = dict[str, str]
 Reference = Callable[[pd.DataFrame, Roles], float]
@@ -33,6 +33,21 @@ def revenue(df: pd.DataFrame, r: Roles) -> float:
 
 def completed(df: pd.DataFrame, r: Roles) -> pd.DataFrame:
     return df[df[r["status"]] == "completed"]
+
+
+def cycle_days(df: pd.DataFrame, r: Roles) -> float:
+    """Average days between creation and closing of won deals (whole days, as DuckDB counts)."""
+    won = df[df[r["status"]] == "won"].dropna(subset=["close_date"])
+    created = pd.to_datetime(won[r["date"]])
+    closed = pd.to_datetime(won["close_date"])
+    return float((closed - created).dt.days.mean())
+
+
+def stalled(df: pd.DataFrame, r: Roles) -> float:
+    """Open deals created more than 90 days before the latest creation date."""
+    created = pd.to_datetime(df[r["date"]])
+    age = (created.max() - created).dt.days
+    return float(((df[r["status"]] == "open") & (age > 90)).sum())
 
 
 REFERENCES: dict[str, dict[str, Reference]] = {
@@ -61,6 +76,30 @@ REFERENCES: dict[str, dict[str, Reference]] = {
         "active_customers": lambda df, r: float(df[r["customer_id"]].nunique()),
         "fee_income": lambda df, r: df["fee"].sum(),
     },
+    "sales": {
+        "pipeline_value": lambda df, r: df.loc[df[r["status"]] == "open", r["amount"]].sum(),
+        "won_revenue": lambda df, r: df.loc[df[r["status"]] == "won", r["amount"]].sum(),
+        "deals_won": lambda df, r: float((df[r["status"]] == "won").sum()),
+        "deals_lost": lambda df, r: float((df[r["status"]] == "lost").sum()),
+        "win_rate_pct": lambda df, r: 100.0
+        * (df[r["status"]] == "won").sum()
+        / df[r["status"]].isin(["won", "lost"]).sum(),
+        "avg_deal_size": lambda df, r: df.loc[df[r["status"]] == "won", r["amount"]].mean(),
+        "avg_cycle_days": lambda df, r: cycle_days(df, r),
+        "new_deals": lambda df, r: float(len(df)),
+        "stalled_deals": lambda df, r: stalled(df, r),
+    },
+    "statistics": {
+        "row_count": lambda df, r: float(len(df)),
+        "pass_rate_pct": lambda df, r: 100.0 * (df["passed"] == "yes").mean(),
+    },
+    "project": {},
+    "expenses": {
+        "total_spend": lambda df, r: df[r["amount"]].sum(),
+        "avg_expense": lambda df, r: df[r["amount"]].mean(),
+        "expense_count": lambda df, r: float(len(df)),
+        "largest_expense": lambda df, r: df[r["amount"]].max(),
+    },
 }
 
 
@@ -73,10 +112,16 @@ def assert_close(actual: float, expected: float) -> None:
     assert math.isclose(actual, float(expected), rel_tol=1e-6, abs_tol=1e-9), (actual, expected)
 
 
-@pytest.mark.parametrize("name", ["retail", "bank"])
+FLATS = {
+    "retail": retail_flat, "bank": bank_flat, "sales": sales_flat, "statistics": statistics_flat,
+}
+MIN_CHECKED = {"retail": 10, "bank": 10, "sales": 15, "statistics": 4}
+
+
+@pytest.mark.parametrize("name", ["retail", "bank", "sales", "statistics"])
 def test_metrics_match_pandas_for_every_pack(name: str, request: pytest.FixtureRequest) -> None:
     dataset: DemoDataset = request.getfixturevalue(name)
-    frame = retail_flat() if name == "retail" else bank_flat()
+    frame = FLATS[name]()
     roles = dataset.model.roles
     checked = 0
     for pack in list_pack_names():
@@ -84,7 +129,7 @@ def test_metrics_match_pandas_for_every_pack(name: str, request: pytest.FixtureR
             actual = scalar(dataset, metric_sql(metric, roles))
             assert_close(actual, REFERENCES[pack][metric.id](frame, roles))
             checked += 1
-    assert checked >= 10
+    assert checked >= MIN_CHECKED[name]
 
 
 @pytest.mark.parametrize("name", ["retail", "bank"])

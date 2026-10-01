@@ -1,0 +1,201 @@
+{
+  "id": "bank",
+  "grid_columns": 12,
+  "tiles": [
+    {
+      "id": "kpi_row",
+      "type": "kpi_row",
+      "title_key": "dashboard.tiles.kpi_row",
+      "title": {
+        "en": "Key numbers",
+        "uz": "Asosiy koʻrsatkichlar"
+      },
+      "size": {
+        "w": 12,
+        "h": 2
+      },
+      "requires": [],
+      "cross_filter": false,
+      "metric_ids": [
+        "$tiles"
+      ]
+    },
+    {
+      "id": "volume_trend",
+      "type": "line",
+      "title_key": "dashboard.tiles.volume_trend",
+      "title": {
+        "en": "Volume trend",
+        "uz": "Tranzaksiyalar hajmi dinamikasi"
+      },
+      "size": {
+        "w": 8,
+        "h": 4
+      },
+      "requires": [
+        "date"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "time:month",
+      "compare": "previous_year"
+    },
+    {
+      "id": "volume_by_channel",
+      "type": "donut",
+      "title_key": "dashboard.tiles.volume_by_channel",
+      "title": {
+        "en": "Volume by channel",
+        "uz": "Kanallar boʻyicha hajm"
+      },
+      "size": {
+        "w": 4,
+        "h": 4
+      },
+      "requires": [
+        "column:channel"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "column:channel"
+    },
+    {
+      "id": "volume_by_branch",
+      "type": "bar_v",
+      "title_key": "dashboard.tiles.volume_by_branch",
+      "title": {
+        "en": "Volume by branch",
+        "uz": "Filiallar boʻyicha hajm"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "column:branch_name"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "column:branch_name"
+    },
+    {
+      "id": "failed_gauge",
+      "type": "gauge",
+      "title_key": "dashboard.tiles.failed_gauge",
+      "title": {
+        "en": "Failed transactions share",
+        "uz": "Muvaffaqiyatsiz tranzaksiyalar ulushi"
+      },
+      "size": {
+        "w": 3,
+        "h": 3
+      },
+      "requires": [
+        "metric:failed_rate_pct"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "failed_rate_pct"
+      ],
+      "inverse": true
+    },
+    {
+      "id": "status_by_month",
+      "type": "stacked_bar",
+      "title_key": "dashboard.tiles.status_by_month",
+      "title": {
+        "en": "Transactions by status and month",
+        "uz": "Holatlar boʻyicha oylik tranzaksiyalar"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "date",
+        "status",
+        "metric:txn_count"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "txn_count"
+      ],
+      "dimension": "status",
+      "stack_by": "time:month"
+    },
+    {
+      "id": "customers_trend",
+      "type": "line",
+      "title_key": "dashboard.tiles.customers_trend",
+      "title": {
+        "en": "Active customers",
+        "uz": "Faol mijozlar dinamikasi"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "date",
+        "metric:active_customers"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "active_customers"
+      ],
+      "dimension": "time:month"
+    },
+    {
+      "id": "type_by_weekday",
+      "type": "heatmap",
+      "title_key": "dashboard.tiles.type_by_weekday",
+      "title": {
+        "en": "Transaction type and weekday",
+        "uz": "Tranzaksiya turi va hafta kuni"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "date",
+        "column:txn_type",
+        "metric:txn_count"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "txn_count"
+      ],
+      "dimension": "column:txn_type",
+      "y": "weekday"
+    },
+    {
+      "id": "largest_branches",
+      "type": "table",
+      "title_key": "dashboard.tiles.largest_branches",
+      "title": {
+        "en": "Largest branches",
+        "uz": "Eng katta filiallar"
+      },
+      "size": {
+        "w": 12,
+        "h": 4
+      },
+      "requires": [
+        "column:branch_name"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "column:branch_name",
+      "limit": 10
+    }
+  ]
+}

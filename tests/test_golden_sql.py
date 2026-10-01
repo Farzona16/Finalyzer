@@ -10,7 +10,12 @@ import duckdb
 import pytest
 import yaml
 
-from scripts.generate_demo_data import generate_bank, generate_retail
+from scripts.generate_demo_data import (
+    generate_bank,
+    generate_retail,
+    generate_sales,
+    generate_statistics,
+)
 from tests.helpers import DEMO_DIR, bank_flat, retail_flat
 
 
@@ -66,6 +71,8 @@ def test_generator_is_deterministic_and_small(tmp_path: Path) -> None:
     for target in (first, second):
         generate_retail(target)
         generate_bank(target)
+        generate_sales(target)
+        generate_statistics(target)
     assert file_hashes(first) == file_hashes(second)
     assert file_hashes(first) == file_hashes(DEMO_DIR)
     total_bytes = sum(len(content) for content in file_hashes(first).values())

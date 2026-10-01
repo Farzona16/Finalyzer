@@ -222,7 +222,9 @@
     "owner",
     "manager",
     "rep",
-    "sales_rep"
+    "sales_rep",
+    "owner_id",
+    "account_manager"
    ]
   },
   "source": {
@@ -239,8 +241,7 @@
    ],
    "en": [
     "source",
-    "lead_source",
-    "channel"
+    "lead_source"
    ]
   },
   "target": {

@@ -56,5 +56,10 @@
   "errors.dataset_busy.title": "Data is busy",
   "errors.dataset_busy.detail": "This dataset is being processed right now. Try again in a moment.",
   "errors.model_invalid.title": "The choice was not accepted",
-  "errors.model_invalid.detail": "The chosen table, column or join does not fit. Change the selection."
+  "errors.model_invalid.detail": "The chosen table, column or join does not fit. Change the selection.",
+  "autopilot.guess": "We think your data looks like “{domain}”",
+  "autopilot.reason.roles": "Matching column types: {items}",
+  "autopilot.reason.names": "Matching column names: {items}",
+  "autopilot.reason.values": "Matching values: {items}",
+  "autopilot.reason.shape": "Many numeric columns and no amount column"
 }

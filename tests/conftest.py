@@ -32,3 +32,15 @@ def retail_findings(retail: DemoDataset) -> list[Finding]:
 def bank() -> DemoDataset:
     """Bank demo dataset (shared by all tests; do not leave filters applied)."""
     return build_demo("bank")
+
+
+@pytest.fixture(scope="session")
+def sales() -> DemoDataset:
+    """Sales (CRM) demo dataset."""
+    return build_demo("sales")
+
+
+@pytest.fixture(scope="session")
+def statistics() -> DemoDataset:
+    """Statistics (manufacturing quality) demo dataset."""
+    return build_demo("statistics")

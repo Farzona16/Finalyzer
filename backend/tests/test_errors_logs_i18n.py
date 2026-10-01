@@ -56,6 +56,9 @@ def test_no_catalog_key_is_unused() -> None:
     """Every key belongs to a known error code (a removed code must not leave text behind)."""
     for locale in ("uz", "en"):
         for key, value in catalog(locale).items():
+            if key.startswith("autopilot."):  # texts of the domain guess (phase U5)
+                assert value.strip(), (locale, key)
+                continue
             match = re.fullmatch(r"errors\.(\w+)\.(title|detail)", key)
             assert match, f"{locale}: {key} is not used by any code"
             assert match.group(1) in ERROR_STATUS, (locale, key)

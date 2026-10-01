@@ -1,0 +1,110 @@
+{
+  "id": "generic",
+  "grid_columns": 12,
+  "tiles": [
+    {
+      "id": "kpi_row",
+      "type": "kpi_row",
+      "title_key": "dashboard.tiles.kpi_row",
+      "title": {
+        "en": "Key numbers",
+        "uz": "Asosiy koʻrsatkichlar"
+      },
+      "size": {
+        "w": 12,
+        "h": 2
+      },
+      "requires": [],
+      "cross_filter": false,
+      "metric_ids": [
+        "$tiles"
+      ]
+    },
+    {
+      "id": "main_trend",
+      "type": "line",
+      "title_key": "dashboard.tiles.main_trend",
+      "title": {
+        "en": "Trend",
+        "uz": "Dinamika"
+      },
+      "size": {
+        "w": 12,
+        "h": 4
+      },
+      "requires": [
+        "date_column"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "time:month"
+    },
+    {
+      "id": "auto_share",
+      "type": "donut",
+      "title_key": "dashboard.tiles.auto_share",
+      "title": {
+        "en": "Shares",
+        "uz": "Ulushlar"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "dimension"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "auto"
+    },
+    {
+      "id": "auto_top",
+      "type": "bar_h",
+      "title_key": "dashboard.tiles.auto_top",
+      "title": {
+        "en": "Top 10",
+        "uz": "Eng koʻp 10 ta"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "dimension"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "auto",
+      "limit": 10
+    },
+    {
+      "id": "data_table",
+      "type": "table",
+      "title_key": "dashboard.tiles.data_table",
+      "title": {
+        "en": "Details",
+        "uz": "Jadval"
+      },
+      "size": {
+        "w": 12,
+        "h": 4
+      },
+      "requires": [
+        "dimension"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "$primary"
+      ],
+      "dimension": "auto",
+      "limit": 10
+    }
+  ]
+}

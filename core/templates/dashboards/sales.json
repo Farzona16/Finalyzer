@@ -1,0 +1,243 @@
+{
+  "id": "sales",
+  "grid_columns": 12,
+  "tiles": [
+    {
+      "id": "kpi_row",
+      "type": "kpi_row",
+      "title_key": "dashboard.tiles.kpi_row",
+      "title": {
+        "en": "Key numbers",
+        "uz": "Asosiy koʻrsatkichlar"
+      },
+      "size": {
+        "w": 12,
+        "h": 2
+      },
+      "requires": [],
+      "cross_filter": false,
+      "metric_ids": [
+        "$tiles"
+      ]
+    },
+    {
+      "id": "stage_funnel",
+      "type": "funnel",
+      "title_key": "dashboard.tiles.stage_funnel",
+      "title": {
+        "en": "Sales funnel",
+        "uz": "Savdo voronkasi"
+      },
+      "size": {
+        "w": 4,
+        "h": 4
+      },
+      "requires": [
+        "stage",
+        "metric:new_deals"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "new_deals"
+      ],
+      "dimension": "stage",
+      "ordered": true
+    },
+    {
+      "id": "pipeline_number",
+      "type": "big_number",
+      "title_key": "dashboard.tiles.pipeline_number",
+      "title": {
+        "en": "Open pipeline",
+        "uz": "Ochiq bitimlar summasi"
+      },
+      "size": {
+        "w": 2,
+        "h": 3
+      },
+      "requires": [
+        "metric:pipeline_value"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "pipeline_value"
+      ]
+    },
+    {
+      "id": "win_gauge",
+      "type": "gauge",
+      "title_key": "dashboard.tiles.win_gauge",
+      "title": {
+        "en": "Win rate",
+        "uz": "Yutish ulushi"
+      },
+      "size": {
+        "w": 3,
+        "h": 3
+      },
+      "requires": [
+        "metric:win_rate_pct"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "win_rate_pct"
+      ]
+    },
+    {
+      "id": "won_by_month",
+      "type": "line",
+      "title_key": "dashboard.tiles.won_by_month",
+      "title": {
+        "en": "Won revenue by month",
+        "uz": "Oylar boʻyicha yutilgan daromad"
+      },
+      "size": {
+        "w": 7,
+        "h": 4
+      },
+      "requires": [
+        "date",
+        "metric:won_revenue"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "won_revenue"
+      ],
+      "dimension": "time:month"
+    },
+    {
+      "id": "win_by_owner",
+      "type": "bar_h",
+      "title_key": "dashboard.tiles.win_by_owner",
+      "title": {
+        "en": "Win rate by owner",
+        "uz": "Menejerlar boʻyicha yutish ulushi"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "owner",
+        "metric:win_rate_pct"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "win_rate_pct"
+      ],
+      "dimension": "owner"
+    },
+    {
+      "id": "deals_by_source",
+      "type": "donut",
+      "title_key": "dashboard.tiles.deals_by_source",
+      "title": {
+        "en": "Deals by source",
+        "uz": "Manbalar boʻyicha bitimlar"
+      },
+      "size": {
+        "w": 3,
+        "h": 4
+      },
+      "requires": [
+        "source",
+        "metric:new_deals"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "new_deals"
+      ],
+      "dimension": "source"
+    },
+    {
+      "id": "quota_by_owner",
+      "type": "bullet",
+      "title_key": "dashboard.tiles.quota_by_owner",
+      "title": {
+        "en": "Quota attainment by owner",
+        "uz": "Reja bajarilishi menejerlar boʻyicha"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "owner",
+        "target",
+        "metric:quota_attainment_pct"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "quota_attainment_pct"
+      ],
+      "dimension": "owner"
+    },
+    {
+      "id": "deal_size_by_owner",
+      "type": "bullet",
+      "title_key": "dashboard.tiles.deal_size_by_owner",
+      "title": {
+        "en": "Average deal size by owner",
+        "uz": "Menejerlar boʻyicha oʻrtacha bitim summasi"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "owner",
+        "metric:avg_deal_size"
+      ],
+      "cross_filter": true,
+      "metric_ids": [
+        "avg_deal_size"
+      ],
+      "dimension": "owner",
+      "unless": [
+        "target"
+      ]
+    },
+    {
+      "id": "deal_size_histogram",
+      "type": "histogram",
+      "title_key": "dashboard.tiles.deal_size_histogram",
+      "title": {
+        "en": "Deal size distribution",
+        "uz": "Bitim summalari taqsimoti"
+      },
+      "size": {
+        "w": 4,
+        "h": 4
+      },
+      "requires": [
+        "amount"
+      ],
+      "cross_filter": false,
+      "dimension": "amount"
+    },
+    {
+      "id": "stalled_table",
+      "type": "table",
+      "title_key": "dashboard.tiles.stalled_table",
+      "title": {
+        "en": "Stalled deals",
+        "uz": "Toʻxtab qolgan bitimlar"
+      },
+      "size": {
+        "w": 12,
+        "h": 4
+      },
+      "requires": [
+        "status",
+        "date",
+        "metric:stalled_deals"
+      ],
+      "cross_filter": false,
+      "metric_ids": [
+        "stalled_deals"
+      ],
+      "dimension": "stalled_rows",
+      "limit": 10
+    }
+  ]
+}

@@ -56,5 +56,10 @@
   "errors.dataset_busy.title": "Ma'lumotlar band",
   "errors.dataset_busy.detail": "Bu ma'lumotlar hozir qayta ishlanmoqda. Birozdan keyin urinib koʻring.",
   "errors.model_invalid.title": "Tanlov qabul qilinmadi",
-  "errors.model_invalid.detail": "Tanlangan jadval, ustun yoki bogʻlanish mos kelmaydi. Tanlovni oʻzgartiring."
+  "errors.model_invalid.detail": "Tanlangan jadval, ustun yoki bogʻlanish mos kelmaydi. Tanlovni oʻzgartiring.",
+  "autopilot.guess": "Biz ma'lumotingizni «{domain}» turiga oʻxshatdik",
+  "autopilot.reason.roles": "Ustun turlari mos keldi: {items}",
+  "autopilot.reason.names": "Ustun nomlari mos keldi: {items}",
+  "autopilot.reason.values": "Qiymatlar mos keldi: {items}",
+  "autopilot.reason.shape": "Sonli ustunlar koʻp, summa ustuni yoʻq"
 }

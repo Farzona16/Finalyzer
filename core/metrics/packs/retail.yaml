@@ -1,5 +1,25 @@
 pack: retail
 primary_metric: revenue
+priority: 70
+labels: {uz: "Chakana savdo", en: "Retail"}
+roles_core: [date, amount, order_id, quantity, customer_id, cost]
+column_hints: [sale, sotuv, savdo, product, mahsulot, tovar, товар, store, doʻkon, магазин, sku, basket, chek, чек]
+value_hints: [paid, refunded, returned, pending, toʻlangan, qaytarilgan, оплачено, возврат]
+dimensions_priority: [category, store_name, channel, region, segment]
+detectors: [trend_regression, outliers, group_difference, skewness, missing_pattern, correlation]
+dashboard_template: retail
+demo_dataset: retail
+suggested_questions:
+  uz:
+    - "Oxirgi oyda daromad qancha boʻldi?"
+    - "Qaysi mahsulotlar eng koʻp sotilgan?"
+    - "Qaysi doʻkon eng yaxshi natija koʻrsatdi?"
+    - "Daromad oʻtgan yilga nisbatan qanday oʻzgardi?"
+  en:
+    - "What was the revenue last month?"
+    - "Which products sold the most?"
+    - "Which store performed best?"
+    - "How did revenue change compared with last year?"
 metrics:
   - id: revenue
     label: Revenue
@@ -12,6 +32,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Sales amount of paid sales. Uses all sales when there is no 'paid' status."
+    priority: 100
+    i18n:
+      uz:
+        label: "Daromad"
+        label_gen: "Daromadning"
+        short: "Daromad"
+        description_plain: "Toʻlangan savdolarning umumiy summasi. Toʻlov holati boʻlmasa, barcha savdolar olinadi."
+        synonyms: [tushum, savdo summasi, aylanma]
   - id: orders
     label: Orders
     expr: "COUNT(DISTINCT {order_id})"
@@ -20,6 +48,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Number of different orders."
+    priority: 85
+    i18n:
+      uz:
+        label: "Buyurtmalar"
+        label_gen: "Buyurtmalarning"
+        short: "Buyurtmalar"
+        description_plain: "Nechta turli buyurtma boʻlgani."
+        synonyms: [savdolar soni, cheklar soni]
   - id: avg_order_value
     label: Average order value
     expr: "SUM({amount}) / NULLIF(COUNT(DISTINCT {order_id}), 0)"
@@ -28,6 +64,14 @@ metrics:
     good_direction: up
     additive: false
     description: "Sales amount divided by the number of orders."
+    priority: 75
+    i18n:
+      uz:
+        label: "Oʻrtacha buyurtma summasi"
+        label_gen: "Oʻrtacha buyurtma summasining"
+        short: "Oʻrtacha chek"
+        description_plain: "Savdo summasini buyurtmalar soniga boʻlganda chiqadigan son."
+        synonyms: [oʻrtacha chek, oʻrtacha buyurtma]
   - id: units
     label: Units sold
     expr: "SUM({quantity})"
@@ -36,6 +80,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Total quantity sold."
+    priority: 60
+    i18n:
+      uz:
+        label: "Sotilgan dona"
+        label_gen: "Sotilgan donaning"
+        short: "Dona"
+        description_plain: "Jami sotilgan miqdor."
+        synonyms: [sotilgan miqdor, donalar soni]
   - id: gross_profit
     label: Gross profit
     expr: "SUM({amount}) - SUM({cost})"
@@ -44,6 +96,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Sales amount minus cost."
+    priority: 90
+    i18n:
+      uz:
+        label: "Yalpi foyda"
+        label_gen: "Yalpi foydaning"
+        short: "Foyda"
+        description_plain: "Savdo summasidan tannarx ayirilgandan keyin qolgan summa."
+        synonyms: [foyda, daromad minus tannarx]
   - id: gross_margin_pct
     label: Gross margin %
     expr: "100.0 * (SUM({amount}) - SUM({cost})) / NULLIF(SUM({amount}), 0)"
@@ -52,6 +112,14 @@ metrics:
     good_direction: up
     additive: false
     description: "Gross profit as a percentage of the sales amount."
+    priority: 80
+    i18n:
+      uz:
+        label: "Yalpi foyda ulushi"
+        label_gen: "Yalpi foyda ulushining"
+        short: "Foyda ulushi"
+        description_plain: "Foyda savdo summasining necha foizini tashkil etishi."
+        synonyms: [marja, foyda foizi, rentabellik]
   - id: active_customers
     label: Active customers
     expr: "COUNT(DISTINCT {customer_id})"
@@ -60,3 +128,11 @@ metrics:
     good_direction: up
     additive: false
     description: "Number of different customers who bought."
+    priority: 70
+    i18n:
+      uz:
+        label: "Faol mijozlar"
+        label_gen: "Faol mijozlarning"
+        short: "Mijozlar"
+        description_plain: "Xarid qilgan turli mijozlar soni."
+        synonyms: [mijozlar soni, xaridorlar]

@@ -1,0 +1,55 @@
+pack: statistics
+primary_metric: row_count
+priority: 40
+labels: {uz: "Statistika / oʻlchovlar", en: "Statistics / measurements"}
+roles_core: []
+column_hints: [sample, namuna, измерение, measure, oʻlchov, measurement, defect, nuqson, брак, batch, partiya, sensor, temperature, harorat, pressure, bosim, line, liniya, shift, smena]
+value_hints: [pass, fail, ok, "yes", "no", ha, yoʻq, прошёл]
+dimensions_priority: [line, shift, operator, group, category]
+detectors: [outliers, correlation, group_difference, skewness, missing_pattern, trend_regression]
+dashboard_template: statistics
+demo_dataset: statistics
+suggested_questions:
+  uz:
+    - "Qaysi ustun eng koʻp oʻzgaradi?"
+    - "Qaysi ikki koʻrsatkich bir-biriga bogʻliq?"
+    - "Qaysi guruhlar orasida katta farq bor?"
+    - "Yetishmayotgan qiymatlar qayerda toʻplangan?"
+  en:
+    - "Which column varies the most?"
+    - "Which two measures move together?"
+    - "Which groups differ the most?"
+    - "Where are the missing values concentrated?"
+metrics:
+  - id: row_count
+    label: Samples
+    expr: "COUNT(*)"
+    requires: []
+    unit: count
+    good_direction: neutral
+    additive: true
+    description: "Number of rows (samples) in the data."
+    priority: 90
+    i18n:
+      uz:
+        label: "Namunalar soni"
+        label_gen: "Namunalar sonining"
+        short: "Namunalar"
+        description_plain: "Ma'lumotdagi namunalar (qatorlar) soni."
+        synonyms: [qatorlar soni, oʻlchovlar soni]
+  - id: pass_rate_pct
+    label: Pass rate %
+    expr: "100.0 * AVG(CASE WHEN \"passed\" THEN 1.0 ELSE 0.0 END)"
+    requires: ["column:passed"]
+    unit: percent
+    good_direction: up
+    additive: false
+    description: "Share of rows where the column 'passed' is true."
+    priority: 80
+    i18n:
+      uz:
+        label: "Tekshiruvdan oʻtganlar ulushi"
+        label_gen: "Tekshiruvdan oʻtganlar ulushining"
+        short: "Oʻtganlar %"
+        description_plain: "Tekshiruvdan muvaffaqiyatli oʻtgan namunalar ulushi."
+        synonyms: [muvaffaqiyat ulushi, yaroqlilar ulushi]

@@ -17,7 +17,7 @@ from core.ingest.loader import load_folder
 from core.models import DatasetModel
 
 DEMO_DIR = Path(__file__).resolve().parents[2] / "data" / "demo"
-DEMO_NAMES = ("retail", "bank")
+DEMO_NAMES = ("retail", "bank", "sales", "statistics")
 MIN_CONTAINMENT = 0.95
 
 

@@ -491,6 +491,209 @@ def generate_bank(out_dir: Path) -> None:
     write_csv(build_branches(), out_dir / "bank" / "branches.csv")
 
 
+# ---------------------------------------------------------------- sales (CRM pipeline), Appendix B
+
+SALES_DEALS = 20_000
+SALES_OWNERS = 12
+SALES_SOURCES = ["website", "referral", "cold_call", "event", "partner"]
+SALES_SOURCE_WEIGHTS = [0.30, 0.18, 0.22, 0.12, 0.18]
+SALES_SOURCE_WIN = {
+    "website": 1.0, "referral": 1.55, "cold_call": 0.52, "event": 0.95, "partner": 1.1,
+}
+SALES_PRODUCTS = ["Basic", "Pro", "Enterprise"]
+SALES_PRODUCT_WEIGHTS = [0.55, 0.30, 0.15]
+SALES_PRODUCT_WIN = {"Basic": 1.04, "Pro": 1.0, "Enterprise": 0.94}
+SALES_PRODUCT_AMOUNT = {"Basic": 1_500_000, "Pro": 6_000_000, "Enterprise": 21_000_000}
+SALES_REGIONS = ["Tashkent", "Samarkand", "Bukhara", "Fergana", "Namangan", "Andijan"]
+STAGES = ["Lead", "Qualified", "Proposal", "Negotiation"]
+# Where a lost deal stopped (most die at Proposal: planted S5). The column `stage` of a lost
+# deal holds that last stage, because `status` already says "lost".
+LOST_AT_STAGE = [0.06, 0.08, 0.75, 0.11]
+OPEN_STAGE_WEIGHTS = [0.30, 0.25, 0.30, 0.15]
+LOST_REASONS = ["price", "competitor", "no_budget", "timing", "no_response"]
+BASE_WIN_RATE = 0.31  # until 2026-08 (S1)
+SEPTEMBER_WIN_RATE = 0.22
+STALLED_VALUE_SHARE = 0.18  # S6
+ENTERPRISE_WON_SHARE = 0.55  # S4
+LATE_CYCLE_FACTOR = 1.22  # S7: deals closing from 2026-07
+
+
+def owner_win_factors() -> np.ndarray:
+    """Win-rate factor per owner; owner 05 wins about half as often as the best (S2)."""
+    factors = np.linspace(0.92, 1.18, SALES_OWNERS)
+    factors = np.roll(factors, 3)
+    factors[4] = 0.55
+    return factors
+
+
+def sales_win_probability(
+    created: pd.DatetimeIndex, owner: np.ndarray, source: np.ndarray, product: np.ndarray
+) -> np.ndarray:
+    """Chance that a deal is won, from month, owner, source and product (S1, S2, S3)."""
+    september = np.asarray((created.year == 2026) & (created.month == 9))
+    base = np.where(september, SEPTEMBER_WIN_RATE, BASE_WIN_RATE)
+    owner_f = owner_win_factors()[owner]
+    source_f = np.array([SALES_SOURCE_WIN[v] for v in source])
+    product_f = np.array([SALES_PRODUCT_WIN[v] for v in product])
+    # 0.93 re-centres the factors so the average win rate stays near the base rate.
+    return np.clip(base * owner_f * source_f * product_f * 0.97, 0.02, 0.85)
+
+
+def build_sales_deals(rng: np.random.Generator) -> pd.DataFrame:
+    """The deals table with the planted patterns S1 to S8."""
+    days = build_days()
+    weights = np.linspace(0.8, 1.25, len(days))
+    created_idx = np.sort(rng.choice(len(days), size=SALES_DEALS, p=weights / weights.sum()))
+    created = days[created_idx]
+    owner = rng.integers(0, SALES_OWNERS, size=SALES_DEALS)
+    source = rng.choice(SALES_SOURCES, size=SALES_DEALS, p=SALES_SOURCE_WEIGHTS)
+    product = rng.choice(SALES_PRODUCTS, size=SALES_DEALS, p=SALES_PRODUCT_WEIGHTS)
+    won = rng.random(SALES_DEALS) < sales_win_probability(created, owner, source, product)
+    cycle = np.maximum(3, rng.lognormal(mean=np.log(34), sigma=0.45, size=SALES_DEALS)).round()
+    close = created + pd.to_timedelta(cycle, unit="D")
+    slow = np.asarray(close >= pd.Timestamp("2026-07-01"))
+    cycle = np.where(slow, (cycle * LATE_CYCLE_FACTOR).round(), cycle)
+    close = created + pd.to_timedelta(cycle, unit="D")
+    status = np.where(won, "won", "lost").astype(object)
+    status[np.asarray(close > pd.Timestamp(END))] = "open"
+    amount = rng.lognormal(0, 0.35, size=SALES_DEALS) * np.array(
+        [SALES_PRODUCT_AMOUNT[v] for v in product]
+    )
+    stage = np.empty(SALES_DEALS, dtype=object)
+    stage[status == "won"] = "Won"
+    lost = status == "lost"
+    stage[lost] = rng.choice(STAGES, size=int(lost.sum()), p=LOST_AT_STAGE)
+    is_open = status == "open"
+    stage[is_open] = rng.choice(STAGES, size=int(is_open.sum()), p=OPEN_STAGE_WEIGHTS)
+    status = stalled_pipeline(rng, created, close, status, stage, amount)
+    amount = scale_enterprise_share(amount, product, status)
+    frame = pd.DataFrame(
+        {
+            "deal_id": [f"D{i + 1:05d}" for i in range(SALES_DEALS)],
+            "created_date": created.strftime("%Y-%m-%d"),
+            "close_date": np.where(status == "open", "", close.strftime("%Y-%m-%d")),
+            "owner_id": [f"O{o + 1:02d}" for o in owner],
+            "region": rng.choice(SALES_REGIONS, size=SALES_DEALS),
+            "source": source,
+            "product": product,
+            "stage": stage,
+            "status": status,
+            "amount": amount.round(0),
+            "lost_reason": np.where(
+                status == "lost", rng.choice(LOST_REASONS, size=SALES_DEALS), ""
+            ),
+        }
+    )
+    frame.loc[rng.random(SALES_DEALS) < 0.30, "region"] = ""  # S8: 30% missing
+    return frame
+
+
+def stalled_pipeline(
+    rng: np.random.Generator,
+    created: pd.DatetimeIndex,
+    close: pd.DatetimeIndex,
+    status: np.ndarray,
+    stage: np.ndarray,
+    amount: np.ndarray,
+) -> np.ndarray:
+    """Keep some old deals open until about 18% of the open value is older than 90 days (S6)."""
+    cutoff = pd.Timestamp(END) - pd.Timedelta(days=90)
+    old = np.asarray(created < cutoff)
+    recent_open = float(amount[(status == "open") & ~old].sum())
+    target = STALLED_VALUE_SHARE / (1 - STALLED_VALUE_SHARE) * recent_open
+    recent = created >= cutoff - pd.Timedelta(days=200)
+    candidates = np.flatnonzero(old & (status != "open") & recent)
+    rng.shuffle(candidates)
+    status = status.copy()
+    total = float(amount[(status == "open") & old].sum())
+    for index in candidates:
+        if total >= target:
+            break
+        status[index] = "open"
+        stage[index] = rng.choice(STAGES[1:], p=[0.2, 0.55, 0.25])
+        total += float(amount[index])
+    return status
+
+
+def scale_enterprise_share(
+    amount: np.ndarray, product: np.ndarray, status: np.ndarray
+) -> np.ndarray:
+    """Rescale Enterprise amounts so they are exactly 55% of won revenue (S4)."""
+    won = status == "won"
+    enterprise = won & (product == "Enterprise")
+    other = float(amount[won & ~enterprise].sum())
+    current = float(amount[enterprise].sum())
+    wanted = ENTERPRISE_WON_SHARE / (1 - ENTERPRISE_WON_SHARE) * other
+    return np.where(product == "Enterprise", amount * wanted / current, amount)
+
+
+def build_sales_owners() -> pd.DataFrame:
+    """The owners dimension."""
+    return pd.DataFrame(
+        {
+            "owner_id": [f"O{i + 1:02d}" for i in range(SALES_OWNERS)],
+            "owner_name": [f"Owner {i + 1:02d}" for i in range(SALES_OWNERS)],
+            "team": ["North" if i % 2 == 0 else "South" for i in range(SALES_OWNERS)],
+        }
+    )
+
+
+def generate_sales(out_dir: Path) -> None:
+    """Write the sales dataset into ``out_dir``."""
+    rng = np.random.default_rng(SEED + 2)
+    write_csv(build_sales_deals(rng), out_dir / "sales" / "deals.csv")
+    write_csv(build_sales_owners(), out_dir / "sales" / "owners.csv")
+
+
+# ------------------------------------------------------- statistics (manufacturing), Appendix B
+
+STATS_ROWS = 30_000
+STATS_LINES = ["A", "B", "C"]
+
+
+def build_measurements(rng: np.random.Generator) -> pd.DataFrame:
+    """Quality measurements with the planted patterns T1 to T8."""
+    n = STATS_ROWS
+    days = build_days()
+    day_index = np.sort(rng.integers(0, len(days), size=n))
+    progress = day_index / (len(days) - 1)
+    line = rng.choice(STATS_LINES, size=n)
+    shift = rng.choice(["day", "night"], size=n)
+    operator = [f"Op {i + 1:02d}" for i in rng.integers(0, 20, size=n)]
+    temperature = rng.normal(70, 4, size=n) + 6.0 * progress  # T7: steady rise
+    pressure = rng.normal(100, 8, size=n)  # T8: unrelated to thickness
+    thickness = rng.normal(5.0, 0.15, size=n) + np.where(line == "C", 0.25, 0.0)  # T3
+    outliers = rng.choice(n, size=int(n * 0.005), replace=False)  # T1: 0.5% extreme values
+    sign = rng.choice([-1, 1], size=outliers.size)
+    thickness[outliers] += sign * rng.uniform(1.0, 1.6, outliers.size)
+    z = (temperature - 70) / 4
+    night = np.where(shift == "night", 2.0, 1.0)  # T4
+    rate = 0.9 * np.clip(1 + 1.5 * z, 0.15, None) * night  # T2, T5
+    defects = rng.poisson(rate * rng.gamma(40.0, 1 / 40.0, size=n))
+    missing = rng.random(n) < np.where(line == "B", 0.405, 0.0225)  # T6: 15%, mostly line B
+    frame = pd.DataFrame(
+        {
+            "sample_id": [f"S{i + 1:06d}" for i in range(n)],
+            "measured_at": days[day_index].strftime("%Y-%m-%d"),
+            "line": line,
+            "shift": shift,
+            "operator": operator,
+            "temperature": temperature.round(2),
+            "pressure": np.where(missing, np.nan, pressure.round(2)),
+            "thickness_mm": thickness.round(3),
+            "defects": defects,
+            "passed": np.where(defects <= 5, "yes", "no"),
+        }
+    )
+    return frame
+
+
+def generate_statistics(out_dir: Path) -> None:
+    """Write the statistics dataset into ``out_dir``."""
+    rng = np.random.default_rng(SEED + 3)
+    write_csv(build_measurements(rng), out_dir / "statistics" / "measurements.csv")
+
+
 def main() -> None:
     """Command line entry point."""
     parser = argparse.ArgumentParser(description="Generate Finalyzer demo data.")
@@ -499,6 +702,8 @@ def main() -> None:
     out_dir = Path(args.out)
     generate_retail(out_dir)
     generate_bank(out_dir)
+    generate_sales(out_dir)
+    generate_statistics(out_dir)
     print(f"Demo data written to {out_dir}")
 
 

@@ -1,5 +1,25 @@
 pack: generic
 primary_metric: row_count
+priority: 10
+labels: {uz: "Umumiy ma'lumot", en: "General data"}
+roles_core: []
+column_hints: []
+value_hints: []
+dimensions_priority: [status, category, segment, region, channel]
+detectors: [outliers, correlation, group_difference, skewness, missing_pattern, trend_regression]
+dashboard_template: generic
+demo_dataset: null
+suggested_questions:
+  uz:
+    - "Jami nechta qator bor?"
+    - "Qaysi ustunda yetishmayotgan qiymatlar koʻp?"
+    - "Oylar boʻyicha qanday oʻzgarish bor?"
+    - "Eng katta summa qaysi guruhda?"
+  en:
+    - "How many rows are there?"
+    - "Which column has the most missing values?"
+    - "How does it change by month?"
+    - "Which group has the largest total?"
 metrics:
   - id: row_count
     label: Rows
@@ -9,6 +29,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Number of rows in the data."
+    priority: 60
+    i18n:
+      uz:
+        label: "Qatorlar soni"
+        label_gen: "Qatorlar sonining"
+        short: "Qatorlar"
+        description_plain: "Ma'lumotdagi qatorlar soni."
+        synonyms: [qatorlar, yozuvlar soni, nechta qator]
   - id: total_amount
     label: Total amount
     expr: "SUM({amount})"
@@ -17,6 +45,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Sum of the amount column."
+    priority: 80
+    i18n:
+      uz:
+        label: "Umumiy summa"
+        label_gen: "Umumiy summaning"
+        short: "Summa"
+        description_plain: "Summa ustunidagi barcha qiymatlarning yigʻindisi."
+        synonyms: [jami summa, umumiy qiymat, tushum]
   - id: avg_amount
     label: Average amount
     expr: "AVG({amount})"
@@ -25,6 +61,14 @@ metrics:
     good_direction: neutral
     additive: false
     description: "Average of the amount column."
+    priority: 55
+    i18n:
+      uz:
+        label: "Oʻrtacha summa"
+        label_gen: "Oʻrtacha summaning"
+        short: "Oʻrtacha"
+        description_plain: "Bitta yozuvdagi oʻrtacha summa."
+        synonyms: [oʻrtacha qiymat, oʻrtacha chek]
   - id: distinct_customers
     label: Distinct customers
     expr: "COUNT(DISTINCT {customer_id})"
@@ -33,3 +77,11 @@ metrics:
     good_direction: up
     additive: false
     description: "Number of different customers."
+    priority: 50
+    i18n:
+      uz:
+        label: "Mijozlar soni"
+        label_gen: "Mijozlar sonining"
+        short: "Mijozlar"
+        description_plain: "Nechta turli mijoz borligi."
+        synonyms: [mijozlar, xaridorlar soni]

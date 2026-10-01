@@ -6,7 +6,7 @@ What to look for: natural wording, the letters `oʻ` and `gʻ` (U+02BB), the apo
 
 * Frames: 78
 * Glossary entries: 189
-* Backend messages: 58
+* Backend messages: 63
 * Frontend messages: 22
 
 ## Message frames
@@ -350,6 +350,11 @@ File: `backend/app/locales/uz.json`
 | `errors.dataset_busy.detail` | Bu ma'lumotlar hozir qayta ishlanmoqda. Birozdan keyin urinib koʻring. |
 | `errors.model_invalid.title` | Tanlov qabul qilinmadi |
 | `errors.model_invalid.detail` | Tanlangan jadval, ustun yoki bogʻlanish mos kelmaydi. Tanlovni oʻzgartiring. |
+| `autopilot.guess` | Biz ma'lumotingizni «{domain}» turiga oʻxshatdik |
+| `autopilot.reason.roles` | Ustun turlari mos keldi: {items} |
+| `autopilot.reason.names` | Ustun nomlari mos keldi: {items} |
+| `autopilot.reason.values` | Qiymatlar mos keldi: {items} |
+| `autopilot.reason.shape` | Sonli ustunlar koʻp, summa ustuni yoʻq |
 
 ## Frontend messages
 
@@ -379,3 +384,320 @@ File: `frontend/src/i18n/uz.json`
 | `home.status.ok` | Server ishlayapti (versiya {version}) |
 | `home.status.down` | Serverga ulanib boʻlmadi |
 | `home.letters_check` | Harflar tekshiruvi: oʻqish, gʻoya, ma'lumot |
+
+## KPI packs, labels and dashboards
+
+Strings: 310
+
+| Source | Key | Text |
+|---|---|---|
+| pack bank | `labels` | Bank tranzaksiyalari |
+| pack bank | `question` | Qaysi filialda tranzaksiyalar eng koʻp? |
+| pack bank | `question` | Muvaffaqiyatsiz tranzaksiyalar ulushi qancha? |
+| pack bank | `question` | Oxirgi oyda tranzaksiyalar hajmi qancha boʻldi? |
+| pack bank | `question` | Qaysi kanal eng koʻp ishlatiladi? |
+| pack bank | `txn_count.label` | Tranzaksiyalar soni |
+| pack bank | `txn_count.label_gen` | Tranzaksiyalar sonining |
+| pack bank | `txn_count.short` | Tranzaksiyalar |
+| pack bank | `txn_count.description_plain` | Barcha tranzaksiyalarning soni. |
+| pack bank | `txn_count.synonyms` | operatsiyalar soni, tranzaksiyalar |
+| pack bank | `txn_volume.label` | Tranzaksiyalar hajmi |
+| pack bank | `txn_volume.label_gen` | Tranzaksiyalar hajmining |
+| pack bank | `txn_volume.short` | Hajm |
+| pack bank | `txn_volume.description_plain` | Muvaffaqiyatli yakunlangan tranzaksiyalarning umumiy summasi. |
+| pack bank | `txn_volume.synonyms` | hajm, aylanma, operatsiyalar hajmi |
+| pack bank | `avg_ticket.label` | Oʻrtacha tranzaksiya summasi |
+| pack bank | `avg_ticket.label_gen` | Oʻrtacha tranzaksiya summasining |
+| pack bank | `avg_ticket.short` | Oʻrtacha summa |
+| pack bank | `avg_ticket.description_plain` | Bitta yakunlangan tranzaksiyaning oʻrtacha summasi. |
+| pack bank | `avg_ticket.synonyms` | oʻrtacha chek, oʻrtacha summa |
+| pack bank | `failed_rate_pct.label` | Muvaffaqiyatsiz tranzaksiyalar ulushi |
+| pack bank | `failed_rate_pct.label_gen` | Muvaffaqiyatsiz tranzaksiyalar ulushining |
+| pack bank | `failed_rate_pct.short` | Xatolar ulushi |
+| pack bank | `failed_rate_pct.description_plain` | Tranzaksiyalarning necha foizi muvaffaqiyatsiz tugagani. |
+| pack bank | `failed_rate_pct.synonyms` | xatolar foizi, rad etilganlar ulushi |
+| pack bank | `active_customers.label` | Faol mijozlar |
+| pack bank | `active_customers.label_gen` | Faol mijozlarning |
+| pack bank | `active_customers.short` | Mijozlar |
+| pack bank | `active_customers.description_plain` | Tranzaksiya qilgan turli mijozlar soni. |
+| pack bank | `active_customers.synonyms` | mijozlar soni, faol foydalanuvchilar |
+| pack bank | `fee_income.label` | Komissiya daromadi |
+| pack bank | `fee_income.label_gen` | Komissiya daromadining |
+| pack bank | `fee_income.short` | Komissiya |
+| pack bank | `fee_income.description_plain` | Komissiya ustunidagi summalarning yigʻindisi. |
+| pack bank | `fee_income.synonyms` | komissiya, xizmat haqi |
+| pack expenses | `labels` | Xarajatlar |
+| pack expenses | `question` | Eng koʻp pul qaysi turdagi xarajatga ketgan? |
+| pack expenses | `question` | Xarajatlar oylar boʻyicha qanday oʻzgargan? |
+| pack expenses | `question` | Qaysi ta'minotchiga eng koʻp pul toʻlangan? |
+| pack expenses | `question` | Eng katta xarajat qancha? |
+| pack expenses | `total_spend.label` | Umumiy xarajat |
+| pack expenses | `total_spend.label_gen` | Umumiy xarajatning |
+| pack expenses | `total_spend.short` | Xarajat |
+| pack expenses | `total_spend.description_plain` | Barcha xarajatlarning yigʻindisi. |
+| pack expenses | `total_spend.synonyms` | jami xarajat, sarf |
+| pack expenses | `avg_expense.label` | Oʻrtacha xarajat |
+| pack expenses | `avg_expense.label_gen` | Oʻrtacha xarajatning |
+| pack expenses | `avg_expense.short` | Oʻrtacha |
+| pack expenses | `avg_expense.description_plain` | Bitta xarajatning oʻrtacha summasi. |
+| pack expenses | `avg_expense.synonyms` | oʻrtacha sarf |
+| pack expenses | `expense_count.label` | Xarajatlar soni |
+| pack expenses | `expense_count.label_gen` | Xarajatlar sonining |
+| pack expenses | `expense_count.short` | Soni |
+| pack expenses | `expense_count.description_plain` | Xarajat yozuvlari soni. |
+| pack expenses | `expense_count.synonyms` | yozuvlar soni |
+| pack expenses | `largest_expense.label` | Eng katta xarajat |
+| pack expenses | `largest_expense.label_gen` | Eng katta xarajatning |
+| pack expenses | `largest_expense.short` | Eng katta |
+| pack expenses | `largest_expense.description_plain` | Bitta xarajatning eng katta summasi. |
+| pack expenses | `largest_expense.synonyms` | maksimal xarajat |
+| pack generic | `labels` | Umumiy ma'lumot |
+| pack generic | `question` | Jami nechta qator bor? |
+| pack generic | `question` | Qaysi ustunda yetishmayotgan qiymatlar koʻp? |
+| pack generic | `question` | Oylar boʻyicha qanday oʻzgarish bor? |
+| pack generic | `question` | Eng katta summa qaysi guruhda? |
+| pack generic | `row_count.label` | Qatorlar soni |
+| pack generic | `row_count.label_gen` | Qatorlar sonining |
+| pack generic | `row_count.short` | Qatorlar |
+| pack generic | `row_count.description_plain` | Ma'lumotdagi qatorlar soni. |
+| pack generic | `row_count.synonyms` | qatorlar, yozuvlar soni, nechta qator |
+| pack generic | `total_amount.label` | Umumiy summa |
+| pack generic | `total_amount.label_gen` | Umumiy summaning |
+| pack generic | `total_amount.short` | Summa |
+| pack generic | `total_amount.description_plain` | Summa ustunidagi barcha qiymatlarning yigʻindisi. |
+| pack generic | `total_amount.synonyms` | jami summa, umumiy qiymat, tushum |
+| pack generic | `avg_amount.label` | Oʻrtacha summa |
+| pack generic | `avg_amount.label_gen` | Oʻrtacha summaning |
+| pack generic | `avg_amount.short` | Oʻrtacha |
+| pack generic | `avg_amount.description_plain` | Bitta yozuvdagi oʻrtacha summa. |
+| pack generic | `avg_amount.synonyms` | oʻrtacha qiymat, oʻrtacha chek |
+| pack generic | `distinct_customers.label` | Mijozlar soni |
+| pack generic | `distinct_customers.label_gen` | Mijozlar sonining |
+| pack generic | `distinct_customers.short` | Mijozlar |
+| pack generic | `distinct_customers.description_plain` | Nechta turli mijoz borligi. |
+| pack generic | `distinct_customers.synonyms` | mijozlar, xaridorlar soni |
+| pack project | `labels` | Loyihalar |
+| pack project | `question` | Nechta loyiha muddatida bajarildi? |
+| pack project | `question` | Qaysi loyiha byudjetdan oshib ketdi? |
+| pack project | `question` | Qaysi rahbarda eng koʻp loyiha bor? |
+| pack project | `question` | Bajarilgan vazifalar ulushi qancha? |
+| pack project | `total_projects.label` | Loyihalar soni |
+| pack project | `total_projects.label_gen` | Loyihalar sonining |
+| pack project | `total_projects.short` | Loyihalar |
+| pack project | `total_projects.description_plain` | Jami loyihalar soni. |
+| pack project | `total_projects.synonyms` | jami loyihalar |
+| pack project | `completed.label` | Yakunlangan loyihalar |
+| pack project | `completed.label_gen` | Yakunlangan loyihalarning |
+| pack project | `completed.short` | Yakunlangan |
+| pack project | `completed.description_plain` | Tugallangan loyihalar soni. |
+| pack project | `completed.synonyms` | tugallangan loyihalar, bajarilgan loyihalar |
+| pack project | `in_progress.label` | Jarayondagi loyihalar |
+| pack project | `in_progress.label_gen` | Jarayondagi loyihalarning |
+| pack project | `in_progress.short` | Jarayonda |
+| pack project | `in_progress.description_plain` | Hozir bajarilayotgan loyihalar soni. |
+| pack project | `in_progress.synonyms` | davom etayotgan loyihalar |
+| pack project | `on_hold.label` | Toʻxtatilgan loyihalar |
+| pack project | `on_hold.label_gen` | Toʻxtatilgan loyihalarning |
+| pack project | `on_hold.short` | Toʻxtatilgan |
+| pack project | `on_hold.description_plain` | Vaqtincha toʻxtatib qoʻyilgan loyihalar soni. |
+| pack project | `on_hold.synonyms` | kutilayotgan loyihalar |
+| pack project | `total_budget.label` | Umumiy byudjet |
+| pack project | `total_budget.label_gen` | Umumiy byudjetning |
+| pack project | `total_budget.short` | Byudjet |
+| pack project | `total_budget.description_plain` | Barcha loyihalar byudjetining yigʻindisi. |
+| pack project | `total_budget.synonyms` | jami byudjet |
+| pack project | `actual_cost.label` | Haqiqiy xarajat |
+| pack project | `actual_cost.label_gen` | Haqiqiy xarajatning |
+| pack project | `actual_cost.short` | Xarajat |
+| pack project | `actual_cost.description_plain` | Loyihalarga amalda sarflangan summa. |
+| pack project | `actual_cost.synonyms` | sarflangan summa, amaldagi xarajat |
+| pack project | `cost_variance.label` | Xarajat farqi |
+| pack project | `cost_variance.label_gen` | Xarajat farqining |
+| pack project | `cost_variance.short` | Farq |
+| pack project | `cost_variance.description_plain` | Haqiqiy xarajat byudjetdan qancha farq qilishi. Musbat son byudjetdan oshganini bildiradi. |
+| pack project | `cost_variance.synonyms` | byudjetdan oshish, xarajat farqi |
+| pack project | `tasks_completed_pct.label` | Bajarilgan vazifalar ulushi |
+| pack project | `tasks_completed_pct.label_gen` | Bajarilgan vazifalar ulushining |
+| pack project | `tasks_completed_pct.short` | Vazifalar % |
+| pack project | `tasks_completed_pct.description_plain` | Barcha vazifalarning necha foizi bajarilgani. |
+| pack project | `tasks_completed_pct.synonyms` | vazifalar bajarilishi |
+| pack project | `deadline_met_pct.label` | Muddatida bajarilganlar ulushi |
+| pack project | `deadline_met_pct.label_gen` | Muddatida bajarilganlar ulushining |
+| pack project | `deadline_met_pct.short` | Muddatida % |
+| pack project | `deadline_met_pct.description_plain` | Tugagan loyihalarning necha foizi rejadagi muddatda tugagani. |
+| pack project | `deadline_met_pct.synonyms` | muddatga rioya, oʻz vaqtida bajarilganlar |
+| pack retail | `labels` | Chakana savdo |
+| pack retail | `question` | Oxirgi oyda daromad qancha boʻldi? |
+| pack retail | `question` | Qaysi mahsulotlar eng koʻp sotilgan? |
+| pack retail | `question` | Qaysi doʻkon eng yaxshi natija koʻrsatdi? |
+| pack retail | `question` | Daromad oʻtgan yilga nisbatan qanday oʻzgardi? |
+| pack retail | `revenue.label` | Daromad |
+| pack retail | `revenue.label_gen` | Daromadning |
+| pack retail | `revenue.short` | Daromad |
+| pack retail | `revenue.description_plain` | Toʻlangan savdolarning umumiy summasi. Toʻlov holati boʻlmasa, barcha savdolar olinadi. |
+| pack retail | `revenue.synonyms` | tushum, savdo summasi, aylanma |
+| pack retail | `orders.label` | Buyurtmalar |
+| pack retail | `orders.label_gen` | Buyurtmalarning |
+| pack retail | `orders.short` | Buyurtmalar |
+| pack retail | `orders.description_plain` | Nechta turli buyurtma boʻlgani. |
+| pack retail | `orders.synonyms` | savdolar soni, cheklar soni |
+| pack retail | `avg_order_value.label` | Oʻrtacha buyurtma summasi |
+| pack retail | `avg_order_value.label_gen` | Oʻrtacha buyurtma summasining |
+| pack retail | `avg_order_value.short` | Oʻrtacha chek |
+| pack retail | `avg_order_value.description_plain` | Savdo summasini buyurtmalar soniga boʻlganda chiqadigan son. |
+| pack retail | `avg_order_value.synonyms` | oʻrtacha chek, oʻrtacha buyurtma |
+| pack retail | `units.label` | Sotilgan dona |
+| pack retail | `units.label_gen` | Sotilgan donaning |
+| pack retail | `units.short` | Dona |
+| pack retail | `units.description_plain` | Jami sotilgan miqdor. |
+| pack retail | `units.synonyms` | sotilgan miqdor, donalar soni |
+| pack retail | `gross_profit.label` | Yalpi foyda |
+| pack retail | `gross_profit.label_gen` | Yalpi foydaning |
+| pack retail | `gross_profit.short` | Foyda |
+| pack retail | `gross_profit.description_plain` | Savdo summasidan tannarx ayirilgandan keyin qolgan summa. |
+| pack retail | `gross_profit.synonyms` | foyda, daromad minus tannarx |
+| pack retail | `gross_margin_pct.label` | Yalpi foyda ulushi |
+| pack retail | `gross_margin_pct.label_gen` | Yalpi foyda ulushining |
+| pack retail | `gross_margin_pct.short` | Foyda ulushi |
+| pack retail | `gross_margin_pct.description_plain` | Foyda savdo summasining necha foizini tashkil etishi. |
+| pack retail | `gross_margin_pct.synonyms` | marja, foyda foizi, rentabellik |
+| pack retail | `active_customers.label` | Faol mijozlar |
+| pack retail | `active_customers.label_gen` | Faol mijozlarning |
+| pack retail | `active_customers.short` | Mijozlar |
+| pack retail | `active_customers.description_plain` | Xarid qilgan turli mijozlar soni. |
+| pack retail | `active_customers.synonyms` | mijozlar soni, xaridorlar |
+| pack sales | `labels` | Savdo (CRM) |
+| pack sales | `question` | Yutish ulushi oylar boʻyicha qanday oʻzgargan? |
+| pack sales | `question` | Qaysi menejer eng koʻp bitim yutgan? |
+| pack sales | `question` | Qaysi manbadan eng yaxshi mijozlar keladi? |
+| pack sales | `question` | Nechta bitim toʻxtab qolgan? |
+| pack sales | `pipeline_value.label` | Ochiq bitimlar summasi |
+| pack sales | `pipeline_value.label_gen` | Ochiq bitimlar summasining |
+| pack sales | `pipeline_value.short` | Ochiq summa |
+| pack sales | `pipeline_value.description_plain` | Hali yopilmagan bitimlarning umumiy summasi. |
+| pack sales | `pipeline_value.synonyms` | voronka qiymati, pipeline, ochiq summa |
+| pack sales | `won_revenue.label` | Yutilgan bitimlar daromadi |
+| pack sales | `won_revenue.label_gen` | Yutilgan bitimlar daromadining |
+| pack sales | `won_revenue.short` | Daromad |
+| pack sales | `won_revenue.description_plain` | Yutilgan bitimlarning umumiy summasi. |
+| pack sales | `won_revenue.synonyms` | daromad, tushum, yutilgan summa |
+| pack sales | `deals_won.label` | Yutilgan bitimlar |
+| pack sales | `deals_won.label_gen` | Yutilgan bitimlarning |
+| pack sales | `deals_won.short` | Yutilgan |
+| pack sales | `deals_won.description_plain` | Muvaffaqiyatli yopilgan bitimlar soni. |
+| pack sales | `deals_won.synonyms` | yutilganlar, yopilgan bitimlar |
+| pack sales | `deals_lost.label` | Yutqazilgan bitimlar |
+| pack sales | `deals_lost.label_gen` | Yutqazilgan bitimlarning |
+| pack sales | `deals_lost.short` | Yutqazilgan |
+| pack sales | `deals_lost.description_plain` | Yutqazilgan bitimlar soni. |
+| pack sales | `deals_lost.synonyms` | yoʻqotilgan bitimlar, rad etilganlar |
+| pack sales | `win_rate_pct.label` | Yutish ulushi |
+| pack sales | `win_rate_pct.label_gen` | Yutish ulushining |
+| pack sales | `win_rate_pct.short` | Yutish % |
+| pack sales | `win_rate_pct.description_plain` | Yopilgan bitimlarning necha foizi yutilgani. |
+| pack sales | `win_rate_pct.synonyms` | konversiya, yutish foizi, win rate |
+| pack sales | `avg_deal_size.label` | Oʻrtacha bitim summasi |
+| pack sales | `avg_deal_size.label_gen` | Oʻrtacha bitim summasining |
+| pack sales | `avg_deal_size.short` | Oʻrtacha bitim |
+| pack sales | `avg_deal_size.description_plain` | Bitta yutilgan bitimning oʻrtacha summasi. |
+| pack sales | `avg_deal_size.synonyms` | oʻrtacha chek, bitim hajmi |
+| pack sales | `avg_cycle_days.label` | Oʻrtacha sotuv davri |
+| pack sales | `avg_cycle_days.label_gen` | Oʻrtacha sotuv davrining |
+| pack sales | `avg_cycle_days.short` | Sotuv davri |
+| pack sales | `avg_cycle_days.description_plain` | Bitim ochilganidan yopilgunicha oʻtgan oʻrtacha kunlar soni. |
+| pack sales | `avg_cycle_days.synonyms` | sotuv sikli, bitim davomiyligi |
+| pack sales | `new_deals.label` | Yangi bitimlar |
+| pack sales | `new_deals.label_gen` | Yangi bitimlarning |
+| pack sales | `new_deals.short` | Yangi |
+| pack sales | `new_deals.description_plain` | Tanlangan davrda ochilgan bitimlar soni. |
+| pack sales | `new_deals.synonyms` | ochilgan bitimlar, yangi mijozlar |
+| pack sales | `stalled_deals.label` | Toʻxtab qolgan bitimlar |
+| pack sales | `stalled_deals.label_gen` | Toʻxtab qolgan bitimlarning |
+| pack sales | `stalled_deals.short` | Toʻxtagan |
+| pack sales | `stalled_deals.description_plain` | 90 kundan koʻp vaqt ochiq turgan bitimlar soni. |
+| pack sales | `stalled_deals.synonyms` | qotib qolgan bitimlar, eskirgan bitimlar |
+| pack sales | `quota_attainment_pct.label` | Rejaning bajarilishi |
+| pack sales | `quota_attainment_pct.label_gen` | Rejaning bajarilishining |
+| pack sales | `quota_attainment_pct.short` | Reja % |
+| pack sales | `quota_attainment_pct.description_plain` | Yutilgan summa rejaning necha foizini tashkil etishi. |
+| pack sales | `quota_attainment_pct.synonyms` | reja bajarilishi, kvota bajarilishi |
+| pack statistics | `labels` | Statistika / oʻlchovlar |
+| pack statistics | `question` | Qaysi ustun eng koʻp oʻzgaradi? |
+| pack statistics | `question` | Qaysi ikki koʻrsatkich bir-biriga bogʻliq? |
+| pack statistics | `question` | Qaysi guruhlar orasida katta farq bor? |
+| pack statistics | `question` | Yetishmayotgan qiymatlar qayerda toʻplangan? |
+| pack statistics | `row_count.label` | Namunalar soni |
+| pack statistics | `row_count.label_gen` | Namunalar sonining |
+| pack statistics | `row_count.short` | Namunalar |
+| pack statistics | `row_count.description_plain` | Ma'lumotdagi namunalar (qatorlar) soni. |
+| pack statistics | `row_count.synonyms` | qatorlar soni, oʻlchovlar soni |
+| pack statistics | `pass_rate_pct.label` | Tekshiruvdan oʻtganlar ulushi |
+| pack statistics | `pass_rate_pct.label_gen` | Tekshiruvdan oʻtganlar ulushining |
+| pack statistics | `pass_rate_pct.short` | Oʻtganlar % |
+| pack statistics | `pass_rate_pct.description_plain` | Tekshiruvdan muvaffaqiyatli oʻtgan namunalar ulushi. |
+| pack statistics | `pass_rate_pct.synonyms` | muvaffaqiyat ulushi, yaroqlilar ulushi |
+| label template | `rows` | Qatorlar soni |
+| label template | `avg` | Oʻrtacha {col} |
+| label template | `sum` | {col} yigʻindisi |
+| label template | `median` | {col} medianasi |
+| label template | `std` | {col}: standart ogʻish |
+| label template | `min` | Eng kichik {col} |
+| label template | `max` | Eng katta {col} |
+| label template | `p25` | {col}: 25-percentil |
+| label template | `p75` | {col}: 75-percentil |
+| label template | `distinct` | {col}: turli qiymatlar soni |
+| label template | `share` | {col}: «{value}» ulushi |
+| label template | `missing` | {col}: yetishmayotgan qiymatlar ulushi |
+| label template | `days_between` | {a} dan {b} gacha oʻrtacha kunlar |
+| label template | `rate` | {col} rost boʻlgan qatorlar ulushi |
+| label template | `pass_rate` | Oʻtganlar ulushi ({col}) |
+| dashboard bank | `kpi_row` | Asosiy koʻrsatkichlar |
+| dashboard bank | `volume_trend` | Tranzaksiyalar hajmi dinamikasi |
+| dashboard bank | `volume_by_channel` | Kanallar boʻyicha hajm |
+| dashboard bank | `volume_by_branch` | Filiallar boʻyicha hajm |
+| dashboard bank | `failed_gauge` | Muvaffaqiyatsiz tranzaksiyalar ulushi |
+| dashboard bank | `status_by_month` | Holatlar boʻyicha oylik tranzaksiyalar |
+| dashboard bank | `customers_trend` | Faol mijozlar dinamikasi |
+| dashboard bank | `type_by_weekday` | Tranzaksiya turi va hafta kuni |
+| dashboard bank | `largest_branches` | Eng katta filiallar |
+| dashboard generic | `kpi_row` | Asosiy koʻrsatkichlar |
+| dashboard generic | `main_trend` | Dinamika |
+| dashboard generic | `auto_share` | Ulushlar |
+| dashboard generic | `auto_top` | Eng koʻp 10 ta |
+| dashboard generic | `data_table` | Jadval |
+| dashboard project | `kpi_row` | Asosiy koʻrsatkichlar |
+| dashboard project | `status_donut` | Holatlar boʻyicha loyihalar |
+| dashboard project | `cost_variance_trend` | Xarajat farqi oylar boʻyicha |
+| dashboard project | `budget_vs_actual` | Haqiqiy xarajat va byudjet |
+| dashboard project | `deadline_gauge` | Muddatida bajarilganlar |
+| dashboard project | `by_priority` | Ustuvorlik boʻyicha loyihalar |
+| dashboard project | `by_manager` | Rahbarlar boʻyicha loyihalar |
+| dashboard project | `tasks_status` | Vazifalar holati |
+| dashboard retail | `kpi_row` | Asosiy koʻrsatkichlar |
+| dashboard retail | `revenue_trend` | Daromad dinamikasi |
+| dashboard retail | `revenue_by_category` | Toifalar boʻyicha daromad ulushi |
+| dashboard retail | `top_products` | Eng koʻp sotilgan 10 mahsulot |
+| dashboard retail | `revenue_by_channel` | Kanallar va oylar boʻyicha daromad |
+| dashboard retail | `margin_gauge` | Yalpi foyda ulushi |
+| dashboard retail | `revenue_by_store` | Doʻkonlar daromadi, oʻrtachaga nisbatan |
+| dashboard retail | `weekday_heatmap` | Hafta kunlari boʻyicha faollik |
+| dashboard retail | `top_customers` | Eng koʻp xarid qilgan mijozlar |
+| dashboard sales | `kpi_row` | Asosiy koʻrsatkichlar |
+| dashboard sales | `stage_funnel` | Savdo voronkasi |
+| dashboard sales | `pipeline_number` | Ochiq bitimlar summasi |
+| dashboard sales | `win_gauge` | Yutish ulushi |
+| dashboard sales | `won_by_month` | Oylar boʻyicha yutilgan daromad |
+| dashboard sales | `win_by_owner` | Menejerlar boʻyicha yutish ulushi |
+| dashboard sales | `deals_by_source` | Manbalar boʻyicha bitimlar |
+| dashboard sales | `quota_by_owner` | Reja bajarilishi menejerlar boʻyicha |
+| dashboard sales | `deal_size_by_owner` | Menejerlar boʻyicha oʻrtacha bitim summasi |
+| dashboard sales | `deal_size_histogram` | Bitim summalari taqsimoti |
+| dashboard sales | `stalled_table` | Toʻxtab qolgan bitimlar |
+| dashboard statistics | `kpi_row` | Asosiy koʻrsatkichlar |
+| dashboard statistics | `main_histogram` | Asosiy koʻrsatkich taqsimoti |
+| dashboard statistics | `main_boxplot` | Qiymatlar oraligʻi |
+| dashboard statistics | `correlation_heatmap` | Koʻrsatkichlar orasidagi bogʻliqlik |
+| dashboard statistics | `top_pair_scatter` | Eng bogʻliq ikki koʻrsatkich |
+| dashboard statistics | `group_means` | Guruhlar oʻrtachalari |
+| dashboard statistics | `mean_over_time` | Oʻrtacha qiymat dinamikasi |
+| dashboard statistics | `describe_table` | Tavsifiy statistika |

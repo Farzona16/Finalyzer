@@ -1,0 +1,20 @@
+{
+  "_note": "Label templates for metrics the autopilot makes without a pack. {col}, {value}, {a}, {b} are column names or category values taken from the data. Set reviewed to true after a native speaker has checked the Uzbek text.",
+  "templates": {
+    "rows": {"en": "Rows", "uz": "Qatorlar soni", "reviewed": false},
+    "avg": {"en": "Average {col}", "uz": "Oʻrtacha {col}", "reviewed": false},
+    "sum": {"en": "Total {col}", "uz": "{col} yigʻindisi", "reviewed": false},
+    "median": {"en": "Median {col}", "uz": "{col} medianasi", "reviewed": false},
+    "std": {"en": "Spread of {col} (standard deviation)", "uz": "{col}: standart ogʻish", "reviewed": false},
+    "min": {"en": "Lowest {col}", "uz": "Eng kichik {col}", "reviewed": false},
+    "max": {"en": "Highest {col}", "uz": "Eng katta {col}", "reviewed": false},
+    "p25": {"en": "{col}: 25th percentile", "uz": "{col}: 25-percentil", "reviewed": false},
+    "p75": {"en": "{col}: 75th percentile", "uz": "{col}: 75-percentil", "reviewed": false},
+    "distinct": {"en": "Different values of {col}", "uz": "{col}: turli qiymatlar soni", "reviewed": false},
+    "share": {"en": "Share of «{value}» in {col}", "uz": "{col}: «{value}» ulushi", "reviewed": false},
+    "missing": {"en": "Missing share of {col}", "uz": "{col}: yetishmayotgan qiymatlar ulushi", "reviewed": false},
+    "days_between": {"en": "Average days from {a} to {b}", "uz": "{a} dan {b} gacha oʻrtacha kunlar", "reviewed": false},
+    "rate": {"en": "Share of rows where {col} is true", "uz": "{col} rost boʻlgan qatorlar ulushi", "reviewed": false},
+    "pass_rate": {"en": "Pass rate ({col})", "uz": "Oʻtganlar ulushi ({col})", "reviewed": false}
+  }
+}

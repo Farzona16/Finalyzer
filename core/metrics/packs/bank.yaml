@@ -1,5 +1,25 @@
 pack: bank
 primary_metric: txn_volume
+priority: 70
+labels: {uz: "Bank tranzaksiyalari", en: "Bank transactions"}
+roles_core: [date, amount, status, customer_id, order_id]
+column_hints: [txn, tranzaksiya, транзакция, branch, filial, филиал, fee, komissiya, комиссия, atm, card, karta, balance, qoldiq]
+value_hints: [completed, failed, reversed, yakunlangan, muvaffaqiyatsiz, bekor, успешно, отклонено]
+dimensions_priority: [channel, branch_name, txn_type, region, segment]
+detectors: [trend_regression, outliers, group_difference, skewness, missing_pattern, correlation]
+dashboard_template: bank
+demo_dataset: bank
+suggested_questions:
+  uz:
+    - "Qaysi filialda tranzaksiyalar eng koʻp?"
+    - "Muvaffaqiyatsiz tranzaksiyalar ulushi qancha?"
+    - "Oxirgi oyda tranzaksiyalar hajmi qancha boʻldi?"
+    - "Qaysi kanal eng koʻp ishlatiladi?"
+  en:
+    - "Which branch has the most transactions?"
+    - "What share of transactions failed?"
+    - "What was the transaction volume last month?"
+    - "Which channel is used the most?"
 metrics:
   - id: txn_count
     label: Transactions
@@ -9,6 +29,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Number of transactions."
+    priority: 80
+    i18n:
+      uz:
+        label: "Tranzaksiyalar soni"
+        label_gen: "Tranzaksiyalar sonining"
+        short: "Tranzaksiyalar"
+        description_plain: "Barcha tranzaksiyalarning soni."
+        synonyms: [operatsiyalar soni, tranzaksiyalar]
   - id: txn_volume
     label: Transaction volume
     expr: "SUM({amount}) FILTER (WHERE {status} = 'completed')"
@@ -19,6 +47,14 @@ metrics:
     good_direction: up
     additive: true
     description: "Total amount of completed transactions."
+    priority: 100
+    i18n:
+      uz:
+        label: "Tranzaksiyalar hajmi"
+        label_gen: "Tranzaksiyalar hajmining"
+        short: "Hajm"
+        description_plain: "Muvaffaqiyatli yakunlangan tranzaksiyalarning umumiy summasi."
+        synonyms: [hajm, aylanma, operatsiyalar hajmi]
   - id: avg_ticket
     label: Average ticket
     expr: "AVG({amount}) FILTER (WHERE {status} = 'completed')"
@@ -29,6 +65,14 @@ metrics:
     good_direction: up
     additive: false
     description: "Average amount of a completed transaction."
+    priority: 70
+    i18n:
+      uz:
+        label: "Oʻrtacha tranzaksiya summasi"
+        label_gen: "Oʻrtacha tranzaksiya summasining"
+        short: "Oʻrtacha summa"
+        description_plain: "Bitta yakunlangan tranzaksiyaning oʻrtacha summasi."
+        synonyms: [oʻrtacha chek, oʻrtacha summa]
   - id: failed_rate_pct
     label: Failed rate %
     expr: "100.0 * COUNT(*) FILTER (WHERE {status} = 'failed') / NULLIF(COUNT(*), 0)"
@@ -39,6 +83,14 @@ metrics:
     good_direction: down
     additive: false
     description: "Share of transactions with status 'failed'."
+    priority: 85
+    i18n:
+      uz:
+        label: "Muvaffaqiyatsiz tranzaksiyalar ulushi"
+        label_gen: "Muvaffaqiyatsiz tranzaksiyalar ulushining"
+        short: "Xatolar ulushi"
+        description_plain: "Tranzaksiyalarning necha foizi muvaffaqiyatsiz tugagani."
+        synonyms: [xatolar foizi, rad etilganlar ulushi]
   - id: active_customers
     label: Active customers
     expr: "COUNT(DISTINCT {customer_id})"
@@ -47,6 +99,14 @@ metrics:
     good_direction: up
     additive: false
     description: "Number of different customers who made a transaction."
+    priority: 75
+    i18n:
+      uz:
+        label: "Faol mijozlar"
+        label_gen: "Faol mijozlarning"
+        short: "Mijozlar"
+        description_plain: "Tranzaksiya qilgan turli mijozlar soni."
+        synonyms: [mijozlar soni, faol foydalanuvchilar]
   - id: fee_income
     label: Fee income
     expr: "SUM(fee)"
@@ -55,3 +115,11 @@ metrics:
     good_direction: up
     additive: true
     description: "Total of the column named fee."
+    priority: 65
+    i18n:
+      uz:
+        label: "Komissiya daromadi"
+        label_gen: "Komissiya daromadining"
+        short: "Komissiya"
+        description_plain: "Komissiya ustunidagi summalarning yigʻindisi."
+        synonyms: [komissiya, xizmat haqi]

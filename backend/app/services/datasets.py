@@ -270,6 +270,8 @@ def apply_model_patch(
         raise AppError("model_invalid", extra={"reason": error.message}) from error
     if patch.domain is not None:
         dataset.domain = patch.domain
+        candidate.domain_source = "user"
+    candidate.autopilot = None  # stale until the next build; the user's KPI edits are kept
     dataset.model_json = candidate.model_dump_json()
     dataset.row_count = candidate.built.row_count if candidate.built else dataset.row_count
     dataset.status = "profiled"
@@ -286,6 +288,7 @@ def start_build(
     dataset.status = "building"
     db.commit()
     dataset_id, workspace_id = dataset.id, dataset.workspace_id
+    from app.services import kpis as kpi_service  # late import: kpis needs this module
 
     def job(ctx: JobContext) -> dict[str, object]:
         ctx.progress(20, "jobs.building")
@@ -297,6 +300,10 @@ def start_build(
                 model = stored_model(row)
                 with services.handles.use(row.id, row.storage_name, model) as handle:
                     model.built = handle.model
+                    ctx.progress(55, "jobs.autopilot")
+                    kpi_service.run_for_build(
+                        services, row, model, handle.model, handle.workspace.con
+                    )
                 row.model_json = model.model_dump_json()
                 row.status = "ready"
         except Exception:

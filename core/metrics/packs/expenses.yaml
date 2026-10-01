@@ -1,0 +1,87 @@
+pack: expenses
+primary_metric: total_spend
+priority: 55
+labels: {uz: "Xarajatlar", en: "Expenses"}
+roles_core: [date, amount]
+column_hints: [expense, xarajat, расход, vendor, supplier, ta'minotchi, поставщик, category, kategoriya, категория, receipt, invoice, hisob, счёт, department, boʻlim]
+value_hints: [approved, rejected, reimbursed, travel, office, rent, salary, tasdiqlangan, rad etilgan, ijara, maosh, аренда, зарплата]
+dimensions_priority: [category, department, vendor, status]
+detectors: [trend_regression, outliers, group_difference, skewness, missing_pattern]
+dashboard_template: generic
+demo_dataset: null
+suggested_questions:
+  uz:
+    - "Eng koʻp pul qaysi turdagi xarajatga ketgan?"
+    - "Xarajatlar oylar boʻyicha qanday oʻzgargan?"
+    - "Qaysi ta'minotchiga eng koʻp pul toʻlangan?"
+    - "Eng katta xarajat qancha?"
+  en:
+    - "Which category took the most money?"
+    - "How did spending change by month?"
+    - "Which vendor received the most money?"
+    - "What was the largest expense?"
+metrics:
+  - id: total_spend
+    label: Total spend
+    expr: "SUM({amount})"
+    requires: [amount]
+    unit: currency
+    good_direction: down
+    additive: true
+    description: "Sum of all expenses."
+    priority: 100
+    i18n:
+      uz:
+        label: "Umumiy xarajat"
+        label_gen: "Umumiy xarajatning"
+        short: "Xarajat"
+        description_plain: "Barcha xarajatlarning yigʻindisi."
+        synonyms: [jami xarajat, sarf]
+  - id: avg_expense
+    label: Average expense
+    expr: "AVG({amount})"
+    requires: [amount]
+    unit: currency
+    good_direction: neutral
+    additive: false
+    description: "Average amount of one expense."
+    priority: 70
+    i18n:
+      uz:
+        label: "Oʻrtacha xarajat"
+        label_gen: "Oʻrtacha xarajatning"
+        short: "Oʻrtacha"
+        description_plain: "Bitta xarajatning oʻrtacha summasi."
+        synonyms: [oʻrtacha sarf]
+  - id: expense_count
+    label: Number of expenses
+    expr: "COUNT(*)"
+    requires: [date]
+    unit: count
+    good_direction: neutral
+    additive: true
+    description: "Number of expense records."
+    priority: 60
+    i18n:
+      uz:
+        label: "Xarajatlar soni"
+        label_gen: "Xarajatlar sonining"
+        short: "Soni"
+        description_plain: "Xarajat yozuvlari soni."
+        synonyms: [yozuvlar soni]
+  - id: largest_expense
+    label: Largest expense
+    expr: "MAX({amount})"
+    requires: [amount]
+    unit: currency
+    good_direction: neutral
+    additive: false
+    description: "The biggest single expense."
+    priority: 65
+    i18n:
+      uz:
+        label: "Eng katta xarajat"
+        label_gen: "Eng katta xarajatning"
+        short: "Eng katta"
+        description_plain: "Bitta xarajatning eng katta summasi."
+        synonyms: [maksimal xarajat]

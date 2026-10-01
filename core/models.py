@@ -87,6 +87,13 @@ class Metric(Base):
     description: str = ""
     # Used instead of ``expr`` when a value required by ``requires_values`` is not in the data.
     fallback_expr: str | None = None
+    # v3: ranking weight (1-100), per-language texts, where the metric came from.
+    priority: int = 50
+    # {"uz": {"label", "label_gen", "short", "description_plain", "synonyms"}, ...}
+    i18n: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    source: Literal["pack", "heuristic", "ai", "user"] = "pack"
+    ai_translated: bool = False
+    spec: dict[str, Any] | None = None
 
 
 class FilterSpec(Base):

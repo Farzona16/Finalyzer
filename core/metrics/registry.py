@@ -14,7 +14,7 @@ from pathlib import Path
 import duckdb
 import sqlglot
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlglot import exp
 
 from core.errors import ValidationError
@@ -28,11 +28,22 @@ COLUMN_PREFIX = "column:"
 
 
 class MetricPack(BaseModel):
-    """A named list of metrics with one primary metric."""
+    """A named list of metrics with one primary metric, plus the v3 domain information."""
 
     pack: str
     primary_metric: str
     metrics: list[Metric]
+    # v3 (spec 6.2). All optional so that a minimal v2 pack still loads.
+    priority: int = 50
+    labels: dict[str, str] = Field(default_factory=dict)
+    roles_core: list[str] = Field(default_factory=list)
+    column_hints: list[str] = Field(default_factory=list)
+    value_hints: list[str] = Field(default_factory=list)
+    dimensions_priority: list[str] = Field(default_factory=list)
+    detectors: list[str] = Field(default_factory=list)
+    dashboard_template: str = "generic"
+    suggested_questions: dict[str, list[str]] = Field(default_factory=dict)
+    demo_dataset: str | None = None
 
 
 class MetricStatus(BaseModel):

@@ -1,0 +1,201 @@
+pack: sales
+primary_metric: won_revenue
+priority: 75
+labels: {uz: "Savdo (CRM)", en: "Sales pipeline"}
+roles_core: [date, amount, stage, status, owner, source]
+column_hints: [deal, bitim, сделка, lead, pipeline, voronka, воронка, owner, menejer, менеджер, stage, bosqich, этап, close_date, quota, kvota]
+value_hints: [won, lost, open, lead, qualified, proposal, negotiation, yutildi, yutqazildi, ochiq, taklif, muzokara, выиграно, проиграно]
+dimensions_priority: [owner, source, product, region, stage]
+detectors: [funnel_drop, stalled, win_rate_gap, cycle_change, trend_regression, group_difference, missing_pattern, outliers]
+dashboard_template: sales
+demo_dataset: sales
+suggested_questions:
+  uz:
+    - "Yutish ulushi oylar boʻyicha qanday oʻzgargan?"
+    - "Qaysi menejer eng koʻp bitim yutgan?"
+    - "Qaysi manbadan eng yaxshi mijozlar keladi?"
+    - "Nechta bitim toʻxtab qolgan?"
+  en:
+    - "How did the win rate change by month?"
+    - "Which owner won the most deals?"
+    - "Which source brings the best customers?"
+    - "How many deals are stalled?"
+metrics:
+  - id: pipeline_value
+    label: Pipeline value
+    expr: "SUM({amount}) FILTER (WHERE {status} = 'open')"
+    requires: [amount, status]
+    requires_values:
+      status: [open]
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Total amount of deals that are still open."
+    priority: 85
+    i18n:
+      uz:
+        label: "Ochiq bitimlar summasi"
+        label_gen: "Ochiq bitimlar summasining"
+        short: "Ochiq summa"
+        description_plain: "Hali yopilmagan bitimlarning umumiy summasi."
+        synonyms: [voronka qiymati, pipeline, ochiq summa]
+  - id: won_revenue
+    label: Won revenue
+    expr: "SUM({amount}) FILTER (WHERE {status} = 'won')"
+    requires: [amount, status]
+    requires_values:
+      status: [won]
+    unit: currency
+    good_direction: up
+    additive: true
+    description: "Total amount of won deals."
+    priority: 100
+    i18n:
+      uz:
+        label: "Yutilgan bitimlar daromadi"
+        label_gen: "Yutilgan bitimlar daromadining"
+        short: "Daromad"
+        description_plain: "Yutilgan bitimlarning umumiy summasi."
+        synonyms: [daromad, tushum, yutilgan summa]
+  - id: deals_won
+    label: Deals won
+    expr: "COUNT(*) FILTER (WHERE {status} = 'won')"
+    requires: [status]
+    requires_values:
+      status: [won]
+    unit: count
+    good_direction: up
+    additive: true
+    description: "Number of won deals."
+    priority: 80
+    i18n:
+      uz:
+        label: "Yutilgan bitimlar"
+        label_gen: "Yutilgan bitimlarning"
+        short: "Yutilgan"
+        description_plain: "Muvaffaqiyatli yopilgan bitimlar soni."
+        synonyms: [yutilganlar, yopilgan bitimlar]
+  - id: deals_lost
+    label: Deals lost
+    expr: "COUNT(*) FILTER (WHERE {status} = 'lost')"
+    requires: [status]
+    requires_values:
+      status: [lost]
+    unit: count
+    good_direction: down
+    additive: true
+    description: "Number of lost deals."
+    priority: 65
+    i18n:
+      uz:
+        label: "Yutqazilgan bitimlar"
+        label_gen: "Yutqazilgan bitimlarning"
+        short: "Yutqazilgan"
+        description_plain: "Yutqazilgan bitimlar soni."
+        synonyms: [yoʻqotilgan bitimlar, rad etilganlar]
+  - id: win_rate_pct
+    label: Win rate %
+    expr: "100.0 * COUNT(*) FILTER (WHERE {status} = 'won') / NULLIF(COUNT(*) FILTER (WHERE {status} IN ('won', 'lost')), 0)"
+    requires: [status]
+    requires_values:
+      status: [won, lost]
+    unit: percent
+    good_direction: up
+    additive: false
+    description: "Won deals as a percentage of closed deals (won and lost)."
+    priority: 95
+    i18n:
+      uz:
+        label: "Yutish ulushi"
+        label_gen: "Yutish ulushining"
+        short: "Yutish %"
+        description_plain: "Yopilgan bitimlarning necha foizi yutilgani."
+        synonyms: [konversiya, yutish foizi, win rate]
+  - id: avg_deal_size
+    label: Average deal size
+    expr: "AVG({amount}) FILTER (WHERE {status} = 'won')"
+    requires: [amount, status]
+    requires_values:
+      status: [won]
+    unit: currency
+    good_direction: up
+    additive: false
+    description: "Average amount of a won deal."
+    priority: 75
+    i18n:
+      uz:
+        label: "Oʻrtacha bitim summasi"
+        label_gen: "Oʻrtacha bitim summasining"
+        short: "Oʻrtacha bitim"
+        description_plain: "Bitta yutilgan bitimning oʻrtacha summasi."
+        synonyms: [oʻrtacha chek, bitim hajmi]
+  - id: avg_cycle_days
+    label: Average sales cycle (days)
+    expr: "AVG(date_diff('day', CAST({date} AS DATE), CAST(\"close_date\" AS DATE))) FILTER (WHERE {status} = 'won')"
+    requires: [date, status, "column:close_date"]
+    requires_values:
+      status: [won]
+    unit: count
+    good_direction: down
+    additive: false
+    description: "Average days from the creation of a won deal to its closing."
+    priority: 70
+    i18n:
+      uz:
+        label: "Oʻrtacha sotuv davri"
+        label_gen: "Oʻrtacha sotuv davrining"
+        short: "Sotuv davri"
+        description_plain: "Bitim ochilganidan yopilgunicha oʻtgan oʻrtacha kunlar soni."
+        synonyms: [sotuv sikli, bitim davomiyligi]
+  - id: new_deals
+    label: New deals
+    expr: "COUNT(*)"
+    requires: [date]
+    unit: count
+    good_direction: up
+    additive: true
+    description: "Number of deals created in the period."
+    priority: 72
+    i18n:
+      uz:
+        label: "Yangi bitimlar"
+        label_gen: "Yangi bitimlarning"
+        short: "Yangi"
+        description_plain: "Tanlangan davrda ochilgan bitimlar soni."
+        synonyms: [ochilgan bitimlar, yangi mijozlar]
+  - id: stalled_deals
+    label: Stalled deals
+    expr: "COUNT(*) FILTER (WHERE {status} = 'open' AND date_diff('day', CAST({date} AS DATE), (SELECT MAX(CAST({date} AS DATE)) FROM data)) > 90)"
+    requires: [date, status]
+    requires_values:
+      status: [open]
+    unit: count
+    good_direction: down
+    additive: false
+    description: "Open deals created more than 90 days before the latest date in the data."
+    priority: 78
+    i18n:
+      uz:
+        label: "Toʻxtab qolgan bitimlar"
+        label_gen: "Toʻxtab qolgan bitimlarning"
+        short: "Toʻxtagan"
+        description_plain: "90 kundan koʻp vaqt ochiq turgan bitimlar soni."
+        synonyms: [qotib qolgan bitimlar, eskirgan bitimlar]
+  - id: quota_attainment_pct
+    label: Quota attainment %
+    expr: "100.0 * SUM({amount}) FILTER (WHERE {status} = 'won') / NULLIF(SUM({target}), 0)"
+    requires: [amount, status, target]
+    requires_values:
+      status: [won]
+    unit: percent
+    good_direction: up
+    additive: false
+    description: "Won amount as a percentage of the total target."
+    priority: 82
+    i18n:
+      uz:
+        label: "Rejaning bajarilishi"
+        label_gen: "Rejaning bajarilishining"
+        short: "Reja %"
+        description_plain: "Yutilgan summa rejaning necha foizini tashkil etishi."
+        synonyms: [reja bajarilishi, kvota bajarilishi]

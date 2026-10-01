@@ -90,3 +90,13 @@ shown; nothing here is an estimate unless it says so.
   chaos tests that patch the provider call; it is not tested against a real provider in CI.
 - Docker was built and run once on the development laptop; the Render deployment itself was
   not performed from here, so `DEPLOY.md` follows `render.yaml` but has not been tried on Render.
+
+## KPI autopilot (phase U5)
+
+- The classifier is measured on 12 fixtures written by the same author as the pack hints (retail, sales, bank, project, expenses, statistics, generic in Uzbek, Russian and English). 12 of 12 are right, but that says little about unseen real files; the figure must not be read as a field accuracy.
+- The project and expenses packs have no demo dataset, so they are checked by structure tests only, not by a parity run against real rows.
+- The expenses pack does not compute `spend_by_category_share` and `largest_category_share` as KPI tiles; the dashboard shows the same information as chart tiles.
+- Sales "stalled deals" is relative to the latest date in the data, so an old export shows its own latest state as "current".
+- The AI metric suggestions are only as good as the model; the DSL limits what can go wrong (no SQL, at most 5 filters, known columns and values only, no personal-data columns), and anything that fails the parity check is dropped, but a valid and boring metric can still be suggested.
+- Heuristic Uzbek labels are templates (`core/autopilot/labels.json`) and have not been reviewed by a native speaker; they are listed in `docs/uz_review.md`.
+- The record of what was sent to the AI during the autopilot is kept in memory and is lost on restart; the Privacy page that shows it arrives in phase U11.

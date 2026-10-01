@@ -40,10 +40,40 @@ def unreviewed_glossary(path: Path = GLOSSARY_FILE) -> dict[str, dict]:
     return {k: v for k, v in _load(path)["entries"].items() if not v.get("reviewed")}
 
 
+def pack_strings() -> list[tuple[str, str, str]]:
+    """``(source, key, Uzbek text)`` of every pack, autopilot label and dashboard title.
+
+    These texts have no ``reviewed`` flag yet, so all of them are listed until the owner has
+    confirmed the files ``core/metrics/packs/*.yaml``, ``core/autopilot/labels.json`` and
+    ``core/templates/dashboards/*.json``.
+    """
+    from core.autopilot.heuristics import label_templates
+    from core.metrics.registry import list_pack_names, load_pack
+    from core.templates.resolver import list_templates, load_template
+
+    rows: list[tuple[str, str, str]] = []
+    for name in list_pack_names():
+        pack = load_pack(name)
+        rows.append((f"pack {name}", "labels", pack.labels.get("uz", "")))
+        rows += [(f"pack {name}", "question", q) for q in pack.suggested_questions.get("uz", [])]
+        for metric in pack.metrics:
+            for field, value in metric.i18n.get("uz", {}).items():
+                text = ", ".join(value) if isinstance(value, list) else str(value)
+                rows.append((f"pack {name}", f"{metric.id}.{field}", text))
+    rows += [("label template", key, t["uz"]) for key, t in label_templates().items()]
+    for name in list_templates():
+        rows += [
+            (f"dashboard {name}", tile["id"], tile["title"]["uz"])
+            for tile in load_template(name)["tiles"]
+        ]
+    return rows
+
+
 def build_markdown(
     frame_file: Path = FRAME_FILE,
     glossary_file: Path = GLOSSARY_FILE,
     catalogs: tuple[tuple[str, Path], ...] = CATALOGS,
+    include_packs: bool = True,
 ) -> str:
     """The whole review document as text."""
     frames = unreviewed_frames(frame_file)
@@ -81,6 +111,11 @@ def build_markdown(
                   "| Key | Text |", "|---|---|"]
         for key, text in data.items():
             lines.append(f"| `{key}` | {_escape(str(text))} |")
+    if include_packs:
+        rows = pack_strings()
+        lines += ["", "## KPI packs, labels and dashboards", "",
+                  f"Strings: {len(rows)}", "", "| Source | Key | Text |", "|---|---|---|"]
+        lines += [f"| {src} | `{key}` | {_escape(text)} |" for src, key, text in rows]
     return "\n".join(lines) + "\n"
 
 

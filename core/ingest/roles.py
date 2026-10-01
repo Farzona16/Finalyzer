@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from core.i18n.synonyms import role_for_column
 from core.models import ColumnInfo
 
 ROLE_SYNONYMS: dict[str, tuple[str, ...]] = {
@@ -20,8 +21,13 @@ ROLE_SYNONYMS: dict[str, tuple[str, ...]] = {
     ),
     "order_id": ("order_id", "sale_id", "txn_id", "transaction_id", "invoice_id", "id"),
     "status": ("status", "state", "payment_status", "txn_status"),
+    # Added in v3 for the sales pipeline (Appendix C).
+    "stage": ("stage", "pipeline_stage", "deal_stage"),
+    "owner": ("owner", "owner_id", "sales_rep", "rep", "account_manager"),
+    "source": ("source", "lead_source"),
+    "target": ("target", "quota", "plan"),
 }
-NUMERIC_ROLES = {"amount", "cost", "quantity"}
+NUMERIC_ROLES = {"amount", "cost", "quantity", "target"}
 # "id" is far too short to be used for contains-matching.
 EXACT_ONLY = {"id"}
 
@@ -56,13 +62,26 @@ def pick_column(role: str, candidates: list[ColumnInfo]) -> str | None:
     return None
 
 
+def pick_by_language(role: str, candidates: list[ColumnInfo]) -> str | None:
+    """Uzbek and Russian names (``sana``, ``summa``, ``дата``): the first column that fits."""
+    for column in candidates:
+        if type_fits(role, column) and role_for_column(column.name) == role:
+            return column.name
+    return None
+
+
 def detect_roles(columns: list[ColumnInfo]) -> dict[str, str]:
-    """Return ``{role: column}``. PII columns are ignored; missing roles are simply absent."""
+    """Return ``{role: column}``. PII columns are ignored; missing roles are simply absent.
+
+    English names are tried first (v2 behaviour); a role that is still missing is looked up
+    with the Uzbek, Russian and English synonym table of ``core/i18n/synonyms.py``.
+    """
     candidates = [c for c in columns if not c.is_pii]
     roles: dict[str, str] = {}
     for role in ROLE_SYNONYMS:
         used = set(roles.values())
-        column = pick_column(role, [c for c in candidates if c.name not in used])
+        free = [c for c in candidates if c.name not in used]
+        column = pick_column(role, free) or pick_by_language(role, free)
         if column:
             roles[role] = column
     return roles

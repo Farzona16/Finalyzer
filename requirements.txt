@@ -12,3 +12,6 @@ litellm>=1.50,<2
 pytest>=8,<10
 ruff>=0.6,<1
 pip-audit>=2.7,<3
+scipy>=1.13,<2
+rapidfuzz>=3.9,<4
+pyarrow>=17

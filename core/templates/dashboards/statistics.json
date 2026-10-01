@@ -1,0 +1,155 @@
+{
+  "id": "statistics",
+  "grid_columns": 12,
+  "tiles": [
+    {
+      "id": "kpi_row",
+      "type": "kpi_row",
+      "title_key": "dashboard.tiles.kpi_row",
+      "title": {
+        "en": "Key numbers",
+        "uz": "Asosiy koʻrsatkichlar"
+      },
+      "size": {
+        "w": 12,
+        "h": 2
+      },
+      "requires": [],
+      "cross_filter": false,
+      "metric_ids": [
+        "$tiles"
+      ]
+    },
+    {
+      "id": "main_histogram",
+      "type": "histogram",
+      "title_key": "dashboard.tiles.main_histogram",
+      "title": {
+        "en": "Distribution of the key measure",
+        "uz": "Asosiy koʻrsatkich taqsimoti"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "numeric:1"
+      ],
+      "cross_filter": false,
+      "dimension": "numeric:auto"
+    },
+    {
+      "id": "main_boxplot",
+      "type": "boxplot",
+      "title_key": "dashboard.tiles.main_boxplot",
+      "title": {
+        "en": "Range of the key measure",
+        "uz": "Qiymatlar oraligʻi"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "numeric:1"
+      ],
+      "cross_filter": false,
+      "dimension": "numeric:auto"
+    },
+    {
+      "id": "correlation_heatmap",
+      "type": "heatmap",
+      "title_key": "dashboard.tiles.correlation_heatmap",
+      "title": {
+        "en": "How the measures relate",
+        "uz": "Koʻrsatkichlar orasidagi bogʻliqlik"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "numeric:2"
+      ],
+      "cross_filter": false,
+      "dimension": "correlation"
+    },
+    {
+      "id": "top_pair_scatter",
+      "type": "scatter",
+      "title_key": "dashboard.tiles.top_pair_scatter",
+      "title": {
+        "en": "Most related pair",
+        "uz": "Eng bogʻliq ikki koʻrsatkich"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "numeric:2"
+      ],
+      "cross_filter": false,
+      "dimension": "top_pair",
+      "trend_line": true
+    },
+    {
+      "id": "group_means",
+      "type": "bar_v",
+      "title_key": "dashboard.tiles.group_means",
+      "title": {
+        "en": "Group averages",
+        "uz": "Guruhlar oʻrtachalari"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "numeric:1",
+        "dimension"
+      ],
+      "cross_filter": true,
+      "dimension": "auto",
+      "whiskers": true
+    },
+    {
+      "id": "mean_over_time",
+      "type": "line",
+      "title_key": "dashboard.tiles.mean_over_time",
+      "title": {
+        "en": "Average over time",
+        "uz": "Oʻrtacha qiymat dinamikasi"
+      },
+      "size": {
+        "w": 6,
+        "h": 4
+      },
+      "requires": [
+        "numeric:1",
+        "date_column"
+      ],
+      "cross_filter": false,
+      "dimension": "time:month",
+      "slope": true
+    },
+    {
+      "id": "describe_table",
+      "type": "table",
+      "title_key": "dashboard.tiles.describe_table",
+      "title": {
+        "en": "Descriptive statistics",
+        "uz": "Tavsifiy statistika"
+      },
+      "size": {
+        "w": 12,
+        "h": 4
+      },
+      "requires": [
+        "numeric:1"
+      ],
+      "cross_filter": false,
+      "dimension": "describe"
+    }
+  ]
+}
