@@ -7,7 +7,7 @@ What to look for: natural wording, the letters `oʻ` and `gʻ` (U+02BB), the apo
 * Frames: 78
 * Glossary entries: 189
 * Backend messages: 63
-* Frontend messages: 88
+* Frontend messages: 99
 
 ## Message frames
 
@@ -392,7 +392,8 @@ File: `frontend/src/i18n/uz.json`
 | `home.status.down` | Serverga ulanib boʻlmadi |
 | `home.letters_check` | Harflar tekshiruvi: oʻqish, gʻoya, ma'lumot |
 | `home.demos` | Namuna ma'lumotlar |
-| `home.upload` | Fayl yuklash |
+| `home.upload` | Fayllarni yuklash |
+| `home.upload_hint` | Bir nechta CSV yoki XLSX faylni birga tanlang. |
 | `home.viewer_hint` | Fayl yuklash uchun tahlilchi yoki administrator huquqi kerak. |
 | `auth.login_title` | Tizimga kirish |
 | `auth.setup_title` | Birinchi administrator |
@@ -427,12 +428,22 @@ File: `frontend/src/i18n/uz.json`
 | `dataset.build` | Panelni yigʻish |
 | `dataset.change_domain` | Sohani oʻzgartirish |
 | `dataset.advanced` | Kengaytirilgan |
+| `dataset.tables_found` | Jadvallar |
+| `dataset.n_rows` | {n} qator |
+| `dataset.fact` | Asosiy jadval |
+| `dataset.joins` | Bogʻlanishlar |
+| `dataset.join_on` | {fact_col} → {dim_table}.{dim_col} |
+| `dataset.flat_columns` | Birlashtirilgan ustunlar |
+| `dataset.no_joins` | Kalit ustunlar topilmadi. |
 | `ask.placeholder` | Savolingizni yozing… |
 | `ask.send` | Soʻrash |
 | `ask.suggested` | Tavsiya etilgan savollar |
 | `ask.verified` | Tasdiqlangan |
 | `ask.unverified` | Tasdiqlanmagan |
 | `ask.clarification` | Aniqlashtirish |
+| `ask.how` | Qanday hisoblandi? |
+| `ask.sql` | SQL |
+| `ask.reasoning` | Hisoblash yoʻli |
 | `insights.simpler` | Soddaroq tushuntir |
 | `insights.mark_done` | Bajarildi |
 | `insights.status_open` | Yangi |
@@ -732,9 +743,9 @@ Strings: 343
 | next steps | `quality.gaps` | Ma'lumotlarda ba'zi kunlar yoʻq: eksport paytida ular tushib qolmaganini tekshiring. |
 | next steps | `quality.pii` | Shaxsiy ma'lumotlar ustunlari tahlildan chiqarildi: {columns}. |
 | ask frames | `headline.kpi` | {metric} {period}: {value}. |
-| ask frames | `headline.table` | {metric} {n} qator. |
-| ask frames | `explanation.kpi` | Bu son shu ma'lumotlardan hisoblandi. |
-| ask frames | `explanation.table` | Natija {n} qatordan iborat. |
+| ask frames | `headline.table` | {metric} {period}: {preview}. |
+| ask frames | `explanation.kpi` | Hisoblangan qiymat: {value}. Bu son shu ma'lumotlardan olindi. |
+| ask frames | `explanation.table` | Natija {n} qator. Qiymatlar: {preview}. |
 | ask frames | `so_what.up` | Bu yaxshi tomonga ketayotganini bildiradi. |
 | ask frames | `so_what.down` | Bu e'tibor talab qilishi mumkin. |
 | ask frames | `so_what.neutral` | Bu hozirgi holat. |
