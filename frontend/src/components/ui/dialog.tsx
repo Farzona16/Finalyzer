@@ -1,3 +1,4 @@
+import { X } from 'lucide-react'
 import { type ReactNode, useEffect, useId, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -30,18 +31,15 @@ export function Dialog({
     <dialog
       ref={ref}
       aria-labelledby={headingId}
-      className={cn(
-        'rounded-card border border-border bg-surface p-5 text-text shadow-lg backdrop:bg-black/40',
-        className,
-      )}
+      className={cn('glass rounded-card p-5 text-text shadow-glow backdrop:bg-black/50', className)}
       onClose={onClose}
     >
       <div className="mb-3 flex items-start justify-between gap-3">
         <h2 id={headingId} className="text-lg font-semibold">
           {title}
         </h2>
-        <Button variant="ghost" size="sm" onClick={onClose}>
-          {t('common.close')}
+        <Button variant="ghost" size="icon" onClick={onClose} aria-label={t('common.close')}>
+          <X aria-hidden="true" className="h-4 w-4" />
         </Button>
       </div>
       {children}

@@ -25,7 +25,11 @@ const config: Config = {
       fontFamily: {
         sans: ['"Inter Variable"', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
+      boxShadow: {
+        glow: '0 10px 15px -3px color-mix(in srgb, var(--blue) 5%, transparent)',
+      },
       transitionDuration: { DEFAULT: '200ms' },
+      transitionTimingFunction: { DEFAULT: 'ease-in-out' },
     },
   },
 }

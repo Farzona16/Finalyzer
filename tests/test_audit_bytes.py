@@ -23,7 +23,7 @@ def test_audited_payload_equals_received_payload(retail) -> None:
     answer = agent.ask("How many sales rows are there in total?")
     assert answer.status == "ok"
     events = audit.events
-    assert len(events) == len(provider.calls) == 3
+    assert len(events) == len(provider.calls) == 1
     received = sorted(serialize_payload(call) for call in provider.calls)
     audited = sorted(e.payload_text for e in events)
     assert audited == received

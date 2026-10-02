@@ -62,3 +62,5 @@ def test_number_formatting_and_descriptions() -> None:
     assert "3 rows and 2 columns" in describe_result(
         result(["a", "b"], [["x", "y"], ["x", "z"], ["q", "r"]])
     )
+    mixed = describe_result(result(["a", "b"], [["x", "y"], ["x", "z"], ["q", "r"]]))
+    assert "Values:" in mixed and "x, y" in mixed

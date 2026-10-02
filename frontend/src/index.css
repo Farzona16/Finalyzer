@@ -4,38 +4,38 @@
 /* `dark:` follows the data-theme attribute that /theme-init.js sets before first paint. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
-/* Design tokens (spec 9.1). Dark is the default look. */
+/* Design tokens. Dark is the default look (slate/navy, indigo/cyan, emerald). */
 :root,
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0e141b;
-  --surface: #161e27;
-  --surface-2: #1d2733;
-  --border: #273341;
-  --text: #e6edf3;
-  --muted: #8b98a5;
-  --green: #2ead6b;
-  --blue: #2f80ed;
-  --amber: #f2a93b;
-  --teal: #1fa3a3;
-  --red: #e5484d;
-  --purple: #8e6cef;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #222c3c;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --green: #10b981;
+  --blue: #6366f1;
+  --amber: #f59e0b;
+  --teal: #06b6d4;
+  --red: #f87171;
+  --purple: #a78bfa;
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --bg: #f4f6f9;
+  --bg: #f1f5f9;
   --surface: #ffffff;
-  --surface-2: #eef1f5;
-  --border: #d9dfe7;
-  --text: #0f1720;
-  --muted: #5b6776;
-  --green: #1f8f55;
-  --blue: #1f6bd6;
-  --amber: #b87410;
-  --teal: #13878a;
-  --red: #c93238;
-  --purple: #6d4bd1;
+  --surface-2: #e2e8f0;
+  --border: #cbd5e1;
+  --text: #0f172a;
+  --muted: #475569;
+  --green: #059669;
+  --blue: #4f46e5;
+  --amber: #b45309;
+  --teal: #0e7490;
+  --red: #dc2626;
+  --purple: #6d28d9;
 }
 
 html {
@@ -49,11 +49,72 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  background:
+    radial-gradient(1100px 520px at 8% -12%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 55%),
+    radial-gradient(900px 480px at 100% 0%, color-mix(in srgb, var(--teal) 10%, transparent), transparent 50%),
+    radial-gradient(700px 360px at 70% 110%, color-mix(in srgb, var(--green) 8%, transparent), transparent 48%),
+    var(--bg);
 }
 
 :focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  box-shadow:
+    0 10px 15px -3px color-mix(in srgb, var(--blue) 5%, transparent),
+    0 4px 6px -4px color-mix(in srgb, var(--bg) 35%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.glow-hover {
+  transition: all 200ms ease-in-out;
+}
+
+.glow-hover:hover {
+  border-color: color-mix(in srgb, var(--blue) 40%, var(--border));
+  box-shadow:
+    0 12px 28px -10px color-mix(in srgb, var(--blue) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text) 10%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--blue) 6%, transparent);
+}
+
+.interactive {
+  transition: all 200ms ease-in-out;
+}
+
+.interactive:hover {
+  transform: scale(1.02);
+}
+
+.interactive:active {
+  transform: scale(0.98);
+}
+
+.field {
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  padding: 0 0.75rem;
+  color: var(--text);
+  transition: all 200ms ease-in-out;
+}
+
+.field:hover {
+  border-color: color-mix(in srgb, var(--blue) 45%, var(--border));
+}
+
+.field:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 18%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -63,5 +124,10 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .interactive:hover,
+  .interactive:active {
+    transform: none;
   }
 }

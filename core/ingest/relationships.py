@@ -17,12 +17,24 @@ from core.models import ColumnInfo, Relationship
 MIN_CONTAINMENT = 0.95
 NAME_SIMILARITY = 0.6
 MIN_COVERAGE = 0.2  # a fact column must reach at least 20% of the dimension's keys
-KEY_TYPES = ("integer", "text")
+KEY_TYPES = ("integer", "text", "float")
+NUMERIC = frozenset({"integer", "float"})
 
 
 def name_similarity(left: str, right: str) -> float:
     """Similarity of two column names between 0 and 1."""
     return SequenceMatcher(None, left.lower(), right.lower()).ratio()
+
+
+def types_compatible(fact_dtype: str, dim_dtype: str, fact_col: str, dim_col: str) -> bool:
+    """True when a join can compare the two columns (same type, both numeric, or similar names)."""
+    if fact_dtype == dim_dtype:
+        return True
+    if fact_dtype in NUMERIC and dim_dtype in NUMERIC:
+        return True
+    if {fact_dtype, dim_dtype} <= NUMERIC | {"text"}:
+        return name_similarity(fact_col, dim_col) >= NAME_SIMILARITY
+    return False
 
 
 def unique_columns(columns: list[ColumnInfo], row_count: int) -> list[ColumnInfo]:
@@ -70,7 +82,9 @@ def best_for_dimension(
     best: tuple[float, Relationship] | None = None
     for key in dim_keys:
         for column in fact_columns:
-            if column.dtype != key.dtype or column.is_pii:
+            if column.is_pii or not types_compatible(
+                column.dtype, key.dtype, column.name, key.name
+            ):
                 continue
             containment, coverage = overlap(con, fact, column.name, dim, key.name)
             if containment < MIN_CONTAINMENT or coverage < MIN_COVERAGE:

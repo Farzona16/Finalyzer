@@ -108,6 +108,7 @@ class ProfileOut(BaseModel):
     dataset: DatasetOut
     fact_table: str
     tables: dict[str, list[ColumnInfo]]
+    columns: list[ColumnInfo] = Field(default_factory=list)  # the joined flat view
     relationships: list[Relationship]
     proposed_relationships: list[Relationship]
     roles: dict[str, str]

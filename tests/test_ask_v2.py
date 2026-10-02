@@ -20,7 +20,7 @@ from core.nlu.router import INTENTS, route_question
 from core.query.evaluation import same_result
 from core.query.executor import execute_query
 from core.query.sql_validator import validate_sql
-from tests.fakes import make_settings
+from tests.fakes import FakeProvider, make_settings, query_reply
 from tests.helpers import DemoDataset
 
 GOLDEN = Path("data/demo/golden_questions_uz.yaml")
@@ -114,6 +114,44 @@ def test_ambiguous_questions_ask_for_a_clarification(retail: DemoDataset, text: 
     assert answer.status in {"clarify", "failed", "refuse"}
     if answer.status == "clarify":
         assert answer.headline
+
+
+COMPLEX = "Which stores grew more than 20 percent versus last year except Tashkent?"
+
+
+def test_a_simple_total_stays_on_the_compiler(retail: DemoDataset) -> None:
+    cat = catalog_of(retail)
+    route = route_question("Jami daromad qancha?", cat)
+    assert route.confident and not route.use_llm
+    answer = agent_of(retail).ask("Jami daromad qancha?", locale="uz")
+    assert answer.status == "ok"
+    assert "model yozmagan" in answer.details or "did not write" in answer.details
+
+
+def test_unmatched_and_complex_questions_use_the_llm_path(retail: DemoDataset) -> None:
+    cat = catalog_of(retail)
+    unmatched = route_question("What is the overlap between weekday and channel spend?", cat)
+    assert unmatched.use_llm and not unmatched.confident
+    complex_route = route_question(COMPLEX, cat)
+    assert complex_route.use_llm and not complex_route.confident
+
+    settings = make_settings(sql_candidates=1)
+    provider = FakeProvider([query_reply("SELECT COUNT(*) AS n FROM data")])
+    gateway = LLMGateway(settings, AuditLog(), provider)
+    ask = AskAgent(
+        retail.con,
+        retail.model,
+        gateway,
+        settings,
+        pack="retail",
+        demo_key="retail",
+        locale="en",
+    )
+    answer = ask.ask(COMPLEX, locale="en")
+    assert provider.calls, "NL2SQL was never invoked"
+    assert answer.status == "ok"
+    assert answer.sql
+    assert "model wrote" in answer.details.lower()
 
 
 def test_compiled_sql_always_passes_the_validator(retail: DemoDataset) -> None:

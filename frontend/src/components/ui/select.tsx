@@ -22,7 +22,7 @@ export function Select({
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-10 rounded-lg border border-border bg-surface px-3 text-text"
+        className="field"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

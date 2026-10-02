@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,7 +9,10 @@ function Fallback({ onRetry, reference }: { onRetry: () => void; reference: stri
   const { t } = useTranslation()
   return (
     <Card role="alert" className="mx-auto mt-16 max-w-md space-y-3">
-      <p>{t('errors.generic')}</p>
+      <p className="flex items-center gap-2">
+        <AlertTriangle aria-hidden="true" className="h-5 w-5 text-amber" />
+        {t('errors.generic')}
+      </p>
       <p className="text-sm text-muted">{t('errors.reference', { id: reference })}</p>
       <Button onClick={onRetry}>{t('common.retry')}</Button>
     </Card>

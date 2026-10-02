@@ -21,7 +21,7 @@ from core.ingest.cleaner import clean_tables
 from core.ingest.loader import RESERVED_TABLE_NAMES
 from core.ingest.pii import find_pii_columns
 from core.ingest.profiler import profile_view, quote_identifier
-from core.ingest.relationships import propose_relationships
+from core.ingest.relationships import propose_relationships, types_compatible
 from core.ingest.roles import ROLE_SYNONYMS, detect_roles, type_fits
 from core.models import CleaningAction, ColumnInfo, DatasetModel, Relationship
 
@@ -124,7 +124,12 @@ def check_relationship(workspace: Workspace, fact_table: str, rel: Relationship)
     dim_cols = {c.name: c for c in workspace.profiles.get(rel.dim_table, [])}
     if rel.fact_col not in fact_cols or rel.dim_col not in dim_cols:
         raise ValidationError(f"Unknown column in join to '{rel.dim_table}'.")
-    if fact_cols[rel.fact_col].dtype != dim_cols[rel.dim_col].dtype:
+    if not types_compatible(
+        fact_cols[rel.fact_col].dtype,
+        dim_cols[rel.dim_col].dtype,
+        rel.fact_col,
+        rel.dim_col,
+    ):
         raise ValidationError(f"Join columns for '{rel.dim_table}' have different types.")
     key = dim_cols[rel.dim_col]
     if key.null_pct > 0 or key.distinct != workspace.row_counts[rel.dim_table]:
@@ -150,9 +155,10 @@ def build_select_sql(
     for index, rel in enumerate(relationships):
         check_relationship(workspace, fact_table, rel)
         alias = f"d{index}"
+        left = f"CAST(f.{quote_identifier(rel.fact_col)} AS VARCHAR)"
+        right = f"CAST({alias}.{quote_identifier(rel.dim_col)} AS VARCHAR)"
         joins.append(
-            f"LEFT JOIN {quote_identifier(rel.dim_table)} {alias} "
-            f"ON f.{quote_identifier(rel.fact_col)} = {alias}.{quote_identifier(rel.dim_col)}"
+            f"LEFT JOIN {quote_identifier(rel.dim_table)} {alias} ON {left} = {right}"
         )
         for column in workspace.profiles[rel.dim_table]:
             if column.is_pii:

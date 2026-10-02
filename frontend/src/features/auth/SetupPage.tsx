@@ -1,3 +1,4 @@
+import { UserPlus } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -42,7 +43,10 @@ export function SetupPage() {
 
   return (
     <Card className="mx-auto mt-16 max-w-md space-y-4">
-      <CardTitle>{t('auth.setup_title')}</CardTitle>
+      <CardTitle className="flex items-center gap-2 normal-case tracking-normal text-text">
+        <UserPlus aria-hidden="true" className="h-4 w-4 text-blue" />
+        {t('auth.setup_title')}
+      </CardTitle>
       <p className="text-sm text-muted">{t('auth.setup_hint')}</p>
       <form className="space-y-3" onSubmit={(e) => void onSubmit(e)}>
         <Field label={t('auth.workspace')} value={workspace} onChange={setWorkspace} />
@@ -50,6 +54,7 @@ export function SetupPage() {
         <Field label={t('auth.email')} value={email} onChange={setEmail} type="email" />
         <Field label={t('auth.password')} value={password} onChange={setPassword} type="password" />
         <Button type="submit" disabled={busy}>
+          <UserPlus aria-hidden="true" className="h-4 w-4" />
           {t('auth.create')}
         </Button>
       </form>
@@ -72,7 +77,7 @@ function Field({
     <label className="flex flex-col gap-1 text-sm">
       {label}
       <input
-        className="h-10 rounded-lg border border-border bg-bg px-3"
+        className="field"
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}

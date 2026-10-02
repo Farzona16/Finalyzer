@@ -1,3 +1,12 @@
+import {
+  CheckCircle2,
+  CircleAlert,
+  Database,
+  FolderOpen,
+  Loader2,
+  ServerCrash,
+  Upload,
+} from 'lucide-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -5,6 +14,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { errorMessage, get, post, postForm } from '@/api/client'
 import { type Job, waitJob } from '@/api/jobs'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
 import { useToasts } from '@/components/ui/toast'
@@ -25,6 +35,19 @@ interface Dataset {
   id: string
   name: string
   status: string
+}
+
+function StatusIcon({ ok, down }: { ok: boolean; down: boolean }) {
+  if (down) return <ServerCrash aria-hidden="true" className="h-4 w-4 text-red" />
+  if (ok) return <CheckCircle2 aria-hidden="true" className="h-4 w-4 text-green" />
+  return <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin text-teal" />
+}
+
+function datasetTone(status: string): 'green' | 'red' | 'amber' | 'muted' {
+  if (status === 'ready') return 'green'
+  if (status === 'failed') return 'red'
+  if (status === 'building' || status === 'profiling') return 'amber'
+  return 'muted'
 }
 
 export function HomePage() {
@@ -102,12 +125,13 @@ export function HomePage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-3xl font-semibold">{t('home.title')}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{t('home.title')}</h1>
         <p className="mt-1 text-muted">{t('home.subtitle')}</p>
       </div>
       <Card className="max-w-md space-y-2">
         <CardTitle>{t('app.name')}</CardTitle>
-        <p aria-live="polite">
+        <p aria-live="polite" className="flex items-center gap-2">
+          <StatusIcon ok={!!status.data} down={status.isError} />
           {status.isPending && t('common.loading')}
           {status.isError && t('home.status.down')}
           {status.data && t('home.status.ok', { version: status.data.version })}
@@ -115,25 +139,37 @@ export function HomePage() {
         <p className="text-sm text-muted">{t('home.letters_check')}</p>
         {!me.data && (
           <p className="text-sm">
-            <Link to="/login" className="text-blue underline">
+            <Link to="/login" className="text-blue underline transition-all duration-200 ease-in-out hover:brightness-110">
               {t('auth.login')}
             </Link>
             {' · '}
-            <Link to="/setup" className="text-blue underline">
+            <Link to="/setup" className="text-blue underline transition-all duration-200 ease-in-out hover:brightness-110">
               {t('auth.first_admin')}
             </Link>
           </p>
         )}
       </Card>
       {job && (
-        <p aria-live="polite">
-          {t('jobs.progress', { label: t(`jobs.${job.message_key.split('.').pop() ?? 'running'}`), n: job.progress })}
-        </p>
+        <Card className="max-w-md space-y-2" aria-live="polite">
+          <p className="flex items-center gap-2 text-sm">
+            <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin text-teal" />
+            {t('jobs.progress', { label: t(`jobs.${job.message_key.split('.').pop() ?? 'running'}`), n: job.progress })}
+          </p>
+          <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
+            <div
+              className="h-full rounded-full bg-teal transition-all duration-200 ease-in-out"
+              style={{ width: `${job.progress}%` }}
+            />
+          </div>
+        </Card>
       )}
       {me.data && (
         <>
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold">{t('home.demos')}</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <Database aria-hidden="true" className="h-5 w-5 text-blue" />
+              {t('home.demos')}
+            </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {(Array.isArray(demos.data) ? demos.data : []).map((demo) => (
                 <Card key={demo.name} className="space-y-2">
@@ -149,7 +185,10 @@ export function HomePage() {
             </div>
           </section>
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold">{t('home.upload')}</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <Upload aria-hidden="true" className="h-5 w-5 text-teal" />
+              {t('home.upload')}
+            </h2>
             {canUpload ? (
               <>
                 <input
@@ -161,18 +200,33 @@ export function HomePage() {
                   onChange={(e) => void upload(e.target.files)}
                 />
                 <Button disabled={busy} onClick={() => fileRef.current?.click()}>
+                  <Upload aria-hidden="true" className="h-4 w-4" />
                   {t('home.upload')}
                 </Button>
+                <p className="text-sm text-muted">{t('home.upload_hint')}</p>
               </>
             ) : (
               <p className="text-sm text-muted">{t('home.viewer_hint')}</p>
             )}
           </section>
           <section className="space-y-2">
-            <h2 className="text-lg font-semibold">{t('nav.datasets')}</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <FolderOpen aria-hidden="true" className="h-5 w-5 text-green" />
+              {t('nav.datasets')}
+            </h2>
             {(Array.isArray(datasets.data) ? datasets.data : []).map((row) => (
-              <Link key={row.id} to={`/datasets/${row.id}`} className="block text-blue underline">
-                {row.name} ({row.status})
+              <Link
+                key={row.id}
+                to={`/datasets/${row.id}`}
+                className="interactive glass glow-hover flex items-center justify-between gap-3 rounded-card px-4 py-3 text-sm transition-all duration-200 ease-in-out"
+              >
+                <span className="font-medium text-text">{row.name}</span>
+                <Badge
+                  tone={datasetTone(row.status)}
+                  icon={row.status === 'failed' ? CircleAlert : row.status === 'ready' ? CheckCircle2 : Loader2}
+                >
+                  {row.status}
+                </Badge>
               </Link>
             ))}
           </section>

@@ -1,3 +1,4 @@
+import { LogIn } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,12 +43,15 @@ export function LoginPage() {
 
   return (
     <Card className="mx-auto mt-16 max-w-md space-y-4">
-      <CardTitle>{t('auth.login_title')}</CardTitle>
+      <CardTitle className="flex items-center gap-2 normal-case tracking-normal text-text">
+        <LogIn aria-hidden="true" className="h-4 w-4 text-blue" />
+        {t('auth.login_title')}
+      </CardTitle>
       <form className="space-y-3" onSubmit={(e) => void onSubmit(e)}>
         <label className="flex flex-col gap-1 text-sm">
           {t('auth.email')}
           <input
-            className="h-10 rounded-lg border border-border bg-bg px-3"
+            className="field"
             type="email"
             autoComplete="username"
             value={email}
@@ -58,7 +62,7 @@ export function LoginPage() {
         <label className="flex flex-col gap-1 text-sm">
           {t('auth.password')}
           <input
-            className="h-10 rounded-lg border border-border bg-bg px-3"
+            className="field"
             type="password"
             autoComplete="current-password"
             value={password}
@@ -67,11 +71,12 @@ export function LoginPage() {
           />
         </label>
         <Button type="submit" disabled={busy}>
+          <LogIn aria-hidden="true" className="h-4 w-4" />
           {t('auth.login')}
         </Button>
       </form>
       <p className="text-sm text-muted">
-        <Link to="/setup" className="text-blue underline">
+        <Link to="/setup" className="text-blue underline transition-all duration-200 ease-in-out hover:brightness-110">
           {t('auth.first_admin')}
         </Link>
       </p>

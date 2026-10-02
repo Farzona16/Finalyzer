@@ -47,6 +47,8 @@ class Route:
     clarify: str | None = None
     confident: bool = False
     question_key: str = ""
+    metric_explicit: bool = False
+    use_llm: bool = False
 
 
 # Higher priority wins. Patterns run on match_key (no apostrophes).
@@ -151,6 +153,43 @@ COMPILED = [
     for intent in sorted(INTENTS, key=lambda i: -i.priority)
 ]
 N_RE = re.compile(r"\b(\d{1,2})\b")
+# Markers that a template cannot express (joins of conditions, windows, exclusions).
+COMPLEX_RE = re.compile(
+    r"\b("
+    r"except|excluding|not including|including only|"
+    r"versus|vs|compared to|rather than|"
+    r"running total|cumulative|rolling|moving average|"
+    r"both .+ and|either .+ or|if .+ then|only when|"
+    r"hamda|bundan tashqari|istisno|"
+    r"solishtir\w*|qiyosla\w*|"
+    r"yigilib boradigan|orta harakatlanuvchi"
+    r")\b"
+)
+COMPLEX_WORD_COUNT = 18
+
+
+def looks_complex(question: str, key: str = "") -> bool:
+    """True when the question needs more than one template (exclusions, windows, long wording)."""
+    text = key or match_key(normalize_text(question))
+    if COMPLEX_RE.search(text):
+        return True
+    return len(text.split()) >= COMPLEX_WORD_COUNT
+
+
+def mark_llm(route: Route) -> Route:
+    """Send the question to NL2SQL instead of compiling a half-matched template."""
+    route.use_llm = True
+    route.confident = False
+    route.clarify = None
+    route.options = []
+    return route
+
+
+def should_use_llm(route: Route, question: str = "") -> bool:
+    """The v2 NL2SQL path: unmatched wording, or a question the compiler cannot express."""
+    if route.use_llm:
+        return True
+    return looks_complex(question, route.question_key)
 
 
 def parse_n(key: str) -> int | None:
@@ -192,7 +231,7 @@ def fill(intent: Intent, question: str, catalog: Catalog, latest) -> Route:
     locale = detect_language(question)
     period = parse_period(question, latest)
     n = parse_n(key)
-    metric, metric_opts, _explicit = resolve_metric(key, catalog)
+    metric, metric_opts, explicit = resolve_metric(key, catalog)
     dimension, dim_opts = resolve_dimension(key, catalog)
     value, _ = resolve_value(key, catalog)
     columns = resolve_columns(key, catalog, 2)
@@ -207,6 +246,7 @@ def fill(intent: Intent, question: str, catalog: Catalog, latest) -> Route:
         column=columns[0] if columns else None,
         column_b=columns[1] if len(columns) > 1 else None,
         question_key=key,
+        metric_explicit=explicit,
     )
     if intent.name in {"top_n", "bottom_n"} and route.n is None:
         route.n = TOP_DEFAULT
@@ -236,6 +276,8 @@ def fill(intent: Intent, question: str, catalog: Catalog, latest) -> Route:
         elif slot == "columns2" and (not route.column or not route.column_b):
             missing.append(("column", columns))
     if missing:
+        if looks_complex(question, key):
+            return mark_llm(route)
         kind, options = missing[0]
         route.clarify, route.options = _clarify(
             locale if locale != "ru" else "uz", kind, [str(o) for o in options]
@@ -245,22 +287,17 @@ def fill(intent: Intent, question: str, catalog: Catalog, latest) -> Route:
         route.intent = "period_value"
     if route.value is not None and route.intent in {"total", "period_value"}:
         route.intent = "filter_value"
+    if looks_complex(question, key):
+        return mark_llm(route)
     route.confident = True
     return route
 
 
 def route_question(question: str, catalog: Catalog, latest=None) -> Route:
-    """The best intent for ``question``. Unknown wording becomes a clarification, not a guess."""
+    """The best intent for ``question``. Complex or unmatched wording uses the LLM path."""
     key = match_key(normalize_text(question))
     locale = detect_language(question)
     intent = first_intent(key)
     if intent is None:
-        prompt, options = _clarify(
-            "en" if locale == "en" else "uz",
-            "metric",
-            [m.label for m in catalog.metrics[:4]],
-        )
-        return Route(
-            intent="total", language=locale, clarify=prompt, options=options, question_key=key
-        )
+        return Route(intent="total", language=locale, question_key=key, use_llm=True)
     return fill(intent, question, catalog, latest)

@@ -8,6 +8,7 @@ never loses the choices of a person and the engine result stays untouched.
 from __future__ import annotations
 
 import logging
+import math
 from datetime import date, timedelta
 from typing import Any
 
@@ -28,7 +29,6 @@ from app.services.datasets import Services, stored_model
 from app.services.engine import core_settings
 from core.autopilot.run import run_autopilot
 from core.dashboard.kpi import KpiValue, compute_kpis, selected_range
-from core.errors import UserFacingError
 from core.i18n.formats import (
     MINUS,
     format_compact,
@@ -87,7 +87,13 @@ def metrics_of(stored: StoredModel) -> list[Metric]:
     """The accepted metrics of the autopilot, best first."""
     if not stored.autopilot:
         return []
-    return [Metric.model_validate(m) for m in stored.autopilot.get("metrics", [])]
+    out: list[Metric] = []
+    for raw in stored.autopilot.get("metrics") or []:
+        try:
+            out.append(Metric.model_validate(raw))
+        except Exception:
+            logger.warning("skip_invalid_metric")
+    return out
 
 
 def is_enabled(metric_id: str, stored: StoredModel) -> bool:
@@ -170,10 +176,17 @@ def default_period(con: Any, model: DatasetModel) -> tuple[date, date] | None:
     return (high - timedelta(days=length - 1), high)
 
 
+def finite(value: float | None) -> float | None:
+    """Drop NaN/Inf so the JSON response stays valid."""
+    if value is None or not math.isfinite(value):
+        return None
+    return value
+
+
 def tile_values(
     services: Services, row: Dataset, stored: StoredModel, wanted: list[Metric]
 ) -> tuple[dict[str, KpiValue], tuple[date, date] | None]:
-    """Current value and change against the previous period for the tile metrics."""
+    """Current value and change against the previous period for the given metrics."""
     if not wanted or stored.built is None:
         return {}, None
     settings = core_settings(services.settings)
@@ -182,10 +195,9 @@ def tile_values(
             con = handle.workspace.con
             period = default_period(con, handle.model)
             spec = FilterSpec(date_range=period) if period else FilterSpec()
-            cards = compute_kpis(
-                con, handle.model, wanted, spec, settings, limit=MAX_DASHBOARD_TILES
-            )
-    except UserFacingError:
+            cards = compute_kpis(con, handle.model, wanted, spec, settings, limit=len(wanted))
+    except Exception:
+        logger.exception("kpi_values_failed dataset=%s", row.id)
         return {}, None
     return {card.metric_id: card for card in cards}, period
 
@@ -193,26 +205,33 @@ def tile_values(
 def domain_view(stored: StoredModel, lang: str) -> DomainOut | None:
     """The detected domain, with the reasons in plain words."""
     info = (stored.autopilot or {}).get("domain")
-    if not info:
+    if not info or not info.get("pack"):
         return None
-    pack = load_pack(info["pack"])
-    name = pack.labels.get(lang, info["pack"])
+    try:
+        pack = load_pack(str(info["pack"]))
+    except Exception:
+        return None
+    name = pack.labels.get(lang, str(info["pack"]))
     reasons = []
-    for evidence in sorted(info.get("evidence", []), key=lambda e: -e["score"]):
-        if evidence["kind"] in REASON_KINDS:
-            items = ", ".join(f"«{item}»" for item in evidence["items"][:4])
-            reasons.append(translate(lang, f"autopilot.reason.{evidence['kind']}", items=items))
-    alternatives = [
-        {"pack": alt, "label": load_pack(alt).labels.get(lang, alt)}
-        for alt in info.get("alternatives", [])
-    ]
+    evidence_rows = info.get("evidence") or []
+    for evidence in sorted(evidence_rows, key=lambda e: -float((e or {}).get("score") or 0)):
+        kind = (evidence or {}).get("kind")
+        if kind in REASON_KINDS:
+            items = ", ".join(f"«{item}»" for item in (evidence.get("items") or [])[:4])
+            reasons.append(translate(lang, f"autopilot.reason.{kind}", items=items))
+    alternatives = []
+    for alt in info.get("alternatives") or []:
+        try:
+            alternatives.append({"pack": alt, "label": load_pack(alt).labels.get(lang, alt)})
+        except Exception:
+            alternatives.append({"pack": alt, "label": str(alt)})
     return DomainOut(
-        pack=info["pack"],
+        pack=str(info["pack"]),
         label=name,
         headline=translate(lang, "autopilot.guess", domain=name),
-        confidence=info["confidence"],
-        level=info["level"],
-        source=info["source"],
+        confidence=float(info.get("confidence") or 0),
+        level=str(info.get("level") or "low"),
+        source=str(info.get("source") or "scores"),
         reasons=reasons,
         alternatives=alternatives,
     )
@@ -220,9 +239,13 @@ def domain_view(stored: StoredModel, lang: str) -> DomainOut | None:
 
 def expert_view(metric: Metric, model: DatasetModel) -> dict[str, Any]:
     """The definition, SQL and DSL of a KPI (analyst and admin only)."""
+    try:
+        sql = f"SELECT {metric_sql(metric, model.roles)} AS value FROM data"
+    except Exception:
+        sql = metric.expr
     return {
         "definition": metric.expr,
-        "sql": f"SELECT {metric_sql(metric, model.roles)} AS value FROM data",
+        "sql": sql,
         "dsl": metric.spec,
     }
 
@@ -238,7 +261,9 @@ def kpi_item(
     """One row of the KPI list."""
     pref = stored.kpi_prefs.get(metric.id)
     uz = metric.i18n.get("uz", {})
-    value = card.value if card else (stored.autopilot or {}).get("values", {}).get(metric.id)
+    stored_value = (stored.autopilot or {}).get("values", {}).get(metric.id)
+    live = card.value if card is not None else None
+    value = finite(live if live is not None else stored_value)
     label = label_of(metric, lang, pref)
     description = uz.get("description_plain") if lang == "uz" else metric.description
     return KpiOut(
@@ -255,8 +280,8 @@ def kpi_item(
         order=pref.order if pref else None,
         value=value,
         display=format_value(value, metric.unit, lang, currency),
-        previous=card.previous if card else None,
-        delta=card.delta if card else None,
+        previous=finite(card.previous) if card else None,
+        delta=finite(card.delta) if card else None,
         delta_kind=card.delta_kind if card else None,
         delta_display=format_delta(card.delta, card.delta_kind, lang) if card else "",
         tone=card.tone if card else "neutral",
@@ -271,8 +296,7 @@ def kpi_list(
     stored = stored_model(row)
     metrics = metrics_of(stored)
     tiles = tile_ids(stored)
-    by_id = {m.id: m for m in metrics}
-    cards, period = tile_values(services, row, stored, [by_id[t] for t in tiles])
+    cards, period = tile_values(services, row, stored, metrics)
     built = stored.built
     items = [
         kpi_item(

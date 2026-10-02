@@ -65,6 +65,56 @@ def format_cell(value: object, metric: Metric | None, locale: str, currency: str
     return format_compact(float(value), locale)
 
 
+def metric_label(route: Route, locale: str) -> str:
+    """The metric name in the answer language."""
+    if route.metric is None:
+        return ""
+    if locale == "uz":
+        return str((route.metric.i18n.get("uz") or {}).get("label") or route.metric.label)
+    return route.metric.label
+
+
+def row_preview(
+    result: QueryResult, metric: Metric | None, locale: str, currency: str, limit: int = 5
+) -> str:
+    """A short, formatted look at the actual cells (not just a row count)."""
+    bits: list[str] = []
+    for row in result.rows[:limit]:
+        cells = [
+            format_cell(cell, metric if i == len(row) - 1 else None, locale, currency)
+            for i, cell in enumerate(row)
+        ]
+        bits.append(" · ".join(cells))
+    return "; ".join(bits)
+
+
+def how_computed(route: Route, locale: str) -> str:
+    """Plain-language reasoning: intent, metric expression, period, filter (spec 7.5, 9.5)."""
+    period = (
+        route.period.label if route.period and route.period.label else frame(locale, "period.all")
+    )
+    metric = metric_label(route, locale)
+    expr = route.metric.expr if route.metric else ""
+    filt = f"{route.value[0]} = {route.value[1]}" if route.value else ""
+    if locale == "en":
+        parts = [
+            f"Understood as «{route.intent}».",
+            f"Metric «{metric}» uses {expr}." if expr else "",
+            f"Period: {period}.",
+            f"Filter: {filt}." if filt else "",
+            "SQL was compiled by code; the model did not write it.",
+        ]
+    else:
+        parts = [
+            f"Savol «{route.intent}» deb tushunildi.",
+            f"«{metric}» ifodasi: {expr}." if expr else "",
+            f"Davr: {period}.",
+            f"Filtr: {filt}." if filt else "",
+            "SQL kod tomonidan tuzildi; model yozmagan.",
+        ]
+    return " ".join(part for part in parts if part)
+
+
 def compose(
     route: Route,
     result: QueryResult,
@@ -73,31 +123,29 @@ def compose(
     currency: str,
     followups: list[str],
 ) -> PlainAnswer:
-    """Fill the frames from a verified router result."""
+    """Fill the frames from a verified router result. SQL always travels with the answer."""
+    _ = level
     period = (
         route.period.label if route.period and route.period.label else frame(locale, "period.all")
     )
-    metric_name = route.metric.label if route.metric else ""
-    if locale == "uz" and route.metric is not None:
-        metric_name = str((route.metric.i18n.get("uz") or {}).get("label") or route.metric.label)
+    name = metric_label(route, locale)
+    preview = row_preview(result, route.metric, locale, currency)
     n = result.row_count
     if n == 1 and len(result.columns) == 1:
         value = format_cell(result.rows[0][0], route.metric, locale, currency)
-        headline = frame(locale, "headline.kpi", metric=metric_name, period=period, value=value)
-        explanation = frame(locale, "explanation.kpi")
+        headline = frame(locale, "headline.kpi", metric=name, period=period, value=value)
+        explanation = frame(locale, "explanation.kpi", value=value)
         next_step = frame(locale, "next_step.kpi")
     else:
-        headline = frame(locale, "headline.table", metric=metric_name, n=n)
-        explanation = frame(locale, "explanation.table", n=n)
+        headline = frame(
+            locale, "headline.table", metric=name, period=period, preview=preview, n=n
+        )
+        explanation = frame(locale, "explanation.table", n=n, preview=preview)
         next_step = frame(locale, "next_step.table")
     direction = "neutral"
-    if route.metric is not None:
-        direction = (
-            "up"
-            if route.metric.good_direction == "up"
-            else ("down" if route.metric.good_direction == "down" else "neutral")
-        )
-    details = result.sql if level == "expert" else ""
+    if route.metric is not None and route.metric.good_direction in {"up", "down"}:
+        direction = route.metric.good_direction
+    details = how_computed(route, locale)
     return PlainAnswer(
         status="ok",
         headline=headline,
@@ -111,7 +159,7 @@ def compose(
         period=period,
         chart=choose_chart(result),
         table=result,
-        sql=result.sql if level == "expert" else None,
+        sql=result.sql,
         followups=followups,
     )
 

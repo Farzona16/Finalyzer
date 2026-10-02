@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 import pytest
 
@@ -27,6 +28,7 @@ QUESTION = "How many sales do we have?"
 
 def make_agent(retail, replies, **settings) -> tuple[NL2SQLAgent, FakeProvider, AuditLog]:
     """An agent on the retail demo data whose model is a scripted fake."""
+    settings.setdefault("sql_candidates", 3)
     config = make_settings(**settings)
     provider = FakeProvider(replies)
     audit = AuditLog()
@@ -74,6 +76,18 @@ def test_all_different_is_unverified(retail) -> None:
     assert answer.result.candidates_agreeing == 1
     assert any("Unverified" in w for w in answer.result.warnings)
     assert answer.result.rows == [[retail.model.row_count]]  # first candidate wins ties
+
+
+def test_identical_live_prompts_are_sent_once(retail) -> None:
+    from core.llm.gateway import clear_prompt_cache
+
+    clear_prompt_cache()
+    agent, provider, _ = make_agent(
+        retail, [query_reply(COUNT)], sql_candidates=3, cache_identical_prompts=True
+    )
+    agent.ask(QUESTION)
+    assert len(provider.calls) == 1
+    clear_prompt_cache()
 
 
 def test_single_candidate_setting_is_verified(retail) -> None:
@@ -195,11 +209,14 @@ def test_prompt_shows_schema_categories_metrics_and_dates(retail) -> None:
     agent, provider, _ = make_agent(retail, [query_reply(COUNT)], sql_candidates=1)
     agent.ask(QUESTION)
     payload = "\n".join(m["content"] for m in provider.calls[0])
-    assert "Table `data` columns" in payload
-    assert "Electronics" in payload  # category values are allowed in demo mode
+    assert "Table `tbl_a` columns" in payload
+    assert "Electronics" not in payload
+    assert "values omitted" in payload
     assert "revenue" in payload and "SUM(" in payload
-    assert "Dates in `data` right now:" in payload
+    assert "Dates in `tbl_a` right now:" in payload
     assert json.loads(json.dumps(provider.calls[0]))[0]["role"] == "system"
+    for name in ("amount", "sale_date", "store_name", "city"):
+        assert not re.search(rf"(?<![\w]){re.escape(name)}(?![\w])", payload)
 
 
 def test_cloud_mode_hides_category_values_by_default(retail) -> None:
@@ -209,7 +226,7 @@ def test_cloud_mode_hides_category_values_by_default(retail) -> None:
     agent.ask(QUESTION)
     payload = "\n".join(m["content"] for m in provider.calls[0])
     assert "Electronics" not in payload
-    assert "category values are not shared" in payload
+    assert "values omitted" in payload
 
 
 @pytest.mark.parametrize("mode", ["demo", "cloud"])

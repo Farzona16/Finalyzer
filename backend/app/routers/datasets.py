@@ -54,6 +54,7 @@ def profile_out(dataset: Dataset) -> ProfileOut:
         dataset=dataset_out(dataset),
         fact_table=stored.fact_table,
         tables=stored.profiles,
+        columns=built.columns if built else [],
         relationships=stored.relationships,
         proposed_relationships=stored.proposed,
         roles=built.roles if built else {},
@@ -89,14 +90,16 @@ async def upload_files(
     services: Services = Depends(get_services),
 ) -> JobOut:
     """Validate the files (S9) and start the ingest job."""
-    if not files or len(files) > settings.max_upload_files:
-        raise AppError("validation_failed", extra={"max_files": settings.max_upload_files})
     checked: list[tuple[str, bytes]] = []
     for upload in files:
-        filename = upload.filename or ""
+        filename = (upload.filename or "").strip()
         data = await read_limited(upload, settings.max_upload_mb * 1024 * 1024)
+        if not filename or not data.strip():
+            continue  # extra empty multipart parts from the browser
         validate_upload(filename, data, settings)
         checked.append((filename, data))
+    if not checked or len(checked) > settings.max_upload_files:
+        raise AppError("validation_failed", extra={"max_files": settings.max_upload_files})
     label = (name or "").strip() or display_name(checked[0][0])
     job = jobs.submit(
         user.workspace_id,

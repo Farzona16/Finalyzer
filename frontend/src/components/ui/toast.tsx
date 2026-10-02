@@ -1,3 +1,4 @@
+import { CircleAlert, Info, X } from 'lucide-react'
 import { create } from 'zustand'
 
 export interface Toast {
@@ -29,16 +30,21 @@ export function ToastViewport() {
   if (!items.length) return null
   return (
     <div className="fixed bottom-4 right-4 z-50 flex w-80 flex-col gap-2" role="status" aria-live="polite">
-      {items.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          className={`rounded-lg border border-border bg-surface p-3 text-left text-sm shadow ${item.tone === 'error' ? 'text-red' : 'text-text'}`}
-          onClick={() => dismiss(item.id)}
-        >
-          {item.title}
-        </button>
-      ))}
+      {items.map((item) => {
+        const Icon = item.tone === 'error' ? CircleAlert : Info
+        return (
+          <button
+            key={item.id}
+            type="button"
+            className={`glass glow-hover interactive flex items-start gap-2 p-3 text-left text-sm ${item.tone === 'error' ? 'text-red' : 'text-text'}`}
+            onClick={() => dismiss(item.id)}
+          >
+            <Icon aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+            <span className="flex-1">{item.title}</span>
+            <X aria-hidden="true" className="h-3.5 w-3.5 text-muted" />
+          </button>
+        )
+      })}
     </div>
   )
 }

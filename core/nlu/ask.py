@@ -24,7 +24,7 @@ from core.nlu.plain_answer import (
     refuse_answer,
 )
 from core.nlu.refuse import refuse_reason, refuse_text
-from core.nlu.router import Route, route_question
+from core.nlu.router import Route, route_question, should_use_llm
 from core.query.executor import execute_query
 from core.query.nl2sql import Answer, NL2SQLAgent
 from core.query.prompts import MAX_QUESTION_CHARS
@@ -42,7 +42,11 @@ def latest_date(con: duckdb.DuckDBPyConnection, roles: dict[str, str]) -> date |
 
 
 def from_nl(answer: Answer, locale: str, level: str) -> PlainAnswer:
-    """Wrap a v2 LLM (or offline-golden) answer in the v3 shape."""
+    """Wrap a v2 LLM (or offline-golden) answer in the v3 shape.
+
+    ``level`` is accepted so the LLM path matches ``compose``; SQL is always attached.
+    """
+    _ = level
     if answer.status == "clarify":
         return PlainAnswer(
             status="clarify", headline=answer.text, explanation=answer.clarification or ""
@@ -52,23 +56,29 @@ def from_nl(answer: Answer, locale: str, level: str) -> PlainAnswer:
     if answer.status != "ok" or answer.result is None:
         return failed_answer(answer.text, locale)
     result = answer.result
+    how = (
+        "The model wrote a SQL candidate; code validated it and ran it on this dataset."
+        if locale == "en"
+        else "Model SQL taklif qildi; kod tekshirib shu ma'lumotlarda bajardi."
+    )
     return PlainAnswer(
         status="ok",
         headline=answer.text,
         explanation=answer.text,
-        badge="Tasdiqlangan"
-        if locale != "en" and result.verified
-        else (
-            "Verified"
-            if result.verified
-            else ("Unverified" if locale == "en" else "Tasdiqlanmagan")
-        ),
+        details=how,
+        badge=frame_badge(locale, result.verified),
         verified=result.verified,
         chart=answer.chart,
         table=result,
-        sql=result.sql if level == "expert" else None,
-        details=result.sql if level == "expert" else "",
+        sql=result.sql,
     )
+
+
+def frame_badge(locale: str, verified: bool) -> str:
+    """Verified / unverified label in the answer language."""
+    if verified:
+        return "Verified" if locale == "en" else "Tasdiqlangan"
+    return "Unverified" if locale == "en" else "Tasdiqlanmagan"
 
 
 class AskAgent:
@@ -142,11 +152,12 @@ class AskAgent:
         latest = latest_date(self.con, self.model.roles)
         route = route_question(question, self.catalog, latest)
         route = self._inherit(question, route, latest)
-        if route.clarify and not route.confident:
+        llm_first = should_use_llm(route, question)
+        if route.clarify and not route.confident and not llm_first:
             yield "done", clarify_answer(route, loc)
             return
         yield "computing", None
-        if route.confident:
+        if route.confident and not llm_first:
             sql = compile_sql(route, self.model.roles)
             if sql:
                 try:
@@ -167,7 +178,7 @@ class AskAgent:
 
     def _inherit(self, question: str, route: Route, latest) -> Route:
         """A short follow-up such as ``shu filial bo'yicha-chi?`` keeps the last metric."""
-        if self.previous is None or route.confident:
+        if self.previous is None or (route.confident and not route.use_llm):
             return route
         key = route.question_key
         if "boyicha" in key or "chi" in key.split() or key.endswith("chi"):
@@ -179,4 +190,5 @@ class AskAgent:
                 route.intent = "by_dimension"
                 route.confident = True
                 route.clarify = None
+                route.use_llm = False
         return route

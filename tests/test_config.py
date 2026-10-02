@@ -18,7 +18,8 @@ def make_settings(monkeypatch: pytest.MonkeyPatch, **env: str) -> Settings:
 def test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings = make_settings(monkeypatch)
     assert settings.privacy_mode == "demo"
-    assert settings.sql_candidates == 3
+    assert settings.sql_candidates == 1
+    assert settings.cache_identical_prompts is True
     assert settings.result_row_limit == 10_000
     assert settings.k_anon_min == 5
     assert settings.uz_polish is False
@@ -67,10 +68,10 @@ def test_explicit_offline_wins(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_category_values_rules(monkeypatch: pytest.MonkeyPatch) -> None:
-    assert make_settings(monkeypatch, PRIVACY_MODE="demo").category_values_allowed
+    assert not make_settings(monkeypatch, PRIVACY_MODE="demo").category_values_allowed
     assert not make_settings(monkeypatch, PRIVACY_MODE="cloud").category_values_allowed
     cloud_on = make_settings(monkeypatch, PRIVACY_MODE="cloud", SEND_CATEGORY_VALUES="true")
-    assert cloud_on.category_values_allowed
+    assert not cloud_on.category_values_allowed
 
 
 def test_result_rows_to_llm(monkeypatch: pytest.MonkeyPatch) -> None:

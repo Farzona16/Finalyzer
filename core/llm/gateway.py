@@ -6,8 +6,10 @@ Egress Gate, parses JSON replies with Pydantic and repairs invalid JSON once.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+import threading
 
 from pydantic import BaseModel
 
@@ -18,6 +20,39 @@ from core.llm.egress import EgressGate
 from core.llm.providers import LiveProvider, OfflineProvider, Provider
 
 FENCE_RE = re.compile(r"^```(?:json)?\s*|\s*```$", re.IGNORECASE)
+_CACHE_LOCK = threading.Lock()
+_PROMPT_CACHE: dict[str, str] = {}
+_PROMPT_CACHE_ORDER: list[str] = []
+_PROMPT_CACHE_MAX = 64
+
+
+def _prompt_key(purpose: str, messages: list[dict[str, str]]) -> str:
+    blob = json.dumps({"p": purpose, "m": messages}, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(blob.encode()).hexdigest()
+
+
+def _cache_get(key: str) -> str | None:
+    with _CACHE_LOCK:
+        return _PROMPT_CACHE.get(key)
+
+
+def _cache_put(key: str, text: str) -> None:
+    with _CACHE_LOCK:
+        if key in _PROMPT_CACHE:
+            _PROMPT_CACHE[key] = text
+            return
+        if len(_PROMPT_CACHE_ORDER) >= _PROMPT_CACHE_MAX:
+            old = _PROMPT_CACHE_ORDER.pop(0)
+            _PROMPT_CACHE.pop(old, None)
+        _PROMPT_CACHE_ORDER.append(key)
+        _PROMPT_CACHE[key] = text
+
+
+def clear_prompt_cache() -> None:
+    """Drop the process-wide identical-prompt cache (tests)."""
+    with _CACHE_LOCK:
+        _PROMPT_CACHE.clear()
+        _PROMPT_CACHE_ORDER.clear()
 
 
 def parse_json_reply[T: BaseModel](text: str, schema: type[T]) -> T:
@@ -62,6 +97,14 @@ class LLMGateway:
         """Send messages through the Egress Gate and return the raw reply text."""
         if self._gate is None:
             raise LLMUnavailableError("No AI model is configured (offline mode).")
+        if self.settings.cache_identical_prompts:
+            key = _prompt_key(purpose, messages)
+            hit = _cache_get(key)
+            if hit is not None:
+                return hit
+            text = self._gate.send(purpose, messages, temperature).text
+            _cache_put(key, text)
+            return text
         return self._gate.send(purpose, messages, temperature).text
 
     def complete_json[T: BaseModel](

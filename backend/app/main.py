@@ -1,6 +1,12 @@
 """FastAPI application factory.
 
-Run with: ``uvicorn app.main:create_app --factory --port 8000`` (one worker, decision D3).
+Run with ``.\\start.ps1`` or ``python run_backend.py`` from the repo root so the
+backend virtualenv is used. Direct form (from ``backend/``, that venv active):
+
+``python -m uvicorn app.main:create_app --factory --reload --port 8000``
+
+There is no module-level ``app`` object (settings fail closed at import). One
+Uvicorn worker in production (decision D3).
 """
 
 from __future__ import annotations
@@ -11,7 +17,13 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, Depends, FastAPI
+try:
+    from fastapi import APIRouter, Depends, FastAPI
+except ModuleNotFoundError as exc:  # wrong interpreter, typically the root .venv
+    raise ModuleNotFoundError(
+        "fastapi is not installed in this Python. On Windows run .\\start.ps1 "
+        "or: backend\\.venv\\Scripts\\python.exe run_backend.py"
+    ) from exc
 
 from app import __version__
 from app.config import BackendSettings, get_settings

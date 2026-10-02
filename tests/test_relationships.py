@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from core.ingest.flatten import open_workspace, propose
+from core.ingest.flatten import build_dataset, open_workspace, propose
 from tests.helpers import DemoDataset
 
 RETAIL_EXPECTED = {
@@ -44,6 +44,18 @@ def test_name_similarity_beats_coincidental_overlap() -> None:
     workspace = open_workspace({"facts": facts, "stores": stores})
     found = propose(workspace, "facts")
     assert as_set(found) == {("store", "stores", "store_id")}
+
+
+def test_integer_and_text_keys_with_similar_names_are_joined() -> None:
+    facts = pd.DataFrame({"store_id": [1, 2, 3, 1, 2, 3], "amount": [10, 20, 30, 11, 21, 31]})
+    stores = pd.DataFrame({"store_id": ["1", "2", "3"], "region": ["North", "South", "East"]})
+    workspace = open_workspace({"facts": facts, "stores": stores})
+    found = propose(workspace, "facts")
+    assert as_set(found) == {("store_id", "stores", "store_id")}
+    model = build_dataset(workspace, "facts", found)
+    assert "region" in {c.name for c in model.columns}
+    rows = {r[0] for r in workspace.con.execute("SELECT DISTINCT region FROM data").fetchall()}
+    assert rows == {"North", "South", "East"}
 
 
 def test_low_containment_is_not_proposed() -> None:

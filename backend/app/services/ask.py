@@ -15,7 +15,23 @@ from core.nlu.ask import AskAgent
 from core.nlu.plain_answer import PlainAnswer
 
 
-def answer(services: Services, row: Dataset, question: str, locale: str, level: str) -> PlainAnswer:
+def without_sql(answer: PlainAnswer) -> PlainAnswer:
+    """Viewers do not see generated SQL (D12 / SEE_SQL). Reasoning text stays."""
+    table = answer.table.model_copy(update={"sql": ""}) if answer.table is not None else None
+    details = answer.details
+    if answer.sql:
+        details = details.replace(answer.sql, "").strip()
+    return answer.model_copy(update={"sql": None, "table": table, "details": details})
+
+
+def answer(
+    services: Services,
+    row: Dataset,
+    question: str,
+    locale: str,
+    level: str,
+    show_sql: bool = True,
+) -> PlainAnswer:
     """One complete answer (the JSON POST)."""
     stored = stored_model(row)
     if stored.built is None:
@@ -31,11 +47,17 @@ def answer(services: Services, row: Dataset, question: str, locale: str, level: 
             pack=domain_pack(row, stored),
             locale=locale,
         )
-        return agent.ask(question, locale, level)
+        payload = agent.ask(question, locale, level)
+    return payload if show_sql else without_sql(payload)
 
 
 def stages(
-    services: Services, row: Dataset, question: str, locale: str, level: str
+    services: Services,
+    row: Dataset,
+    question: str,
+    locale: str,
+    level: str,
+    show_sql: bool = True,
 ) -> Iterator[tuple[str, PlainAnswer | None]]:
     """SSE stages of one question."""
     stored = stored_model(row)
@@ -52,7 +74,10 @@ def stages(
             pack=domain_pack(row, stored),
             locale=locale,
         )
-        yield from agent.iter_ask(question, locale, level)
+        for stage, payload in agent.iter_ask(question, locale, level):
+            if payload is not None and not show_sql:
+                payload = without_sql(payload)
+            yield stage, payload
 
 
 def suggestions(services: Services, row: Dataset, locale: str) -> list[str]:

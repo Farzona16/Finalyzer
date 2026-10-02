@@ -40,10 +40,21 @@ Never commit `.env`.
 
 ## Run locally (two processes)
 
-Backend (from `backend/`):
+On Windows, from the repository root (uses ``backend\.venv``, which has FastAPI):
+
+```powershell
+.\start.ps1
+```
+
+or ``python run_backend.py``. Do not run ``uvicorn backend.app.main:app`` from the root
+``.venv``: that environment has no FastAPI, there is no ``app`` object, and ``--reload``
+spawns a child that must inherit the backend interpreter. The factory target is
+``app.main:create_app --factory``.
+
+Manual form, with the backend venv active, from ``backend/``:
 
 ```bash
-uvicorn app.main:create_app --factory --reload --port 8000
+python -m uvicorn app.main:create_app --factory --reload --port 8000
 ```
 
 Frontend:

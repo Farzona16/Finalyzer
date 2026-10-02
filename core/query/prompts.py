@@ -8,6 +8,7 @@ from __future__ import annotations
 from core.config import Settings
 from core.metrics.builder import metric_sql
 from core.models import ColumnInfo, DatasetModel, Metric
+from core.query.anonymizer import IdentifierMask
 
 MAX_QUESTION_CHARS = 500
 MAX_VALUE_CHARS = 60
@@ -45,20 +46,15 @@ def clean_text(value: str) -> str:
 
 
 def describe_column(column: ColumnInfo, settings: Settings) -> str:
-    """One line describing a column: type, role, nulls, range and (if allowed) category values."""
+    """One line of schema for a model: type, role, nulls. Never min/max or category values."""
+    _ = settings
     parts = [f"{column.name} ({column.dtype}"]
     if column.role:
         parts[0] += f", role: {column.role}"
     parts[0] += f", nulls {column.null_pct:.1f}%"
-    if column.min_value is not None and column.max_value is not None:
-        parts[0] += f", min {column.min_value}, max {column.max_value}"
     line = "- " + parts[0] + ")"
     if column.categories:
-        if settings.category_values_allowed:
-            values = ", ".join(f"'{clean_text(v)}'" for v in column.categories)
-            line += f" values: {values}"
-        else:
-            line += " (category values are not shared in this privacy mode)"
+        line += " (categorical; values omitted)"
     return line
 
 
@@ -79,22 +75,26 @@ def build_user_payload(
 ) -> str:
     """The user message: schema, metrics, current range and filters, examples and the question."""
     columns = "\n".join(describe_column(c, settings) for c in model.columns)
-    range_text = f"{date_range[0]} to {date_range[1]}" if date_range else "unknown"
+    _ = date_range  # real min/max dates stay on this machine
     filters = filters_text or "none"
     return (
         f"Table `data` columns:\n{columns}\n\n"
         f"Available metrics:\n{describe_metrics(metrics, model.roles)}\n\n"
-        f"Dates in `data` right now: {range_text}. Active filters: {filters}.\n\n"
+        f"Dates in `data` right now: not shared. Active filters: {filters}.\n\n"
         f"{FEW_SHOT}\n\n"
         f"Question: {question.strip()[:MAX_QUESTION_CHARS]}"
     )
 
 
-def build_messages(user_payload: str) -> list[dict[str, str]]:
-    """Chat messages for the first attempt."""
+def build_messages(
+    user_payload: str, mask: IdentifierMask | None = None
+) -> list[dict[str, str]]:
+    """Chat messages for the first attempt. ``mask`` rewrites identifiers before they leave."""
+    system = SYSTEM_PROMPT if mask is None else mask.mask_text(SYSTEM_PROMPT)
+    user = user_payload if mask is None else mask.mask_text(user_payload)
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_payload},
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
     ]
 
 

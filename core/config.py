@@ -24,7 +24,8 @@ class Settings(BaseSettings):
     llm_api_base: str = ""
     llm_timeout_s: int = 60
     llm_max_retries: int = 3
-    sql_candidates: int = 3
+    sql_candidates: int = 1
+    cache_identical_prompts: bool = True
     session_token_budget: int = 200_000
     send_category_values: bool = False
     uz_polish: bool = False  # UZ_POLISH: optional AI rephrasing of Uzbek insight cards (off)
@@ -63,10 +64,12 @@ class Settings(BaseSettings):
 
     @property
     def category_values_allowed(self) -> bool:
-        """Whether distinct category values may be sent to the LLM (decision D7)."""
-        if self.privacy_mode == "cloud":
-            return self.send_category_values
-        return True
+        """Whether distinct category values may be sent to the LLM.
+
+        Live prompts never include raw values (schema, samples, or categories). The flag is
+        kept for older callers; egress always treats it as false.
+        """
+        return False
 
     @property
     def max_result_rows_to_llm(self) -> int:

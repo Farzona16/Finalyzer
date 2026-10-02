@@ -1,8 +1,10 @@
+import { UserPlus, Users } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
 import { errorMessage, get, post } from '@/api/client'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
@@ -44,19 +46,26 @@ export function AdminPage() {
   return (
     <div className="space-y-5">
       <Card className="space-y-3">
-        <CardTitle>{t('admin.title')}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Users aria-hidden="true" className="h-4 w-4 text-blue" />
+          {t('admin.title')}
+        </CardTitle>
         {(users.data ?? []).map((u) => (
-          <p key={u.id} className="text-sm">
-            {u.display_name} ({u.email}) — {u.role}
+          <p key={u.id} className="flex flex-wrap items-center gap-2 text-sm">
+            {u.display_name} ({u.email})
+            <Badge tone={u.role === 'admin' ? 'blue' : 'muted'}>{u.role}</Badge>
           </p>
         ))}
       </Card>
       <Card className="space-y-3">
-        <CardTitle>{t('admin.create')}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <UserPlus aria-hidden="true" className="h-4 w-4 text-teal" />
+          {t('admin.create')}
+        </CardTitle>
         <form className="space-y-2" onSubmit={(e) => void onSubmit(e)}>
-          <input className="h-10 w-full rounded-lg border border-border px-3" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('auth.display_name')} required />
-          <input className="h-10 w-full rounded-lg border border-border px-3" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('auth.email')} required />
-          <input className="h-10 w-full rounded-lg border border-border px-3" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t('auth.password')} required />
+          <input className="field w-full" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('auth.display_name')} required />
+          <input className="field w-full" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('auth.email')} required />
+          <input className="field w-full" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t('auth.password')} required />
           <Select
             label={t('admin.role')}
             value={role}
@@ -67,7 +76,10 @@ export function AdminPage() {
               { value: 'admin', label: 'admin' },
             ]}
           />
-          <Button type="submit">{t('admin.create')}</Button>
+          <Button type="submit">
+            <UserPlus aria-hidden="true" className="h-4 w-4" />
+            {t('admin.create')}
+          </Button>
         </form>
       </Card>
     </div>

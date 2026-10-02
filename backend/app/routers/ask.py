@@ -8,11 +8,11 @@ from typing import Literal
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import StreamingResponse
 
-from app.deps import dataset_of, get_services, limit
+from app.deps import dataset_of, get_services, limit, require
 from app.errors import locale_of
-from app.models import Dataset
+from app.models import Dataset, User
 from app.schemas.ask import AskIn, SuggestedOut
-from app.security.permissions import Permission
+from app.security.permissions import Permission, has_permission
 from app.services import ask as service
 from app.services.datasets import Services
 from core.nlu.plain_answer import PlainAnswer
@@ -27,18 +27,31 @@ def ask_question(
     body: AskIn,
     request: Request,
     dataset: Dataset = Depends(dataset_of(Permission.READ)),
+    user: User = Depends(require(Permission.READ)),
     services: Services = Depends(get_services),
     _: None = Depends(ask_limit),
 ) -> PlainAnswer:
     """Answer one question. The router path is verified; the LLM path may not be."""
     locale = body.lang or locale_of(request)
-    return service.answer(services, dataset, body.question, locale, body.level)
+    return service.answer(
+        services,
+        dataset,
+        body.question,
+        locale,
+        body.level,
+        show_sql=has_permission(user.role, Permission.SEE_SQL),
+    )
 
 
 def _events(
-    services: Services, dataset: Dataset, question: str, locale: str, level: str
+    services: Services,
+    dataset: Dataset,
+    question: str,
+    locale: str,
+    level: str,
+    show_sql: bool,
 ) -> Iterator[str]:
-    for stage, payload in service.stages(services, dataset, question, locale, level):
+    for stage, payload in service.stages(services, dataset, question, locale, level, show_sql):
         yield service.sse_line(stage, payload)
 
 
@@ -49,13 +62,21 @@ def ask_stream(
     lang: Lang | None = Query(default=None),
     level: Literal["simple", "expert", "simpler"] = Query(default="simple"),
     dataset: Dataset = Depends(dataset_of(Permission.READ)),
+    user: User = Depends(require(Permission.READ)),
     services: Services = Depends(get_services),
     _: None = Depends(ask_limit),
 ) -> StreamingResponse:
     """The same answer as SSE stages ``understanding`` → ``computing`` → ``writing`` → ``done``."""
     locale = lang or locale_of(request)
     return StreamingResponse(
-        _events(services, dataset, question, locale, level),
+        _events(
+            services,
+            dataset,
+            question,
+            locale,
+            level,
+            has_permission(user.role, Permission.SEE_SQL),
+        ),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )

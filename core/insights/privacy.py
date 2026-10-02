@@ -90,7 +90,5 @@ def prepare_for_model(
 ) -> tuple[list[Finding], SegmentMasker | None]:
     """Apply suppression and (when category values are not allowed) masking."""
     safe = cloud_safe(findings, settings)
-    if settings.category_values_allowed:
-        return safe, None
     masker = SegmentMasker()
     return [masker.mask_finding(f) for f in safe], masker

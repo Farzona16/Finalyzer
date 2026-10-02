@@ -22,6 +22,7 @@ def make_settings(**overrides: Any) -> Settings:
         "llm_model": "fake-model",
         "llm_api_key": "test-key",
         "llm_max_retries": 0,
+        "cache_identical_prompts": False,
     }
     values.update(overrides)
     return Settings(_env_file=None, **values)

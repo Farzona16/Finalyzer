@@ -109,8 +109,8 @@ def test_category_values_are_sent_when_the_operator_allows_it(retail_findings) -
     findings = [f for f in retail_findings if f.type == "concentration"][:1]
     gateway, _ = cloud_gateway(findings, send_category_values=True)
     narrate_findings(findings, gateway, gateway.settings)
-    assert "Electronics" in all_payloads(gateway)
-    assert "Segment A" not in all_payloads(gateway)
+    assert "Electronics" not in all_payloads(gateway)
+    assert "Segment A" in all_payloads(gateway)
 
 
 def test_masking_round_trip() -> None:

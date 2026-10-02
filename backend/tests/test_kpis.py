@@ -68,6 +68,8 @@ def test_every_tile_has_a_real_value_and_a_formatted_text(admin: TestClient, bui
     for tile in tiles:
         assert tile["value"] is not None and tile["display"] not in ("", "â€”")
         assert tile["label"] and tile["description"]
+    for item in body["items"]:
+        assert item["display"] not in ("",)
 
 
 def test_the_build_job_reports_the_autopilot_step(admin: TestClient, monkeypatch) -> None:

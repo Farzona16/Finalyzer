@@ -18,6 +18,7 @@ from core.config import Settings
 from core.i18n.glossary import find_entry, load_glossary
 from core.llm.gateway import LLMGateway
 from core.models import DatasetModel
+from core.query.anonymizer import IdentifierMask
 from core.query.prompts import describe_column
 
 logger = logging.getLogger("finalyzer.autopilot")
@@ -60,17 +61,26 @@ def schema_text(model: DatasetModel, settings: Settings) -> str:
 
 
 def suggest_messages(
-    model: DatasetModel, pack_id: str, known_ids: list[str], settings: Settings
+    model: DatasetModel,
+    pack_id: str,
+    known_ids: list[str],
+    settings: Settings,
+    mask: IdentifierMask | None = None,
 ) -> list[dict[str, str]]:
-    """Chat messages of the suggestion request."""
+    """Chat messages of the suggestion request (identifiers already masked)."""
+    mask = mask or IdentifierMask.from_model(model)
+    schema = mask.mask_text(schema_text(model, settings))
     user = (
         f"Business type guess: {pack_id}\n"
         f"Rows: {model.row_count}\n"
-        f"Columns of `data`:\n{schema_text(model, settings)}\n\n"
+        f"Columns of `{mask.table}`:\n{schema}\n\n"
         f"Metrics that already exist (do not repeat them): {', '.join(known_ids) or 'none'}\n"
         "Suggest the extra metrics now."
     )
-    return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}]
+    return [
+        {"role": "system", "content": mask.mask_text(SYSTEM_PROMPT)},
+        {"role": "user", "content": user},
+    ]
 
 
 def suggest_specs(
@@ -79,13 +89,14 @@ def suggest_specs(
     """Raw metric objects proposed by the model (unchecked), or ``[]`` when none can be had."""
     if gateway is None or gateway.is_offline:
         return []
-    messages = suggest_messages(model, pack_id, known_ids, gateway.settings)
+    mask = IdentifierMask.from_model(model)
+    messages = suggest_messages(model, pack_id, known_ids, gateway.settings, mask)
     try:
         reply = gateway.complete_json(PURPOSE_SUGGEST, messages, SuggestReply)
     except Exception as exc:  # noqa: BLE001 - the model is optional; never fail the build
         logger.info("autopilot_suggest_skipped type=%s", type(exc).__name__)
         return []
-    return reply.metrics[:MAX_SUGGESTIONS]
+    return [mask.unmask_spec(item) for item in reply.metrics[:MAX_SUGGESTIONS]]
 
 
 def make_tiebreak(
@@ -96,9 +107,11 @@ def make_tiebreak(
         return None
 
     def tiebreak(candidates: list[str]) -> str | None:
+        mask = IdentifierMask.from_model(model)
+        schema = mask.mask_text(schema_text(model, gateway.settings))
         user = (
             f"Which business type fits this table best: {', '.join(candidates)}?\n"
-            f"Columns:\n{schema_text(model, gateway.settings)}\n"
+            f"Columns:\n{schema}\n"
             'Reply with {"pack": "<one of the options>"}.'
         )
         messages = [

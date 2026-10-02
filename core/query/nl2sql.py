@@ -24,6 +24,7 @@ from core.errors import (
 from core.llm.gateway import LLMGateway
 from core.llm.providers import OFFLINE_MESSAGE
 from core.models import DatasetModel, Metric, QueryResult
+from core.query.anonymizer import IdentifierMask
 from core.query.charts import ChartSpec, choose_chart, column_kinds
 from core.query.executor import execute_query, result_hash
 from core.query.prompts import (
@@ -94,7 +95,9 @@ def describe_result(result: QueryResult) -> str:
                 f"{result.row_count} rows. {label}: {best[0]} "
                 f"({format_number(best[1])} {result.columns[1].replace('_', ' ')})."
             )
-    return f"{result.row_count} rows and {len(result.columns)} columns."
+    bits = [", ".join(format_number(cell) for cell in row) for row in result.rows[:5]]
+    preview = "; ".join(bits)
+    return f"{result.row_count} rows and {len(result.columns)} columns. Values: {preview}."
 
 
 def count_summary(agreeing: int, total: int) -> str:
@@ -154,30 +157,36 @@ class NL2SQLAgent:
         return (str(low), str(high)) if low is not None else None
 
     def _ask_live(self, question: str, filters_text: str) -> Answer:
+        mask = IdentifierMask.from_model(self.model)
         payload = build_user_payload(
             self.model, self.metrics, question, self.settings, self._date_range(), filters_text
         )
-        messages = build_messages(payload)
-        first = self._candidate(messages, 0.0)
+        messages = build_messages(payload, mask)
+        first = self._candidate(messages, 0.0, mask)
         if first.answer is not None and first.answer.intent != "query":
-            return self._non_query(first.answer)
+            return self._non_query(first.answer, mask)
         extra = max(self.settings.sql_candidates - 1, 0)
         with ThreadPoolExecutor(max_workers=max(extra, 1)) as pool:
             futures = [
-                pool.submit(self._candidate, messages, DIVERSE_TEMPERATURE) for _ in range(extra)
+                pool.submit(self._candidate, messages, DIVERSE_TEMPERATURE, mask)
+                for _ in range(extra)
             ]
             others = [f.result() for f in futures]
-        return self._vote([first, *others])
+        return self._vote([first, *others], mask)
 
     @staticmethod
-    def _non_query(answer: NLAnswer) -> Answer:
+    def _non_query(answer: NLAnswer, mask: IdentifierMask) -> Answer:
         if answer.intent == "clarify":
-            text = answer.clarification or "Could you rephrase the question more precisely?"
+            raw = answer.clarification or "Could you rephrase the question more precisely?"
+            text = mask.unmask_text(raw)
             return Answer(status="clarify", text=text, clarification=text)
-        text = answer.clarification or "I can only answer questions that read the data."
+        raw = answer.clarification or "I can only answer questions that read the data."
+        text = mask.unmask_text(raw)
         return Answer(status="refuse", text=text)
 
-    def _candidate(self, messages: list[dict[str, str]], temperature: float) -> Candidate:
+    def _candidate(
+        self, messages: list[dict[str, str]], temperature: float, mask: IdentifierMask
+    ) -> Candidate:
         """One attempt, with up to ``MAX_REPAIRS`` repairs using the exact error."""
         conversation = list(messages)
         error: str | None = None
@@ -189,8 +198,10 @@ class NL2SQLAgent:
             if reply.intent != "query":
                 return Candidate(answer=reply)
             try:
-                ids = [i for i in reply.metric_ids if i in self._metric_ids]
-                result = execute_query(self.con, reply.sql or "", self.settings, ids)
+                ids = [mask.restore_name(i) for i in reply.metric_ids]
+                ids = [i for i in ids if i in self._metric_ids]
+                sql = mask.unmask_sql(reply.sql or "")
+                result = execute_query(self.con, sql, self.settings, ids)
                 return Candidate(answer=reply, result=result, digest=result_hash(result.rows))
             except QueryTimeoutError as exc:
                 return Candidate(answer=reply, error=exc.message)
@@ -199,11 +210,11 @@ class NL2SQLAgent:
                 conversation = [
                     *conversation,
                     {"role": "assistant", "content": reply.model_dump_json()},
-                    {"role": "user", "content": repair_message(error)},
+                    {"role": "user", "content": repair_message(mask.mask_error(error))},
                 ]
         return Candidate(error=error)
 
-    def _vote(self, candidates: list[Candidate]) -> Answer:
+    def _vote(self, candidates: list[Candidate], mask: IdentifierMask) -> Answer:
         done = [c for c in candidates if c.result is not None]
         if not done:
             if all(c.unavailable for c in candidates):
@@ -211,7 +222,7 @@ class NL2SQLAgent:
             reason = next((c.error for c in candidates if c.error), "no valid query was produced")
             return Answer(
                 status="failed",
-                text=f"I could not answer this reliably. Last problem: {reason}",
+                text=f"I could not answer this reliably. Last problem: {mask.unmask_text(reason)}",
             )
         groups: dict[str, list[Candidate]] = {}
         for c in done:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from datetime import date
 
 import duckdb
@@ -91,8 +92,11 @@ def format_delta(delta: float | None, kind: str | None) -> str:
 
 
 def to_float(value: object) -> float | None:
-    """A DuckDB value as float (None stays None)."""
-    return None if value is None else float(value)
+    """A DuckDB value as a finite float (None and NaN/Inf stay None)."""
+    if value is None:
+        return None
+    number = float(value)
+    return number if math.isfinite(number) else None
 
 
 def aggregate_row(
@@ -174,7 +178,11 @@ def compute_kpis(
     if not chosen:
         return []
     roles = model.roles
-    current = safe_aggregate(con, chosen, roles, "data", settings)
+    # Apply the spec as SQL on `data` so callers do not have to mutate the shared view.
+    # If `apply_filters` already restricted `data`, the same WHERE is redundant but equal.
+    current_where = where_sql(spec, model)
+    current_source = f"data {current_where}" if current_where else "data"
+    current = safe_aggregate(con, chosen, roles, current_source, settings)
     previous: list[float | None] = [None] * len(chosen)
     span = selected_range(con, model, spec)
     if span is not None:

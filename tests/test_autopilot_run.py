@@ -18,6 +18,7 @@ from core.autopilot.validate import load_frame, reference_value, spec_columns, v
 from core.config import Settings
 from core.llm.gateway import LLMGateway
 from core.models import ColumnInfo
+from core.query.anonymizer import IdentifierMask
 from tests.autopilot_fixtures import CLASSIFIER_FIXTURES, hr_attrition, model_from_frame
 from tests.fakes import FakeProvider, make_settings
 from tests.helpers import DemoDataset, bank_flat, retail_flat, sales_flat, statistics_flat
@@ -77,7 +78,7 @@ def test_tiebreak_asks_the_model_only_when_one_exists(sales: DemoDataset) -> Non
     tiebreak = make_tiebreak(gateway, sales.model)
     assert tiebreak is not None
     assert tiebreak(["sales", "bank"]) == "bank"
-    assert "Enterprise" in provider.calls[0][1]["content"]  # demo mode shares category values
+    assert "Enterprise" not in provider.calls[0][1]["content"]
 
 
 # ------------------------------------------------------------------ offline behaviour
@@ -312,6 +313,8 @@ def test_ai_metrics_are_checked_compiled_and_labelled(sales: DemoDataset) -> Non
     ai = {m.id: m for m in result.metrics if m.source == "ai"}
     assert set(ai) == {"ai_top_region_share", "ai_p90_deal", "ai_referral_deal"}
     assert len(provider.calls) == 1
+    sent = "\n".join(item["content"] for item in provider.calls[0])
+    assert "tbl_a" in sent and "`data`" not in sent
     reasons = dict(result.dropped)
     assert reasons["evil"].startswith("invalid") and reasons["ghost"].startswith("invalid")
     assert reasons["inject"].startswith("invalid") and reasons["dup"] == "duplicate"
@@ -359,13 +362,15 @@ def test_cloud_mode_keeps_category_values_and_personal_columns_out_of_the_prompt
     model = sales.model.model_copy(update={"columns": columns})
     gateway, provider = live_gateway({"metrics": []}, privacy_mode="cloud")
     run_autopilot(model, sales.con, make_settings(privacy_mode="cloud"), gateway)
-    sent = provider.calls[0][1]["content"]
-    assert "amount (" in sent and "stage (" in sent  # the schema is shared
-    assert "Enterprise" not in sent and "website" not in sent  # category values are not
+    sent = "\n".join(item["content"] for item in provider.calls[0])
+    mask = IdentifierMask.from_model(model)
+    assert f"{mask.forward['amount']} (" in sent and f"{mask.forward['stage']} (" in sent
+    assert "`data`" not in sent and "amount (" not in sent
+    assert "Enterprise" not in sent and "website" not in sent
     assert "owner_email" not in sent and "ann@example.com" not in sent
     demo, demo_provider = live_gateway({"metrics": []})
     run_autopilot(model, sales.con, make_settings(), demo)
-    assert "Enterprise" in demo_provider.calls[0][1]["content"]
+    assert "Enterprise" not in demo_provider.calls[0][1]["content"]
 
 
 def test_label_rules() -> None:

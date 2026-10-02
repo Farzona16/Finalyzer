@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { resetApiState } from '@/api/client'
@@ -65,10 +66,8 @@ describe('signed-in home and summary', () => {
     expect(screen.queryByRole('button', { name: uz['home.upload'] })).toBeNull()
   })
 
-  it('lists removed personal columns on the summary page', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (url: string) => {
+    it('lists removed personal columns on the summary page', async () => {
+    const fetchMock = vi.fn(async (url: string) => {
         const path = String(url)
         if (path.includes('/auth/csrf')) return json({ csrf_token: 'tok' })
         if (path.includes('/auth/me')) {
@@ -88,22 +87,58 @@ describe('signed-in home and summary', () => {
         }
         if (path.includes('/profile')) {
           return json({
-            dataset: { id: 'd1', name: 'Demo', domain: 'retail', status: 'profiled' },
+            dataset: {
+              id: 'd1',
+              name: 'Demo',
+              domain: 'retail',
+              status: 'profiled',
+              tables: { sales: 120, customers: 10 },
+            },
+            dropped_pii: ['email', 'phone'],
+            warnings: [],
+            fact_table: 'sales',
+            tables: { sales: [{ name: 'amount' }], customers: [{ name: 'region' }] },
+            columns: [{ name: 'amount' }, { name: 'region' }],
+            relationships: [{ fact_col: 'customer_id', dim_table: 'customers', dim_col: 'customer_id' }],
+            proposed_relationships: [
+              { fact_col: 'customer_id', dim_table: 'customers', dim_col: 'customer_id' },
+            ],
+            roles: { amount: 'amount' },
+          })
+        }
+        if (path.includes('/model')) {
+          return json({
+            dataset: { id: 'd1', name: 'Demo', domain: 'retail', status: 'profiled', tables: { sales: 120 } },
             dropped_pii: ['email', 'phone'],
             warnings: [],
             fact_table: 'sales',
             tables: { sales: [{ name: 'amount' }] },
+            columns: [{ name: 'amount' }],
             relationships: [],
+            proposed_relationships: [
+              { fact_col: 'customer_id', dim_table: 'customers', dim_col: 'customer_id' },
+            ],
             roles: { amount: 'amount' },
           })
         }
         if (path.includes('/version')) return json({ version: '3.0.0', first_run_required: false })
         return problem(404, 'not_found')
-      }),
-    )
+      })
+    vi.stubGlobal('fetch', fetchMock)
     render(<TestApp path="/datasets/d1" />)
     await waitFor(() => expect(screen.getByText(/email, phone/)).toBeTruthy())
     expect(screen.getByText(uz['dataset.pii'])).toBeTruthy()
+    expect(screen.getByText(uz['dataset.joins'])).toBeTruthy()
+    expect(screen.getByText('customer_id → customers.customer_id')).toBeTruthy()
+    expect(screen.getByText(/region/)).toBeTruthy()
     expect(screen.getByRole('button', { name: uz['dataset.build'] })).toBeTruthy()
+    await userEvent.click(screen.getByRole('button', { name: uz['dataset.advanced'] }))
+    expect(screen.getByLabelText(uz['dataset.fact'])).toBeTruthy()
+    const joinBox = screen.getByRole('checkbox')
+    expect(joinBox).toBeChecked()
+    await userEvent.click(joinBox)
+    await waitFor(() =>
+      expect(fetchMock.mock.calls.some((call) => String(call[0]).includes('/model'))).toBe(true),
+    )
   })
 })

@@ -82,10 +82,15 @@ describe('insights and ask pages', () => {
           return json({
             status: 'ok',
             headline: '12 mln',
-            explanation: 'Jami',
+            explanation: 'Hisoblangan qiymat: 12 mln soʻm.',
+            so_what: 'Bu hozirgi holat.',
+            next_step: 'Shu koʻrsatkichni oylar boʻyicha ham koʻring.',
+            details: 'Savol «total» deb tushunildi. SQL kod tomonidan tuzildi.',
+            sql: 'SELECT SUM(amount) FROM data',
             verified: true,
             followups: [],
             options: [{ label: 'Doʻkon boʻyicha', append: 'doʻkon' }],
+            table: { columns: ['revenue'], rows: [[12_000_000]], row_count: 1 },
           })
         }
         return json({ version: '3.0.0', first_run_required: true })
@@ -96,6 +101,19 @@ describe('insights and ask pages', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Jami daromad qancha?' }))
     await waitFor(() => expect(screen.getByText(uz['ask.verified'])).toBeTruthy())
     expect(screen.getByText('12 mln')).toBeTruthy()
+    expect(screen.getByText('Hisoblangan qiymat: 12 mln soʻm.')).toBeTruthy()
+    expect(screen.getByText('12000000')).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Doʻkon boʻyicha' })).toBeTruthy()
+    HTMLDialogElement.prototype.showModal = function showModal() {
+      this.setAttribute('open', '')
+    }
+    HTMLDialogElement.prototype.close = function closeDialog() {
+      this.removeAttribute('open')
+    }
+    await userEvent.click(screen.getByRole('button', { name: uz['ask.how'] }))
+    expect(screen.getByText(uz['ask.reasoning'])).toBeTruthy()
+    expect(screen.getByText(/SQL kod tomonidan tuzildi/)).toBeTruthy()
+    expect(screen.getByText(uz['ask.sql'])).toBeTruthy()
+    expect(screen.getByText('SELECT SUM(amount) FROM data')).toBeTruthy()
   })
 })

@@ -1,3 +1,4 @@
+import { Download, FilterX, LayoutGrid, Table2, TrendingDown, TrendingUp } from 'lucide-react'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -44,6 +45,13 @@ interface Filters {
   extra_value: string | null
 }
 
+function deltaClass(text: string): string {
+  if (!text || /n\/a|—|–/i.test(text)) return 'text-muted'
+  if (text.includes('-') || text.includes('−')) return 'text-red'
+  if (text.includes('+')) return 'text-green'
+  return 'text-muted'
+}
+
 function TileCard({
   datasetId,
   tile,
@@ -75,6 +83,7 @@ function TileCard({
         <h3 className="text-sm font-semibold">{tile.title}</h3>
         <div className="flex gap-1">
           <Button variant="ghost" size="sm" onClick={() => setAsTable((v) => !v)}>
+            {asTable ? <LayoutGrid aria-hidden="true" className="h-4 w-4" /> : <Table2 aria-hidden="true" className="h-4 w-4" />}
             {asTable ? t('view.chart') : t('view.table')}
           </Button>
           <Button
@@ -91,6 +100,7 @@ function TileCard({
               URL.revokeObjectURL(url)
             }}
           >
+            <Download aria-hidden="true" className="h-4 w-4" />
             {t('export.csv')}
           </Button>
         </div>
@@ -110,7 +120,7 @@ function TileCard({
               {(data.formatted_rows.length ? data.formatted_rows : data.rows).slice(0, 20).map((row, i) => (
                 <tr key={i}>
                   {(row as unknown[]).map((cell, j) => (
-                    <td key={j} className="border-b border-border px-2 py-1">
+                    <td key={j} className="border-b border-border/40 px-2 py-1">
                       {String(cell ?? '')}
                     </td>
                   ))}
@@ -178,18 +188,30 @@ export function DashboardPage() {
             {chip}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setFilters({ extra_column: null, extra_value: null })}>
+            <FilterX aria-hidden="true" className="h-4 w-4" />
             {t('filters.clear')}
           </Button>
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {kpiTiles.map((kpi) => (
-          <Card key={kpi.id} className="space-y-1">
-            <p className="text-xs uppercase tracking-wide text-muted">{kpi.label}</p>
-            <p className="text-2xl font-semibold">{kpi.display || formatCompact(0, locale)}</p>
-            {kpi.delta_display ? <p className="text-sm text-muted">{kpi.delta_display}</p> : null}
-          </Card>
-        ))}
+        {kpiTiles.map((kpi) => {
+          const tone = deltaClass(kpi.delta_display)
+          const down = tone === 'text-red'
+          const up = tone === 'text-green'
+          return (
+            <Card key={kpi.id} className="space-y-1">
+              <p className="text-xs uppercase tracking-wide text-muted">{kpi.label}</p>
+              <p className="text-2xl font-semibold text-green">{kpi.display || formatCompact(0, locale)}</p>
+              {kpi.delta_display ? (
+                <p className={`flex items-center gap-1 text-sm ${tone}`}>
+                  {down ? <TrendingDown aria-hidden="true" className="h-3.5 w-3.5" /> : null}
+                  {up ? <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" /> : null}
+                  {kpi.delta_display}
+                </p>
+              ) : null}
+            </Card>
+          )
+        })}
       </div>
       <div className="grid grid-cols-12 gap-3">
         {tiles

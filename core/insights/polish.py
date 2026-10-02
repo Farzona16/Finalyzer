@@ -101,9 +101,8 @@ def mask_card(
     card: PlainCard, finding: Finding, settings: Settings
 ) -> tuple[dict[str, str], SegmentMasker | None]:
     """The sentences to send, with category values masked when they may not leave."""
+    _ = settings
     texts = {field: getattr(card, field) for field in FIELDS}
-    if settings.category_values_allowed:
-        return texts, None
     masker = SegmentMasker()
     values = category_values(finding)
     return {k: masker.mask_text(v, values) for k, v in texts.items()}, masker

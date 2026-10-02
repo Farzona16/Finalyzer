@@ -1,9 +1,9 @@
 {
   "uz": {
     "headline.kpi": "{metric} {period}: {value}.",
-    "headline.table": "{metric} {n} qator.",
-    "explanation.kpi": "Bu son shu ma'lumotlardan hisoblandi.",
-    "explanation.table": "Natija {n} qatordan iborat.",
+    "headline.table": "{metric} {period}: {preview}.",
+    "explanation.kpi": "Hisoblangan qiymat: {value}. Bu son shu ma'lumotlardan olindi.",
+    "explanation.table": "Natija {n} qator. Qiymatlar: {preview}.",
     "so_what.up": "Bu yaxshi tomonga ketayotganini bildiradi.",
     "so_what.down": "Bu e'tibor talab qilishi mumkin.",
     "so_what.neutral": "Bu hozirgi holat.",
@@ -16,9 +16,9 @@
   },
   "en": {
     "headline.kpi": "{metric} {period}: {value}.",
-    "headline.table": "{metric}: {n} rows.",
-    "explanation.kpi": "This number was computed from this dataset.",
-    "explanation.table": "The result has {n} rows.",
+    "headline.table": "{metric} ({period}): {preview}.",
+    "explanation.kpi": "Computed value: {value}. This number comes from this dataset.",
+    "explanation.table": "The result has {n} rows. Values: {preview}.",
     "so_what.up": "This is moving in a good direction.",
     "so_what.down": "This may need attention.",
     "so_what.neutral": "This is the current picture.",

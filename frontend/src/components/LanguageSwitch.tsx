@@ -1,3 +1,4 @@
+import { Languages } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ export function LanguageSwitch() {
   const { t, i18n } = useTranslation()
   return (
     <div role="group" aria-label={t('language.label')} className="flex items-center gap-1">
+      <Languages aria-hidden="true" className="h-4 w-4 text-muted" />
       {LANGUAGES.map((language: Language) => (
         <Button
           key={language}

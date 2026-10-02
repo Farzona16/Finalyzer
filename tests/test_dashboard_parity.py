@@ -97,6 +97,19 @@ def test_kpis_match_pandas_for_random_filters(name: str, request) -> None:
     assert checked >= COMBINATIONS * 4
 
 
+def test_compute_kpis_filters_current_period_without_mutating_data(retail) -> None:
+    """A date-range spec restricts current values even when the `data` view is unfiltered."""
+    apply_filters(retail.con, FilterSpec(), retail.model)
+    full = retail.con.execute("SELECT COUNT(*) FROM data").fetchone()[0]
+    metrics = available_metrics(retail.model)
+    all_time = compute_kpis(retail.con, retail.model, metrics, FilterSpec(), limit=1)[0]
+    spec = FilterSpec(date_range=(date(2026, 9, 1), date(2026, 9, 30)))
+    month = compute_kpis(retail.con, retail.model, metrics, spec, limit=1)[0]
+    assert retail.con.execute("SELECT COUNT(*) FROM data").fetchone()[0] == full
+    assert month.value is not None and all_time.value is not None
+    assert month.value != all_time.value
+
+
 def test_default_span_compares_with_nothing_before_the_data(retail) -> None:
     metrics = available_metrics(retail.model)
     cards = compute_kpis(retail.con, retail.model, metrics, FilterSpec())

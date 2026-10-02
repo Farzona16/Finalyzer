@@ -92,9 +92,18 @@ def test_two_files_are_joined_when_the_keys_match(admin: TestClient) -> None:
     assert [(r["dim_table"], r["dim_col"]) for r in profile["relationships"]] == [
         ("customers", "customer_id")
     ]
-    flat = {c["name"] for c in profile["tables"]["sales"]}
-    assert "region" not in flat  # the region column lives in the dimension table
+    flat = {c["name"] for c in profile["columns"]}
+    assert "region" in flat
     assert profile["dataset"]["tables"] == {"sales": 120, "customers": 10}
+    asked = admin.post(
+        f"/api/v1/datasets/{dataset_id}/ask",
+        json={"question": "Region bo'yicha jami daromad", "lang": "uz"},
+    )
+    assert asked.status_code == 200, asked.text
+    body = asked.json()
+    assert body["status"] == "ok"
+    text = body["headline"] + body["explanation"] + str(body.get("table"))
+    assert "Region" in text
 
 
 def test_build_marks_the_dataset_ready(admin: TestClient) -> None:
@@ -232,6 +241,11 @@ def test_the_whole_request_is_limited_before_it_is_read(make_client) -> None:
     response = upload(client, [("a.csv", payload), ("b.csv", payload)])
     assert response.status_code == 413 and code_of(response) == "payload_too_large"
     assert response.headers["content-type"].startswith("application/problem+json")
+
+
+def test_an_empty_extra_upload_part_is_ignored(admin: TestClient) -> None:
+    dataset_id = upload_ready(admin, [("sales.csv", sales_csv(20)), ("empty.csv", b"")])
+    assert admin.get(f"/api/v1/datasets/{dataset_id}").json()["row_count"] == 20
 
 
 def test_too_many_files_are_refused(make_client) -> None:

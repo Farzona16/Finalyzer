@@ -240,7 +240,7 @@ def apply_model_patch(
         raise AppError("dataset_busy")
     stored = stored_model(dataset)
     fact = patch.fact_table or stored.fact_table
-    if fact not in stored.tables:
+    if fact not in stored.row_counts:
         raise AppError("model_invalid", params={"why": "unknown_table"})
     fact_changed = fact != stored.fact_table
     candidate = stored.model_copy(

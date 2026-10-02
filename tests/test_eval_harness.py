@@ -97,7 +97,7 @@ def test_unverified_answers_are_counted_separately(retail: DemoDataset) -> None:
         query_reply("SELECT COUNT(*) AS n FROM data"),
         query_reply("SELECT SUM(amount) AS n FROM data"),
     ]
-    settings = make_settings()
+    settings = make_settings(sql_candidates=3)
     gateway = LLMGateway(settings, AuditLog(), FakeProvider(replies))
     outcomes = evaluate_dataset(retail.con, retail.model, "retail", [question], gateway, settings)
     summary = summarize(outcomes, gateway.audit)
