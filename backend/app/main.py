@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -43,6 +44,11 @@ from app.services.engine import core_settings
 from app.spa import install_spa
 from app.storage.handles import HandleCache
 from app.storage.store import DatasetStore
+from core.llm.gateway import clear_prompt_cache
+from core.llm.registry import verify_models
+from core.runtime.health import HealthShortcut
+from core.runtime.tile_cache import clear as clear_tile_cache
+from core.runtime.watchdog import register_cache_clear
 
 API_PREFIX = "/api/v1"
 logger = logging.getLogger("finalyzer.main")
@@ -83,6 +89,21 @@ def sweep_once(services: Services) -> int:
         return dataset_service.purge_expired(services, db)
 
 
+def check_models(services: Services) -> None:
+    """Compare configured model ids with each provider's model list (spec 3.2, R13).
+
+    Unknown ids skip that provider; a failed check (no network) leaves it unchecked.
+    """
+    settings = core_settings(services.settings)
+    if settings.effective_llm_mode == "offline":
+        return
+    try:
+        runtime = services.llm_runtime
+        verify_models(runtime.providers(settings), runtime)
+    except Exception as exc:  # noqa: BLE001 - startup must never fail on a model check
+        logger.warning("model_check_failed error=%s", type(exc).__name__)
+
+
 def create_app(settings: BackendSettings | None = None) -> FastAPI:
     """Build the app. Fails closed if the settings are invalid (S15)."""
     settings = settings or get_settings()
@@ -108,6 +129,10 @@ def create_app(settings: BackendSettings | None = None) -> FastAPI:
             if settings.purge_interval_seconds > 0
             else None
         )
+        if settings.app_env != "test":
+            threading.Thread(
+                target=check_models, args=(services,), name="model-check", daemon=True
+            ).start()
         yield
         if sweeper is not None:
             sweeper.cancel()
@@ -136,7 +161,9 @@ def create_app(settings: BackendSettings | None = None) -> FastAPI:
         fast_hasher() if settings.app_env == "test" else calibrated_hasher()
     )
 
-    # Added last = outermost: headers wrap everything, including the context middleware's 500s.
+    # Added last = outermost. HealthShortcut must sit outside so keep-alives skip FastAPI.
+    app.add_middleware(HealthShortcut)
+    # Headers wrap everything, including the context middleware's 500s.
     app.add_middleware(
         BodyLimitMiddleware,
         prefixes=(f"{API_PREFIX}/datasets",),
@@ -148,5 +175,8 @@ def create_app(settings: BackendSettings | None = None) -> FastAPI:
 
     app.include_router(build_api_router())
     app.add_api_route("/healthz", meta.root_healthz, methods=["GET"], include_in_schema=False)
+    app.add_api_route("/health/ready", meta.root_ready, methods=["GET"], include_in_schema=False)
     install_spa(app, settings.frontend_dist)
+    register_cache_clear(clear_prompt_cache)
+    register_cache_clear(clear_tile_cache)
     return app

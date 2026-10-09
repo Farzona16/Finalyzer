@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app import clock
 from app.models.base import Base, UtcDateTime, new_id
 
-JOB_STATES = ("queued", "running", "done", "failed")
+JOB_STATES = ("queued", "running", "done", "failed", "interrupted")
 
 
 class Job(Base):
@@ -24,7 +24,7 @@ class Job(Base):
     )
     user_id: Mapped[str] = mapped_column(String(32))
     kind: Mapped[str] = mapped_column(String(30))
-    status: Mapped[str] = mapped_column(String(10), default="queued")
+    status: Mapped[str] = mapped_column(String(16), default="queued")
     progress: Mapped[int] = mapped_column(Integer, default=0)
     message_key: Mapped[str] = mapped_column(String(80), default="")
     result: Mapped[str | None] = mapped_column(Text, nullable=True)

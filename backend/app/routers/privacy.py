@@ -9,7 +9,7 @@ from app.models import User
 from app.schemas.privacy import PrivacyEventsOut, PrivacySummaryOut
 from app.security.permissions import Permission
 from app.services.datasets import Services
-from app.services.engine import core_settings
+from app.services.engine import core_settings, make_gateway
 
 router = APIRouter(prefix="/privacy", tags=["privacy"])
 
@@ -23,12 +23,23 @@ def privacy_summary(
     del user
     audit = services.audit
     settings = core_settings(services.settings)
+    status = make_gateway(services, None, settings=settings).status()
+    providers = [
+        {k: v for k, v in item.items() if k in ("name", "model", "state", "models_checked")}
+        for item in status["providers"]
+    ]
     return PrivacySummaryOut(
         bytes_sent=audit.total_bytes_sent,
         blocked_calls=audit.blocked_count,
         tokens_used=audit.tokens_used,
         event_count=len(audit.events),
         mode=settings.effective_llm_mode,
+        privacy_level=settings.privacy_level,
+        template_mode=status["template_mode"],
+        kill_switch=status["kill_switch"],
+        budgets=status["budgets"],
+        providers=providers,
+        ephemeral=services.settings.storage_mode != "persistent",
     )
 
 

@@ -3,27 +3,71 @@ services:
     name: finalyzer
     runtime: docker
     dockerfilePath: ./Dockerfile
-    plan: standard
-    healthCheckPath: /healthz
+    plan: free
+    healthCheckPath: /health
     autoDeploy: true
     envVars:
       - key: APP_ENV
         value: production
+      - key: RESOURCE_PROFILE
+        value: free
       - key: STORAGE_MODE
         value: ephemeral
       - key: PRIVACY_MODE
         value: demo
       - key: LLM_MODE
         value: offline
+      - key: LLM_PROVIDER_CHAIN
+        value: anthropic,grok,offline
+      - key: CLAUDE_MODEL_FAST
+        value: claude-haiku-5-5
+      - key: CLAUDE_MODEL_MAIN
+        value: claude-haiku-5-5
+      - key: CLAUDE_MODEL_DEEP
+        value: claude-haiku-5-5
+      - key: OPENAI_BASE_URL
+        value: https://api.x.ai/v1
+      - key: EGRESS_ALLOWED_HOSTS
+        value: api.anthropic.com,api.x.ai
+      - key: PRIVACY_LEVEL
+        value: strict
+      - key: PROVIDER_CLEARANCE
+        value: anthropic:synthetic_only,grok:synthetic_only
+      - key: KILL_SWITCH_DEFAULT
+        value: off
+      - key: INGEST_WORKERS
+        value: "1"
+      - key: MAX_FILES
+        value: "10"
+      - key: MAX_FILE_MB
+        value: "10"
+      - key: MAX_TOTAL_MB
+        value: "30"
+      - key: MAX_ROWS
+        value: "500000"
+      - key: ASK_CANDIDATES
+        value: "1"
+      - key: INSIGHT_PRECOMPUTE
+        value: on_demand
+      - key: SESSION_TOKEN_BUDGET
+        value: "30000"
+      - key: DATASET_TOKEN_BUDGET
+        value: "80000"
+      - key: DAILY_TOKEN_BUDGET
+        value: "200000"
+      - key: HARD_STOP_ON_BUDGET
+        value: "true"
+      - key: PARITY_SAMPLE
+        value: "0"
       - key: APP_SECRET_KEY
         sync: false
       - key: APP_MASTER_KEY
         sync: false
       - key: DATABASE_URL
         sync: false
-      - key: LLM_MODEL
+      - key: ANTHROPIC_API_KEY
         sync: false
-      - key: LLM_API_KEY
+      - key: XAI_API_KEY
         sync: false
       - key: LOG_LEVEL
         value: INFO

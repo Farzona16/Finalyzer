@@ -1,0 +1,87 @@
+﻿........................................................................ [ 25%]
+...................................................F.................... [ 51%]
+........................................................................ [ 76%]
+.................................................................        [100%]
+================================== FAILURES ===================================
+_________ test_logs_never_contain_passwords_tokens_cookies_or_bodies __________
+
+client = <starlette.testclient.TestClient object at 0x0000021E8FD008C0>
+log_stream = <_io.StringIO object at 0x0000021E8F958940>
+
+    def test_logs_never_contain_passwords_tokens_cookies_or_bodies(
+        client: TestClient, log_stream
+    ) -> None:
+        first_admin(client)
+        browser = with_csrf(new_session(client))
+        browser.post(
+            "/api/v1/auth/login",
+            json={"email": ADMIN_EMAIL, "password": CANARY_PASSWORD},
+            headers={"X-Canary-Header": CANARY_VALUE},
+        )
+        browser.post("/api/v1/auth/login", json={"email": ADMIN_EMAIL, "password": STRONG_PASSWORD})
+        browser.get(f"/api/v1/auth/me?token={CANARY_VALUE}")
+        logs = log_stream.getvalue()
+        assert logs, "the access log must not be empty"
+        cookies = " ".join(f"{c.value}" for c in browser.cookies.jar if len(c.value) > 20)
+        for forbidden in (CANARY_PASSWORD, CANARY_VALUE, STRONG_PASSWORD, ADMIN_EMAIL, cookies):
+>           assert forbidden not in logs, forbidden
+E           AssertionError: CANARY-secret-value-9912
+E           assert 'CANARY-secret-value-9912' not in '{"ts": "202...00 OK\\""}\n'
+E             
+E             'CANARY-secret-value-9912' is contained here:
+E               /me?token=CANARY-secret-value-9912 \"HTTP/1.1 200 OK\""}
+
+tests\test_errors_logs_i18n.py:208: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+{"ts": "2026-10-08T21:05:20.574+00:00", "level": "INFO", "logger": "alembic.runtime.migration", "request_id": "-", "msg": "Context impl SQLiteImpl."}
+{"ts": "2026-10-08T21:05:20.574+00:00", "level": "INFO", "logger": "alembic.runtime.migration", "request_id": "-", "msg": "Will assume non-transactional DDL."}
+{"ts": "2026-10-08T21:05:20.584+00:00", "level": "INFO", "logger": "alembic.runtime.migration", "request_id": "-", "msg": "Running upgrade  -> 0001, initial schema"}
+{"ts": "2026-10-08T21:05:20.622+00:00", "level": "INFO", "logger": "alembic.runtime.migration", "request_id": "-", "msg": "Running upgrade 0001 -> 0002, datasets.last_accessed_at (idle purge of ephemeral data)"}
+----------------------------- Captured log setup ------------------------------
+INFO     alembic.runtime.migration:migration.py:205 Context impl SQLiteImpl.
+INFO     alembic.runtime.migration:migration.py:208 Will assume non-transactional DDL.
+INFO     alembic.runtime.migration:migration.py:611 Running upgrade  -> 0001, initial schema
+INFO     alembic.runtime.migration:migration.py:611 Running upgrade 0001 -> 0002, datasets.last_accessed_at (idle purge of ephemeral data)
+---------------------------- Captured stderr call -----------------------------
+{"ts": "2026-10-08T21:05:20.648+00:00", "level": "INFO", "logger": "finalyzer.access", "request_id": "bf3cff1479564a75", "msg": "request method=GET path=/api/v1/auth/csrf status=200 ms=10"}
+{"ts": "2026-10-08T21:05:20.650+00:00", "level": "INFO", "logger": "httpx2", "request_id": "-", "msg": "HTTP Request: GET http://testserver/api/v1/auth/csrf \"HTTP/1.1 200 OK\""}
+{"ts": "2026-10-08T21:05:20.663+00:00", "level": "INFO", "logger": "finalyzer.access", "request_id": "d595a1b1cd124abd", "msg": "request method=POST path=/api/v1/auth/first-admin status=201 ms=12"}
+{"ts": "2026-10-08T21:05:20.664+00:00", "level": "INFO", "logger": "httpx2", "request_id": "-", "msg": "HTTP Request: POST http://testserver/api/v1/auth/first-admin \"HTTP/1.1 201 Created\""}
+{"ts": "2026-10-08T21:05:20.664+00:00", "level": "DEBUG", "logger": "asyncio", "request_id": "-", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-10-08T21:05:20.667+00:00", "level": "INFO", "logger": "finalyzer.access", "request_id": "083833f6eac64879", "msg": "request method=GET path=/api/v1/auth/csrf status=200 ms=2"}
+{"ts": "2026-10-08T21:05:20.669+00:00", "level": "INFO", "logger": "httpx2", "request_id": "-", "msg": "HTTP Request: GET http://testserver/api/v1/auth/csrf \"HTTP/1.1 200 OK\""}
+{"ts": "2026-10-08T21:05:20.670+00:00", "level": "DEBUG", "logger": "asyncio", "request_id": "-", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-10-08T21:05:20.684+00:00", "level": "INFO", "logger": "finalyzer.access", "request_id": "ac748859261b42bf", "msg": "request method=POST path=/api/v1/auth/login status=401 ms=12"}
+{"ts": "2026-10-08T21:05:20.684+00:00", "level": "INFO", "logger": "httpx2", "request_id": "-", "msg": "HTTP Request: POST http://testserver/api/v1/auth/login \"HTTP/1.1 401 Unauthorized\""}
+{"ts": "2026-10-08T21:05:20.685+00:00", "level": "DEBUG", "logger": "asyncio", "request_id": "-", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-10-08T21:05:20.702+00:00", "level": "INFO", "logger": "finalyzer.access", "request_id": "daf283d73fe44b73", "msg": "request method=POST path=/api/v1/auth/login status=200 ms=16"}
+{"ts": "2026-10-08T21:05:20.704+00:00", "level": "INFO", "logger": "httpx2", "request_id": "-", "msg": "HTTP Request: POST http://testserver/api/v1/auth/login \"HTTP/1.1 200 OK\""}
+{"ts": "2026-10-08T21:05:20.704+00:00", "level": "DEBUG", "logger": "asyncio", "request_id": "-", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-10-08T21:05:20.712+00:00", "level": "INFO", "logger": "finalyzer.access", "request_id": "2ff355929c45458e", "msg": "request method=GET path=/api/v1/auth/me status=200 ms=6"}
+{"ts": "2026-10-08T21:05:20.714+00:00", "level": "INFO", "logger": "httpx2", "request_id": "-", "msg": "HTTP Request: GET http://testserver/api/v1/auth/me?token=CANARY-secret-value-9912 \"HTTP/1.1 200 OK\""}
+------------------------------ Captured log call ------------------------------
+INFO     finalyzer.access:middleware.py:69 request method=GET path=/api/v1/auth/csrf status=200 ms=10
+INFO     httpx2:_client.py:1085 HTTP Request: GET http://testserver/api/v1/auth/csrf "HTTP/1.1 200 OK"
+INFO     finalyzer.access:middleware.py:69 request method=POST path=/api/v1/auth/first-admin status=201 ms=12
+INFO     httpx2:_client.py:1085 HTTP Request: POST http://testserver/api/v1/auth/first-admin "HTTP/1.1 201 Created"
+DEBUG    asyncio:proactor_events.py:634 Using proactor: IocpProactor
+INFO     finalyzer.access:middleware.py:69 request method=GET path=/api/v1/auth/csrf status=200 ms=2
+INFO     httpx2:_client.py:1085 HTTP Request: GET http://testserver/api/v1/auth/csrf "HTTP/1.1 200 OK"
+DEBUG    asyncio:proactor_events.py:634 Using proactor: IocpProactor
+INFO     finalyzer.access:middleware.py:69 request method=POST path=/api/v1/auth/login status=401 ms=12
+INFO     httpx2:_client.py:1085 HTTP Request: POST http://testserver/api/v1/auth/login "HTTP/1.1 401 Unauthorized"
+DEBUG    asyncio:proactor_events.py:634 Using proactor: IocpProactor
+INFO     finalyzer.access:middleware.py:69 request method=POST path=/api/v1/auth/login status=200 ms=16
+INFO     httpx2:_client.py:1085 HTTP Request: POST http://testserver/api/v1/auth/login "HTTP/1.1 200 OK"
+DEBUG    asyncio:proactor_events.py:634 Using proactor: IocpProactor
+INFO     finalyzer.access:middleware.py:69 request method=GET path=/api/v1/auth/me status=200 ms=6
+INFO     httpx2:_client.py:1085 HTTP Request: GET http://testserver/api/v1/auth/me?token=CANARY-secret-value-9912 "HTTP/1.1 200 OK"
+============================== warnings summary ===============================
+tests/test_tokens_and_passwords.py::test_a_different_algorithm_is_refused
+  C:\Users\i7\Documents\Farzona\finalyzer\backend\.venv\Lib\site-packages\jwt\api_jwt.py:149: InsecureKeyLengthWarning: The HMAC key is 53 bytes long, which is below the minimum recommended length of 64 bytes for SHA512. See RFC 7518 Section 3.2.
+    return self._jws.encode(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_errors_logs_i18n.py::test_logs_never_contain_passwords_tokens_cookies_or_bodies
+backend exit=1

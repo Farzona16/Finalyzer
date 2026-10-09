@@ -24,6 +24,7 @@ from core.ingest.profiler import profile_view, quote_identifier
 from core.ingest.relationships import propose_relationships, types_compatible
 from core.ingest.roles import ROLE_SYNONYMS, detect_roles, type_fits
 from core.models import CleaningAction, ColumnInfo, DatasetModel, Relationship
+from core.runtime.profile import duckdb_pragmas
 
 
 @dataclass
@@ -39,10 +40,16 @@ class Workspace:
 
 
 def create_connection(settings: Settings) -> duckdb.DuckDBPyConnection:
-    """Create an in-memory DuckDB connection with external access disabled."""
+    """Create an in-memory DuckDB connection with profile-derived memory and thread caps."""
     con = duckdb.connect(":memory:")
-    con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
-    con.execute("SET enable_external_access=false")
+    for statement in duckdb_pragmas():
+        try:
+            con.execute(statement)
+        except Exception:  # noqa: BLE001 - ``max_memory`` is an alias of ``memory_limit``
+            if "max_memory" not in statement:
+                raise
+    if settings.duckdb_memory_limit:
+        con.execute(f"SET memory_limit='{settings.duckdb_memory_limit}'")
     return con
 
 

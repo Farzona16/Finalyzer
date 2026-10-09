@@ -47,6 +47,13 @@ class StoredModel(BaseModel):
         default_factory=dict
     )  # finding id -> open|done|dismissed
     layout: list[dict[str, Any]] | None = None  # user tile positions; None = template layout
+    # v3.1-Z: demo datasets are synthetic; provider clearance decides what real data may leave.
+    origin: Literal["synthetic", "real"] = "real"
+    # Share of rows kept when a large file was sampled (1.0 = all rows; spec 2.1).
+    sample_fraction: float = 1.0
+    # Cached insight cards. Key includes provider and model (WP2) so a chain change recomputes.
+    insight_cache_key: str = ""
+    insight_payload: dict[str, Any] | None = None
 
 
 class JobError(BaseModel):
@@ -63,7 +70,7 @@ class JobOut(BaseModel):
 
     id: str
     kind: str
-    status: Literal["queued", "running", "done", "failed"]
+    status: Literal["queued", "running", "done", "failed", "interrupted"]
     progress: int
     message_key: str
     result: dict[str, Any] | None = None
@@ -83,6 +90,8 @@ class DatasetOut(BaseModel):
     tables: dict[str, int]
     created_at: datetime
     last_accessed_at: datetime
+    sample_fraction: float = 1.0
+    sample_badge: str | None = None
 
 
 class RelationshipIn(StrictModel):

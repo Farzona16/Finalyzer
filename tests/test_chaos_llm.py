@@ -1,80 +1,75 @@
 """Chaos tests: whatever the AI service does, the app ends in a readable state.
 
-The failure is injected below the retry logic (``LiveProvider._call_litellm``), so the real
-retry, gateway, Egress Gate, question pipeline and narrator all run.
+The failure is injected at the HTTP transport of a real ``OpenAICompatProvider``, so the real
+retry, circuit breaker, chain, Egress Gate, question pipeline and narrator all run.
 """
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
+import httpx
 import pytest
 from streamlit.testing.v1 import AppTest
 
 from app.state import CHOICE_KEY
 from core.config import get_settings
 from core.errors import LLMUnavailableError
-from core.llm import providers
-from core.llm.providers import LiveProvider, LLMResponse
-from tests.fakes import make_settings
+from core.llm import gateway as gateway_module
+from core.llm.openai_compat import OpenAICompatProvider
 from tests.test_app_smoke import APP_FILE, TIMEOUT, assert_clean, texts
 
 MAX_RETRIES = 2
 
 
-class RateLimitError(Exception):
-    """Named like LiteLLM's error so it is recognised as retryable."""
-
-    status_code = 429
+def status(code: int, body: str = "{}") -> Callable[[httpx.Request], httpx.Response]:
+    return lambda request: httpx.Response(code, text=body)
 
 
-class InternalServerError(Exception):
-    """Named like LiteLLM's error (HTTP 500)."""
-
-    status_code = 500
-
-
-class AuthenticationError(Exception):
-    """A permanent failure: the key is wrong (HTTP 401)."""
-
-    status_code = 401
+def content(text: str) -> Callable[[httpx.Request], httpx.Response]:
+    """A 200 answer with ``text`` as the message and no tool call."""
+    return lambda request: httpx.Response(
+        200, json={"choices": [{"message": {"role": "assistant", "content": text}}],
+                   "usage": {"prompt_tokens": 5, "completion_tokens": 5}},
+    )
 
 
-def raise_(error: Exception):
-    """A replacement for the raw model call that always fails with ``error``."""
-
-    def call(self, messages, temperature):
-        raise error
-
-    return call
+def timeout(request: httpx.Request) -> httpx.Response:
+    raise httpx.ReadTimeout("timed out", request=request)
 
 
-def reply(text: str):
-    """A replacement for the raw model call that always returns ``text``."""
-
-    def call(self, messages, temperature):
-        return LLMResponse(text=text, tokens_in=5, tokens_out=5)
-
-    return call
-
-
-FAILURES = {
-    "timeout": raise_(TimeoutError("timed out")),
-    "rate_limit_429": raise_(RateLimitError("slow down")),
-    "server_error_500": raise_(InternalServerError("boom")),
-    "malformed_json": reply("Sure! Here is your answer: {oops"),
-    "empty_output": reply(""),
-    "wrong_key_401": raise_(AuthenticationError("bad key")),
+FAILURES: dict[str, Callable[[httpx.Request], httpx.Response]] = {
+    "timeout": timeout,
+    "rate_limit_429": status(429, '{"error": "slow down"}'),
+    "server_error_500": status(500, '{"error": "boom"}'),
+    "malformed_json": content("Sure! Here is your answer: {oops"),
+    "empty_output": content(""),
+    "wrong_key_401": status(401, '{"error": "bad key"}'),
+    "credits_402": status(402, '{"error": "payment required"}'),
 }
+
+
+def provider_with(handler: Callable[[httpx.Request], httpx.Response]) -> OpenAICompatProvider:
+    return OpenAICompatProvider(
+        models={"main": "grok-test"},
+        api_key="test-key",
+        api_base="https://api.x.ai/v1",
+        max_retries=MAX_RETRIES,
+        allowed_hosts=frozenset({"api.x.ai"}),
+        transport=httpx.MockTransport(handler),
+        sleep=lambda seconds: None,
+    )
 
 
 @pytest.fixture
 def live_settings(monkeypatch: pytest.MonkeyPatch):
-    """A configuration with a key, retries enabled and instant back-off."""
+    """A configuration with a Grok key and model; retries enabled."""
     for name, value in {
-        "LLM_MODE": "live", "LLM_API_KEY": "test-key", "LLM_MODEL": "fake-model",
-        "APP_PASSWORD": "", "PRIVACY_MODE": "demo", "LLM_MAX_RETRIES": str(MAX_RETRIES),
+        "LLM_MODE": "live", "XAI_API_KEY": "test-key", "GROK_MODEL_MAIN": "grok-test",
+        "LLM_PROVIDER_CHAIN": "grok,offline", "APP_PASSWORD": "", "PRIVACY_MODE": "demo",
+        "LLM_MAX_RETRIES": str(MAX_RETRIES),
     }.items():
         monkeypatch.setenv(name, value)
-    monkeypatch.setattr(providers, "backoff_delay", lambda attempt: 0.0)
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
@@ -84,7 +79,8 @@ def live_settings(monkeypatch: pytest.MonkeyPatch):
 def test_app_stays_usable_when_the_ai_fails(
     name: str, live_settings: None, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(LiveProvider, "_call_litellm", FAILURES[name])
+    provider = provider_with(FAILURES[name])
+    monkeypatch.setattr(gateway_module, "build_providers", lambda settings, runtime: [provider])
     at = AppTest.from_file(APP_FILE, default_timeout=TIMEOUT).run()
     at.sidebar.radio(key=CHOICE_KEY).set_value("retail").run()
     assert_clean(at)
@@ -106,41 +102,38 @@ def test_app_stays_usable_when_the_ai_fails(
 
 
 @pytest.mark.parametrize(
-    "error, retries",
+    "handler, requests",
     [
-        (TimeoutError("t"), MAX_RETRIES),
-        (RateLimitError("r"), MAX_RETRIES),
-        (InternalServerError("s"), MAX_RETRIES),
-        (AuthenticationError("a"), 0),
+        (timeout, MAX_RETRIES + 1),
+        (status(429), MAX_RETRIES + 1),
+        (status(500), MAX_RETRIES + 1),
+        (status(401), 1),
+        (status(402), 1),
     ],
 )
 def test_transient_errors_are_retried_and_permanent_ones_are_not(
-    error: Exception, retries: int, monkeypatch: pytest.MonkeyPatch
+    handler: Callable[[httpx.Request], httpx.Response], requests: int
 ) -> None:
-    attempts = []
+    seen: list[httpx.Request] = []
 
-    def call(self, messages, temperature):
-        attempts.append(1)
-        raise error
+    def counting(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return handler(request)
 
-    monkeypatch.setattr(LiveProvider, "_call_litellm", call)
-    provider = LiveProvider(make_settings(llm_max_retries=MAX_RETRIES), sleep=lambda s: None)
     with pytest.raises(LLMUnavailableError) as caught:
-        provider.complete([{"role": "user", "content": "hi"}], 0.0)
-    assert len(attempts) == retries + 1
-    assert "busy or not reachable" in caught.value.message or "rejected" in caught.value.message
+        provider_with(counting).complete([{"role": "user", "content": "hi"}], 0.0)
+    assert len(seen) == requests
+    assert any(word in caught.value.message for word in ("busy or not reachable", "key", "credit"))
 
 
-def test_a_flaky_service_recovers_within_the_retry_budget(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls = []
+def test_a_flaky_service_recovers_within_the_retry_budget() -> None:
+    seen: list[httpx.Request] = []
 
-    def call(self, messages, temperature):
-        calls.append(1)
-        if len(calls) < MAX_RETRIES + 1:
-            raise RateLimitError("try later")
-        return LLMResponse(text="ok", tokens_in=1, tokens_out=1)
+    def flaky(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        if len(seen) <= MAX_RETRIES:
+            return httpx.Response(429, text="{}")
+        return content("ok")(request)
 
-    monkeypatch.setattr(LiveProvider, "_call_litellm", call)
-    provider = LiveProvider(make_settings(llm_max_retries=MAX_RETRIES), sleep=lambda s: None)
-    assert provider.complete([{"role": "user", "content": "hi"}], 0.0).text == "ok"
-    assert len(calls) == MAX_RETRIES + 1
+    assert provider_with(flaky).complete([{"role": "user", "content": "hi"}], 0.0).text == "ok"
+    assert len(seen) == MAX_RETRIES + 1

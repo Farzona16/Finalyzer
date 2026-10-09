@@ -1,4 +1,4 @@
-"""Build data/demo/golden_questions_uz.yaml from the router+compiler (run once, then keep the file)."""
+"""Build data/demo/golden_questions_uz.yaml from the router + compiler (run once, keep the file)."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from core.metrics.registry import available_metrics, primary_metric
 from core.nlu.compiler import compile_sql
 from core.nlu.entities import Catalog
 from core.nlu.router import route_question
-from core.metrics.registry import available_metrics, primary_metric
 from tests.helpers import build_demo
 
 QUESTIONS: list[tuple[str, str, str | None]] = [
@@ -115,7 +115,7 @@ def main() -> None:
     demos = {name: build_demo(name) for name in ("retail", "bank", "sales", "statistics")}
     lines = [
         "# Uzbek golden questions for Ask v2 (15 per demo dataset).",
-        "# expected_sql is produced by the deterministic compiler; result-set equality is the test.",
+        "# expected_sql comes from the deterministic compiler; result-set equality is the test.",
         "questions:",
     ]
     counts: dict[str, int] = {}

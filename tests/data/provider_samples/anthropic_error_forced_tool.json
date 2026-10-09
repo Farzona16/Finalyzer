@@ -1,0 +1,8 @@
+{
+  "type": "error",
+  "error": {
+    "type": "invalid_request_error",
+    "message": "tool_choice of type 'tool' (forced tool use) is not supported for this model; use tool_choice 'auto'."
+  },
+  "request_id": "req_011CSHoEeqs5C35K2UUqR7G0"
+}

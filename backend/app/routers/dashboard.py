@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.deps import dataset_of, get_db, get_services, require
 from app.errors import locale_of
 from app.models import Dataset, User, Workspace
-from app.schemas.dashboard import DashboardOut, LayoutIn, LayoutOut, TileQueryIn
+from app.schemas.dashboard import DashboardOut, LayoutIn, LayoutOut, TileBatchIn, TileQueryIn
 from app.security.permissions import Permission, has_permission
 from app.services import dashboard as service
 from app.services.datasets import Services
@@ -47,6 +47,30 @@ def query_tile(
         services,
         dataset,
         body.tile_id,
+        body.filters,
+        lang or locale_of(request),
+        currency,
+        show_sql=has_permission(user.role, Permission.SEE_SQL),
+    )
+
+
+@router.post("/{dataset_id}/tiles/query-batch")
+def query_tiles_batch(
+    body: TileBatchIn,
+    request: Request,
+    lang: Lang | None = Query(default=None),
+    dataset: Dataset = Depends(dataset_of(Permission.READ)),
+    user: User = Depends(require(Permission.READ)),
+    db: Session = Depends(get_db),
+    services: Services = Depends(get_services),
+) -> list[dict[str, Any]]:
+    """Data for several tiles. Identical SQL is served from the LRU cache."""
+    workspace = db.get(Workspace, user.workspace_id)
+    currency = workspace.currency if workspace else "UZS"
+    return service.query_tiles(
+        services,
+        dataset,
+        body.tile_ids,
         body.filters,
         lang or locale_of(request),
         currency,

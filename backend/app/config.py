@@ -66,9 +66,12 @@ class BackendSettings(BaseSettings):
     # DuckDB manager: how many datasets stay open, and the memory each connection may use.
     max_open_datasets: int = 3
     duckdb_memory_limit: str = "512MB"
+    resource_profile: Literal["", "free", "full"] = ""
+    max_total_mb: int = 300
     # Seconds between idle/retention sweeps (0 turns the background sweep off).
     purge_interval_seconds: int = 60
     job_workers: int = 2
+    http_timeout_s: int = 30
 
     privacy_mode: Literal["demo", "cloud", "local"] = "demo"
     allowed_privacy_modes: str = "demo,cloud,local"

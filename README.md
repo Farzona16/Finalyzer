@@ -113,10 +113,10 @@ export APP_SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(4
 docker compose up --build
 ```
 
-The app listens on port 8000 (`/healthz`). Streamlit is not in the image.
+The app listens on port 8000 (`/health`). Streamlit is not in the image.
 TLS example: `docker compose --profile tls up` with `deploy/Caddyfile`.
 
-Render: see `DEPLOY.md`. Health check path is `/healthz`.
+Render: see `DEPLOY.md`. Health check path is `/health`.
 
 ## Privacy modes (`PRIVACY_MODE`)
 

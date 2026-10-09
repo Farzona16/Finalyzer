@@ -2,12 +2,13 @@
 
 Usage:
     python scripts/eval_golden.py --model offline
-    python scripts/eval_golden.py --model gpt-4o-mini --candidates 3
+    python scripts/eval_golden.py --provider anthropic --model <model id> --candidates 2
 
 ``--model offline`` uses the offline provider (the stored SQL of each question), which only
-proves that the harness works. Any other value is a LiteLLM model string; the key comes from
-LLM_API_KEY (environment or .env), an optional endpoint from LLM_API_BASE. A report is written
-to ``reports/eval_<model>_<date>.json``.
+proves that the harness works. Otherwise ``--provider`` (anthropic, grok or ollama) is the only
+link of the chain and ``--model`` overrides its main model; keys and endpoints come from the
+environment or .env (ANTHROPIC_API_KEY, XAI_API_KEY, LLM_API_BASE). A report is written to
+``reports/eval_<model>_<date>.json``.
 """
 
 from __future__ import annotations
@@ -38,17 +39,31 @@ from core.query.evaluation import (  # noqa: E402
 REPORT_DIR = Path("reports")
 
 
-def build_settings(model: str, candidates: int) -> Settings:
-    """Settings for the run: offline for ``offline``, otherwise the given LiteLLM model."""
+MODEL_FIELD = {"anthropic": "claude_model_main", "grok": "grok_model_main", "ollama": "llm_model"}
+
+
+def build_settings(model: str, candidates: int, provider: str = "anthropic") -> Settings:
+    """Settings for the run: offline for ``offline``, otherwise one provider with ``model``."""
     base = load_settings()
     if model == "offline":
         return base.model_copy(update={"llm_mode": "offline", "sql_candidates": candidates})
-    if not base.llm_api_key and base.privacy_mode != "local":
+    update: dict[str, Any] = {
+        "llm_mode": "local" if provider == "ollama" else "live",
+        "llm_provider_chain": f"{provider},offline",
+        "sql_candidates": candidates,
+        "ask_candidates": None,
+        "session_token_budget": max(base.session_token_budget, 2_000_000),
+        "daily_token_budget": max(base.daily_token_budget, 2_000_000),
+    }
+    if model:
+        update[MODEL_FIELD[provider]] = model
+    settings = base.model_copy(update=update)
+    if not settings.provider_configured(provider):
         raise UserFacingError(
-            "LLM_API_KEY is not set. Use --model offline, or set the key in the environment."
+            f"The {provider} provider is not configured (key and model). Use --model offline, "
+            "or set them in the environment."
         )
-    update = {"llm_mode": "live", "llm_model": model, "sql_candidates": candidates}
-    return base.model_copy(update=update)
+    return settings
 
 
 def safe_name(model: str) -> str:
@@ -78,9 +93,11 @@ def print_summary(summary: dict[str, Any]) -> None:
           f"({summary['model_calls']} model calls)")
 
 
-def run(model: str, candidates: int, datasets: list[str]) -> tuple[list[QuestionOutcome], dict]:
+def run(
+    model: str, candidates: int, datasets: list[str], provider: str = "anthropic"
+) -> tuple[list[QuestionOutcome], dict]:
     """Evaluate the chosen demo datasets and return outcomes and summary."""
-    settings = build_settings(model, candidates)
+    settings = build_settings(model, candidates, provider)
     audit = AuditLog()
     gateway = LLMGateway(settings, audit)
     questions = load_golden_questions()
@@ -113,13 +130,14 @@ def write_report(
 def main() -> int:
     """Parse arguments, run the evaluation, print and store the report."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", required=True, help="LiteLLM model string, or 'offline'")
+    parser.add_argument("--model", required=True, help="model id of the provider, or 'offline'")
+    parser.add_argument("--provider", choices=sorted(MODEL_FIELD), default="anthropic")
     parser.add_argument("--candidates", type=int, default=3)
     parser.add_argument("--dataset", choices=[*DEMO_NAMES, "all"], default="all")
     args = parser.parse_args()
     datasets = list(DEMO_NAMES) if args.dataset == "all" else [args.dataset]
     try:
-        outcomes, summary = run(args.model, args.candidates, datasets)
+        outcomes, summary = run(args.model, args.candidates, datasets, args.provider)
     except UserFacingError as exc:
         print(exc.message, file=sys.stderr)
         return 2

@@ -1,0 +1,9 @@
+{
+  "data": [
+    {"type": "model", "id": "claude-test-main", "display_name": "Test Main", "created_at": "2026-01-01T00:00:00Z"},
+    {"type": "model", "id": "claude-test-fast", "display_name": "Test Fast", "created_at": "2026-01-01T00:00:00Z"}
+  ],
+  "has_more": false,
+  "first_id": "claude-test-main",
+  "last_id": "claude-test-fast"
+}

@@ -34,7 +34,9 @@ from core.ingest.flatten import (
     propose,
 )
 from core.llm.audit import AuditLog
+from core.llm.registry import LLMRuntime
 from core.models import Relationship
+from core.runtime.profile import load_limits
 
 logger = logging.getLogger("finalyzer.datasets")
 MIN_CONTAINMENT = 0.95  # joins at least this complete are pre-confirmed (spec 9.3)
@@ -56,6 +58,9 @@ class Services:
         self.store = store
         self.handles = handles
         self.audit = AuditLog()
+        self.llm_runtime = LLMRuntime()
+        # Startup default from KILL_SWITCH_DEFAULT; a value stored in the database wins (lifespan).
+        self.kill_switch = core_settings(settings).kill_switch_default == "on"
 
 
 # ---------------------------------------------------------------------- lookups
@@ -107,10 +112,14 @@ def ingest_tables(
     name: str,
     ctx: JobContext,
     audit_detail: dict[str, object] | None = None,
+    origin: str = "real",
+    extra_warnings: list[str] | None = None,
 ) -> dict[str, object]:
     """Clean, profile, store and register tables as a new dataset. Runs inside a job."""
     ctx.progress(25, "jobs.cleaning")
     cleaned, actions, warnings = clean_tables(raw_tables)
+    if extra_warnings:
+        warnings = list(warnings) + list(extra_warnings)
     ctx.progress(45, "jobs.profiling")
     settings = core_settings(services.settings)
     workspace = open_workspace(cleaned, actions, warnings, settings)
@@ -120,6 +129,21 @@ def ingest_tables(
         chosen = [r for r in proposed if r.containment >= MIN_CONTAINMENT]
         ctx.progress(65, "jobs.modeling")
         built = build_dataset(workspace, fact, chosen)
+        sample_fraction = 1.0
+        kept: list[str] = []
+        for note in warnings:
+            if note.startswith("sampled:"):
+                try:
+                    sample_fraction = min(sample_fraction, float(note.split(":", 1)[1]))
+                    continue
+                except ValueError:
+                    pass
+            kept.append(note)
+        warnings = kept
+        if sample_fraction < 0.999:
+            pct = max(1, round(sample_fraction * 100))
+            warnings.append(f"Based on a sample ({pct}%)")
+            built.warnings = list(built.warnings) + [f"Based on a sample ({pct}%)"]
         stored = StoredModel(
             tables=list(cleaned),
             profiles=workspace.profiles,
@@ -130,6 +154,8 @@ def ingest_tables(
             proposed=proposed,
             relationships=chosen,
             built=built,
+            origin=origin,
+            sample_fraction=sample_fraction,
         )
     finally:
         workspace.con.close()
@@ -182,7 +208,8 @@ def make_upload_job(
 
     def job(ctx: JobContext) -> dict[str, object]:
         ctx.progress(10, "jobs.reading")
-        raw = load_files(files, core_settings(services.settings))
+        notes: list[str] = []
+        raw = load_files(files, core_settings(services.settings), warnings=notes)
         return ingest_tables(
             services,
             raw,
@@ -191,6 +218,7 @@ def make_upload_job(
             name=name,
             ctx=ctx,
             audit_detail={"files": len(files)},
+            extra_warnings=notes,
         )
 
     return job
@@ -214,6 +242,7 @@ def make_demo_job(
             name=demo,
             ctx=ctx,
             audit_detail={"demo": demo},
+            origin="synthetic",
         )
 
     return job
@@ -274,6 +303,8 @@ def apply_model_patch(
         dataset.domain = patch.domain
         candidate.domain_source = "user"
     candidate.autopilot = None  # stale until the next build; the user's KPI edits are kept
+    candidate.insight_cache_key = ""
+    candidate.insight_payload = None
     dataset.model_json = candidate.model_dump_json()
     dataset.row_count = candidate.built.row_count if candidate.built else dataset.row_count
     dataset.status = "profiled"
@@ -306,8 +337,18 @@ def start_build(
                     kpi_service.run_for_build(
                         services, row, model, handle.model, handle.workspace.con
                     )
+                    model.insight_cache_key = ""
+                    model.insight_payload = None
                 row.model_json = model.model_dump_json()
                 row.status = "ready"
+                if (
+                    services.settings.app_env != "test"
+                    and load_limits().insight_precompute == "after_build"
+                ):
+                    ctx.progress(80, "jobs.insights")
+                    from app.services.insights import run_insights
+
+                    run_insights(services, row, "en", "simple", session)
         except Exception:
             with session_scope(services.factory) as session:
                 row = session.get(Dataset, dataset_id)
@@ -390,6 +431,11 @@ def reset_after_restart(services: Services, db: Session) -> None:
     Ephemeral data never survives a restart, so its rows and files go. In both modes a dataset
     left in ``building`` by a crash is marked failed so that it can be built again.
     """
+    from app.models import Job
+
+    for job in db.scalars(select(Job).where(Job.status.in_(("queued", "running")))):
+        job.status = "interrupted"
+        job.message_key = "jobs.interrupted"
     if not services.store.persistent:
         services.store.wipe()
         for row in db.scalars(select(Dataset)):

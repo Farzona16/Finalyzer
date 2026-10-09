@@ -45,6 +45,7 @@ def setup_logging(level: str = "INFO") -> None:
     root.addHandler(handler)
     # Uvicorn's own access log would print query strings; the app logs its own access line.
     logging.getLogger("uvicorn.access").disabled = True
-    # HTTP client libraries log full URLs (with query strings) at INFO level.
-    for noisy in ("httpx", "httpcore"):
+    # HTTP client libraries log full URLs (with query strings) at INFO level; the Anthropic SDK
+    # logs whole request bodies at DEBUG.
+    for noisy in ("httpx", "httpcore", "httpx2", "httpcore2", "anthropic"):
         logging.getLogger(noisy).setLevel(logging.WARNING)

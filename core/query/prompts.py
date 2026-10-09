@@ -90,7 +90,8 @@ def build_messages(
     user_payload: str, mask: IdentifierMask | None = None
 ) -> list[dict[str, str]]:
     """Chat messages for the first attempt. ``mask`` rewrites identifiers before they leave."""
-    system = SYSTEM_PROMPT if mask is None else mask.mask_text(SYSTEM_PROMPT)
+    # The system prompt holds no data; masking category values in it would garble the rules.
+    system = SYSTEM_PROMPT if mask is None else mask.transform(SYSTEM_PROMPT, "mask")
     user = user_payload if mask is None else mask.mask_text(user_payload)
     return [
         {"role": "system", "content": system},

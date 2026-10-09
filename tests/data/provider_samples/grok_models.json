@@ -1,0 +1,7 @@
+{
+  "data": [
+    {"id": "grok-test-main", "created": 1752800000, "object": "model", "owned_by": "xai"},
+    {"id": "grok-test-fast", "created": 1752800000, "object": "model", "owned_by": "xai"}
+  ],
+  "object": "list"
+}

@@ -3,7 +3,7 @@ import { get } from '@/api/client'
 export interface Job {
   id: string
   kind: string
-  status: 'queued' | 'running' | 'done' | 'failed'
+  status: 'queued' | 'running' | 'done' | 'failed' | 'interrupted'
   progress: number
   message_key: string
   result: Record<string, unknown> | null
@@ -20,7 +20,7 @@ export async function waitJob(
   while (Date.now() - started < timeoutMs) {
     const job = await get<Job>(`/jobs/${jobId}`)
     onProgress?.(job)
-    if (job.status === 'done' || job.status === 'failed') return job
+    if (job.status === 'done' || job.status === 'failed' || job.status === 'interrupted') return job
     await new Promise((resolve) => setTimeout(resolve, 250))
   }
   throw new Error('job timeout')

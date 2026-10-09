@@ -1,4 +1,4 @@
-"""KPI autopilot in the backend: run it during a build and serve the KPI manager.
+﻿"""KPI autopilot in the backend: run it during a build and serve the KPI manager.
 
 The autopilot result is stored inside the dataset's ``model_json`` (``StoredModel.autopilot``).
 What the user changes in the KPI manager is stored next to it (``kpi_prefs``), so a rebuild
@@ -26,7 +26,7 @@ from app.schemas.datasets import (
     StoredModel,
 )
 from app.services.datasets import Services, stored_model
-from app.services.engine import core_settings
+from app.services.engine import core_settings, make_gateway
 from core.autopilot.run import run_autopilot
 from core.dashboard.kpi import KpiValue, compute_kpis, selected_range
 from core.i18n.formats import (
@@ -37,7 +37,6 @@ from core.i18n.formats import (
     format_integer,
     format_percent,
 )
-from core.llm.gateway import LLMGateway
 from core.metrics.builder import metric_sql
 from core.metrics.registry import load_pack
 from core.models import DatasetModel, FilterSpec, Metric
@@ -61,7 +60,8 @@ def run_for_build(
     """Run the autopilot on an open dataset and keep its result in ``stored``."""
     settings = core_settings(services.settings)
     override = row.domain if stored.domain_source == "user" else None
-    result = run_autopilot(model, con, settings, LLMGateway(settings, services.audit), override)
+    gateway = make_gateway(services, row, stored, settings)
+    result = run_autopilot(model, con, settings, gateway, override)
     stored.autopilot = result.to_dict()
     if stored.domain_source != "user":
         row.domain = result.classification.pack
@@ -135,7 +135,7 @@ def label_of(metric: Metric, lang: str, pref: KpiPref | None) -> str:
 def format_value(value: float | None, unit: str, lang: str, currency: str) -> str:
     """A number in the shared Uzbek or English style."""
     if value is None:
-        return "—"
+        return "â€”"
     if unit == "percent":
         return format_percent(value, lang)
     if unit == "currency":
@@ -217,7 +217,7 @@ def domain_view(stored: StoredModel, lang: str) -> DomainOut | None:
     for evidence in sorted(evidence_rows, key=lambda e: -float((e or {}).get("score") or 0)):
         kind = (evidence or {}).get("kind")
         if kind in REASON_KINDS:
-            items = ", ".join(f"«{item}»" for item in (evidence.get("items") or [])[:4])
+            items = ", ".join(f"Â«{item}Â»" for item in (evidence.get("items") or [])[:4])
             reasons.append(translate(lang, f"autopilot.reason.{kind}", items=items))
     alternatives = []
     for alt in info.get("alternatives") or []:

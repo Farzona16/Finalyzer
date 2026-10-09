@@ -29,12 +29,13 @@ def model_reply(messages: list[dict[str, str]], temperature: float) -> str:
 def live_env(monkeypatch: pytest.MonkeyPatch) -> FakeProvider:
     """Settings with a key and model; the provider behind the gateway is a scripted fake."""
     for name, value in {
-        "LLM_MODE": "live", "LLM_API_KEY": "test-key", "LLM_MODEL": "fake-model",
+        "LLM_MODE": "live", "ANTHROPIC_API_KEY": "test-key", "CLAUDE_MODEL_MAIN": "fake-model",
         "APP_PASSWORD": "", "PRIVACY_MODE": "demo", "LLM_MAX_RETRIES": "0",
+        "SQL_CANDIDATES": "3", "ASK_CANDIDATES": "3", "CACHE_IDENTICAL_PROMPTS": "false",
     }.items():
         monkeypatch.setenv(name, value)
     provider = FakeProvider([model_reply])
-    monkeypatch.setattr(gateway_module, "LiveProvider", lambda settings: provider)
+    monkeypatch.setattr(gateway_module, "build_providers", lambda settings, runtime: [provider])
     get_settings.cache_clear()
     yield provider
     get_settings.cache_clear()

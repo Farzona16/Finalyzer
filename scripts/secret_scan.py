@@ -6,7 +6,6 @@ Exits 1 when a high-confidence pattern is found outside allowlisted files.
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent

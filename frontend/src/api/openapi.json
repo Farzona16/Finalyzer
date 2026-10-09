@@ -51,6 +51,26 @@
         }
       }
     },
+    "/api/v1/health/ready": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Health Ready Alias",
+        "description": "Same readiness payload under ``/api/v1`` (the public path is ``/health/ready``).",
+        "operationId": "health_ready_alias_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/version": {
       "get": {
         "tags": [
@@ -1451,6 +1471,84 @@
         }
       }
     },
+    "/api/v1/datasets/{dataset_id}/tiles/query-batch": {
+      "post": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Query Tiles Batch",
+        "description": "Data for several tiles. Identical SQL is served from the LRU cache.",
+        "operationId": "query_tiles_batch_api_v1_datasets__dataset_id__tiles_query_batch_post",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "uz",
+                    "en"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lang"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TileBatchIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Query Tiles Batch Api V1 Datasets  Dataset Id  Tiles Query Batch Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/datasets/{dataset_id}/layout": {
       "get": {
         "tags": [
@@ -1750,6 +1848,49 @@
         ],
         "responses": {
           "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/restart": {
+      "post": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Restart Job",
+        "description": "Re-run an interrupted job. After a process restart the work must be started again.",
+        "operationId": "restart_job_api_v1_jobs__job_id__restart_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -2434,6 +2575,22 @@
             "type": "string",
             "format": "date-time",
             "title": "Last Accessed At"
+          },
+          "sample_fraction": {
+            "type": "number",
+            "title": "Sample Fraction",
+            "default": 1.0
+          },
+          "sample_badge": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sample Badge"
           }
         },
         "type": "object",
@@ -2859,7 +3016,8 @@
               "queued",
               "running",
               "done",
-              "failed"
+              "failed",
+              "interrupted"
             ],
             "title": "Status"
           },
@@ -3679,6 +3837,44 @@
           "mode": {
             "type": "string",
             "title": "Mode"
+          },
+          "privacy_level": {
+            "type": "string",
+            "title": "Privacy Level",
+            "default": "strict"
+          },
+          "template_mode": {
+            "type": "boolean",
+            "title": "Template Mode",
+            "default": true
+          },
+          "kill_switch": {
+            "type": "boolean",
+            "title": "Kill Switch",
+            "default": false
+          },
+          "budgets": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Budgets"
+          },
+          "providers": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Providers"
+          },
+          "ephemeral": {
+            "type": "boolean",
+            "title": "Ephemeral",
+            "default": true
           }
         },
         "type": "object",
@@ -3710,6 +3906,13 @@
             },
             "type": "object",
             "title": "Tables"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnInfo"
+            },
+            "type": "array",
+            "title": "Columns"
           },
           "relationships": {
             "items": {
@@ -3974,6 +4177,29 @@
         ],
         "title": "SuggestedOut",
         "description": "Starter questions from the domain pack."
+      },
+      "TileBatchIn": {
+        "properties": {
+          "tile_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 40,
+            "minItems": 1,
+            "title": "Tile Ids"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/FilterIn"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "tile_ids"
+        ],
+        "title": "TileBatchIn",
+        "description": "Ask for several tiles in one request (deduped, cached, two workers)."
       },
       "TileQueryIn": {
         "properties": {

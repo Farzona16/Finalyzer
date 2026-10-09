@@ -90,10 +90,12 @@ def test_identical_live_prompts_are_sent_once(retail) -> None:
     clear_prompt_cache()
 
 
-def test_single_candidate_setting_is_verified(retail) -> None:
+def test_single_candidate_setting_is_unverified(retail) -> None:
     agent, provider, _ = make_agent(retail, [query_reply(COUNT)], sql_candidates=1)
     answer = agent.ask(QUESTION)
-    assert answer.result.verified and len(provider.calls) == 1
+    assert not answer.result.verified
+    assert any("one candidate" in w.lower() for w in answer.result.warnings)
+    assert len(provider.calls) == 1
 
 
 def test_failed_candidate_counts_against_agreement(retail) -> None:

@@ -17,7 +17,8 @@ def admin(client: TestClient) -> TestClient:
 def _ready(admin: TestClient, name: str = "retail") -> str:
     job = wait_job(admin, admin.post(f"/api/v1/demo/{name}/load").json()["id"], timeout=120)
     dataset_id = job["result"]["dataset_id"]
-    built = wait_job(admin, admin.post(f"/api/v1/datasets/{dataset_id}/build").json()["id"], timeout=120)
+    job_id = admin.post(f"/api/v1/datasets/{dataset_id}/build").json()["id"]
+    built = wait_job(admin, job_id, timeout=120)
     assert built["status"] == "done", built
     return dataset_id
 

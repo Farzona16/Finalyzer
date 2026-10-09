@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+
 from sqlalchemy.orm import Session
 
 from app.errors import AppError
@@ -22,6 +24,8 @@ from core.dashboard.filters import choose_slicers
 from core.dashboard.tiles import run_tile
 from core.metrics.registry import load_pack
 from core.models import FilterSpec
+from core.runtime.profile import load_limits
+from core.runtime.tile_cache import cache_key, get as cache_get, put as cache_put
 from core.templates.resolver import resolve_template
 
 
@@ -115,6 +119,13 @@ def query_tile(
         raise AppError("not_found")
     settings = core_settings(services.settings)
     spec = to_spec(filters)
+    key = cache_key(row.id, stored.built.version, tile_id, filters.model_dump())
+    cached = cache_get(key)
+    if cached is not None:
+        payload = dict(cached)
+        if not show_sql:
+            payload["source_sql"] = None
+        return payload
     with services.handles.use(row.id, row.storage_name, stored) as handle:
         tiles = resolved_tiles(row, stored, handle.model, handle.workspace.con)
         tile = next((t for t in tiles if t["id"] == tile_id), None)
@@ -124,7 +135,33 @@ def query_tile(
         data = run_tile(
             handle.workspace.con, handle.model, tile, metrics, spec, settings, locale, currency
         )
-    return data.as_dict(show_sql)
+    payload = data.as_dict(show_sql=True)
+    cache_put(key, payload)
+    if not show_sql:
+        payload = {**payload, "source_sql": None}
+    return payload
+
+
+def query_tiles(
+    services: Services,
+    row: Dataset,
+    tile_ids: list[str],
+    filters: FilterIn,
+    locale: str,
+    currency: str,
+    show_sql: bool,
+) -> list[dict]:
+    """Several tiles in one go: cache hits first, then at most two workers on the rest."""
+    unique: list[str] = list(dict.fromkeys(tile_ids))
+    workers = max(1, load_limits().tile_query_parallelism)
+
+    def one(tile_id: str) -> dict:
+        return query_tile(services, row, tile_id, filters, locale, currency, show_sql)
+
+    if len(unique) == 1 or workers == 1:
+        return [one(tile_id) for tile_id in unique]
+    with ThreadPoolExecutor(max_workers=min(workers, len(unique))) as pool:
+        return list(pool.map(one, unique))
 
 
 def save_layout(db: Session, row: Dataset, body: LayoutIn) -> LayoutOut:

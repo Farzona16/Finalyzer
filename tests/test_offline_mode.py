@@ -31,7 +31,8 @@ def test_offline_is_chosen_without_a_key() -> None:
 
 
 def test_live_is_chosen_with_a_key() -> None:
-    assert not LLMGateway(make_settings()).is_offline
+    gateway = LLMGateway(make_settings(anthropic_api_key="k", claude_model_main="claude-test"))
+    assert not gateway.is_offline and gateway.provider_names() == ["anthropic"]
 
 
 @pytest.mark.parametrize("question", GOLDEN, ids=lambda q: q.id)

@@ -80,8 +80,8 @@ export function HomePage() {
 
   async function track(jobId: string): Promise<Job> {
     const done = await waitJob(jobId, 120_000, setJob)
-    if (done.status === 'failed') {
-      throw new Error(done.error?.detail || t('jobs.failed'))
+    if (done.status === 'failed' || done.status === 'interrupted') {
+      throw new Error(done.error?.detail || t(`jobs.${done.status}`))
     }
     return done
   }

@@ -55,9 +55,27 @@ class JobRunner:
     def __init__(self, factory: sessionmaker[Session], workers: int = 2) -> None:
         self._factory = factory
         self._pool = ThreadPoolExecutor(max_workers=max(1, workers), thread_name_prefix="job")
+        self._functions: dict[str, JobFunction] = {}
+        self._inflight: dict[str, str] = {}
 
-    def submit(self, workspace_id: str, user_id: str, kind: str, function: JobFunction) -> Job:
-        """Record a queued job and start it. Returns the stored job."""
+    def submit(
+        self,
+        workspace_id: str,
+        user_id: str,
+        kind: str,
+        function: JobFunction,
+        *,
+        flight_key: str | None = None,
+    ) -> Job:
+        """Record a queued job and start it. Identical ``flight_key`` values share one job."""
+        if flight_key:
+            existing_id = self._inflight.get(flight_key)
+            if existing_id:
+                with session_scope(self._factory) as db:
+                    job = db.get(Job, existing_id)
+                    if job is not None and job.status in ("queued", "running"):
+                        db.expunge(job)
+                        return job
         with session_scope(self._factory) as db:
             job = Job(
                 workspace_id=workspace_id, user_id=user_id, kind=kind, message_key="jobs.queued"
@@ -65,9 +83,24 @@ class JobRunner:
             db.add(job)
             db.flush()
             db.expunge(job)
+        self._functions[job.id] = function
+        if flight_key:
+            self._inflight[flight_key] = job.id
         context = contextvars.copy_context()  # keeps the request id in the job's log lines
         self._pool.submit(context.run, self._run, job.id, function)
         return job
+
+    def restart(self, job_id: str) -> Job | None:
+        """Re-run an interrupted job whose function is still in this process."""
+        function = self._functions.get(job_id)
+        if function is None:
+            return None
+        with session_scope(self._factory) as db:
+            job = db.get(Job, job_id)
+            if job is None or job.status != "interrupted":
+                return None
+            workspace_id, user_id, kind = job.workspace_id, job.user_id, job.kind
+        return self.submit(workspace_id, user_id, kind, function)
 
     def shutdown(self) -> None:
         """Wait for running jobs (app shutdown)."""
@@ -102,6 +135,7 @@ class JobRunner:
                 message_key="jobs.done",
                 result=json.dumps({"ok": True, **result}),
             )
+        self._inflight = {key: value for key, value in self._inflight.items() if value != job_id}
 
     def _fail(self, job_id: str, code: str, reason: str) -> None:
         payload = {"ok": False, "error": {"code": code, "reason": reason[:300]}}

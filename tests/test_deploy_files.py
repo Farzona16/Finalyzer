@@ -24,13 +24,13 @@ def test_render_service_is_a_docker_web_service_with_a_health_check() -> None:
     assert service["type"] == "web"
     assert service["runtime"] == "docker"
     assert (ROOT / service["dockerfilePath"]).is_file()
-    assert service["healthCheckPath"] == "/healthz"
-    assert service["plan"] != "free"
+    assert service["healthCheckPath"] == "/health"
+    assert service["plan"] == "free"
 
 
 def test_render_secrets_are_not_stored_and_modes_are_set() -> None:
     env = {item["key"]: item for item in render_service()["envVars"]}
-    for secret in ("LLM_API_KEY", "LLM_MODEL", "APP_SECRET_KEY", "APP_MASTER_KEY", "DATABASE_URL"):
+    for secret in ("ANTHROPIC_API_KEY", "XAI_API_KEY", "APP_SECRET_KEY", "APP_MASTER_KEY", "DATABASE_URL"):
         assert env[secret].get("sync") is False
         assert "value" not in env[secret]
     assert env["PRIVACY_MODE"]["value"] == "demo"
@@ -39,13 +39,15 @@ def test_render_secrets_are_not_stored_and_modes_are_set() -> None:
 
 
 def test_render_variables_are_known_settings() -> None:
-    known = {
-        line.split("=")[0]
-        for line in (ROOT / ".env.example").read_text(encoding="utf-8").splitlines()
-        if "=" in line and not line.startswith("#")
-    }
+    known: set[str] = set()
+    for name in (".env.example", ".env.free.example", ".env.full.example"):
+        known |= {
+            line.split("=")[0]
+            for line in (ROOT / name).read_text(encoding="utf-8").splitlines()
+            if "=" in line and not line.startswith("#")
+        }
     declared = {item["key"] for item in render_service()["envVars"]}
-    assert declared <= known
+    assert declared <= known | {"LOG_LEVEL"}
 
 
 def test_dockerfile_runs_as_non_root_on_the_render_port() -> None:

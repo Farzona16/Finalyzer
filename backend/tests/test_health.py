@@ -15,7 +15,8 @@ def test_healthz_works_on_both_paths(client: TestClient) -> None:
 
 
 def test_readyz_checks_the_database(client: TestClient) -> None:
-    assert client.get("/api/v1/readyz").json() == {"status": "ready"}
+    body = client.get("/api/v1/readyz").json()
+    assert body["status"] == "ready"
 
 
 def test_readyz_reports_unavailable_when_the_database_is_gone(client: TestClient) -> None:

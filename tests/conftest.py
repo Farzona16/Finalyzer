@@ -10,6 +10,9 @@ from core.metrics.registry import available_metrics, primary_metric
 from core.models import Finding
 from tests.helpers import DemoDataset, build_demo
 
+# The developer's .env (keys, model names, candidate counts) must never change test outcomes.
+Settings.model_config["env_file"] = None
+
 
 @pytest.fixture(scope="session")
 def retail() -> DemoDataset:

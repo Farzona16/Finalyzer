@@ -1,0 +1,32 @@
+{
+  "id": "b7e2c4a1-1f0d-4c55-9a3e-2d6f0c1e8b90",
+  "object": "chat.completion",
+  "created": 1752854600,
+  "model": "grok-test-main",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "tool_calls": [
+          {
+            "id": "call_01",
+            "type": "function",
+            "function": {
+              "name": "submit_nl2sql",
+              "arguments": "{\"intent\": \"query\", \"sql\": \"SELECT COUNT(*) AS n FROM data\", \"clarification\": null}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 380,
+    "completion_tokens": 35,
+    "total_tokens": 415
+  }
+}

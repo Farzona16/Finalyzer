@@ -108,3 +108,22 @@ One line per decision that the specification left open (what, why).
 - U11: Insight status is stored per dataset (`PATCH /datasets/{id}/insights/{finding_id}`), not as a global `/insights/{id}`, so one workspace cannot guess another’s ids. Finding status is not per-user.
 - U12: Streamlit (`app/`) stays in the git tree for v2 tests and is excluded from the Docker context (`.dockerignore`). The image CMD is Uvicorn, one worker.
 - U13: `docker compose` requires `APP_SECRET_KEY` in the environment; there is no default secret in the compose file.
+
+## v3.1-Z (zero-cost infrastructure, multi-provider AI)
+
+Verified facts and their sources are in `docs/V31Z_BASELINE.md` (checked 2026-10-09).
+
+- Z0: The v3.1 base spec is not in the repository. Its concepts that this spec relies on (privacy levels `strict/balanced/open`, kill switch, Analyst Agent, claim validator, two-candidate Ask) are built on top of the v3 code here, in the smallest form that the v3.1-Z acceptance tests need.
+- Z0: `pandas` stays a runtime dependency. The cleaner, tiles, autopilot and storage use it (~125 call sites); replacing it is a rewrite with high regression risk. The 400 MB gate is met through DuckDB limits, sampling and caps instead, and the deviation is listed in `KNOWN_LIMITATIONS.md`. CSV/TSV/Parquet ingestion now goes through DuckDB; `.xls` uses `xlrd`.
+- Z1: Default Claude model `claude-haiku-5-5` for fast/main/deep (free preset). `claude-3-5-haiku-*` is retired (2026-02-19).
+- Z1: Grok model names are left empty. No key was available to list `/v1/models`; the agent does not guess. `scripts/grok_smoke.py` prints the list and the owner sets `GROK_MODEL_*`.
+- Z1: The Anthropic provider never sends `temperature` (removed from SDK 1.x and rejected by current models). Determinism comes from forced tools and validators, not sampling settings.
+- Z1: xAI is called through `/v1/chat/completions` (OpenAI-compatible) as the spec asks, although xAI recommends the Responses API for new integrations.
+- Z1: Token prices are never stored; the Privacy page shows tokens, not money.
+- Z1: Forced tools are decided per model at run time. A model that answers 400 to `tool_choice: {"type": "tool"}` is remembered and gets `tool_choice: auto` + `strict: true` + an instruction instead; the validator is unchanged. Grok falls back from `tools` to `response_format: json_schema`, then reports `forced_tool=false` so the chain moves on.
+- Z1: xAI documents `max_tokens` as deprecated; the Grok link sends `max_completion_tokens`, the generic `custom` link keeps `max_tokens` (what most OpenAI-compatible servers accept).
+- Z1: Spend limits are treated like exhausted credits: Anthropic answers 400 (organisation spend limit) or 429 without `retry-after` (tier spend cap). Retrying these only burns the 30 s request budget, so the provider is disabled for the session (re-enabled by an admin or a restart).
+- Z1: A mid-stream Anthropic `event: error` arrives as HTTP 200; its error `type` is mapped to the documented status (e.g. `overloaded_error` = 529) so it is retried like the non-streaming error.
+- Z1: The Anthropic SDK logs whole request bodies at DEBUG and `httpx2` logs full URLs at INFO; both loggers (and `anthropic`) are pinned to WARNING when a provider is built and in the backend logging setup.
+- Z1: The session token budget in the API backend is per process (one shared audit log; Render restarts the process after idle). Dataset and daily budgets are tracked separately in the shared ledger.
+- Z1: The old `LLM_MODEL`/`LLM_API_KEY` (LiteLLM string) setup has no automatic migration: LiteLLM model prefixes cannot be mapped safely. Such a configuration now runs offline until the owner sets `ANTHROPIC_*`/`XAI_*` or the `custom` link (see `.env.example`).

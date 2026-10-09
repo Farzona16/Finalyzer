@@ -165,10 +165,16 @@ class NL2SQLAgent:
         first = self._candidate(messages, 0.0, mask)
         if first.answer is not None and first.answer.intent != "query":
             return self._non_query(first.answer, mask)
-        extra = max(self.settings.sql_candidates - 1, 0)
+        extra = max(self.settings.candidates - 1, 0)
+        exclude: set[str] | None = None
+        names = self.gateway.provider_names()
+        if extra and len(names) > 1:
+            exclude = {names[0]}
         with ThreadPoolExecutor(max_workers=max(extra, 1)) as pool:
             futures = [
-                pool.submit(self._candidate, messages, DIVERSE_TEMPERATURE, mask)
+                pool.submit(
+                    self._candidate, messages, DIVERSE_TEMPERATURE, mask, exclude
+                )
                 for _ in range(extra)
             ]
             others = [f.result() for f in futures]
@@ -185,14 +191,20 @@ class NL2SQLAgent:
         return Answer(status="refuse", text=text)
 
     def _candidate(
-        self, messages: list[dict[str, str]], temperature: float, mask: IdentifierMask
+        self,
+        messages: list[dict[str, str]],
+        temperature: float,
+        mask: IdentifierMask,
+        exclude: set[str] | None = None,
     ) -> Candidate:
         """One attempt, with up to ``MAX_REPAIRS`` repairs using the exact error."""
         conversation = list(messages)
         error: str | None = None
         for _ in range(MAX_REPAIRS + 1):
             try:
-                reply = self.gateway.complete_json("nl2sql", conversation, NLAnswer, temperature)
+                reply = self.gateway.complete_json(
+                    "nl2sql", conversation, NLAnswer, temperature, exclude=exclude
+                )
             except (LLMUnavailableError, PrivacyBlockedError) as exc:
                 return Candidate(error=exc.message, unavailable=True)
             if reply.intent != "query":
@@ -229,7 +241,7 @@ class NL2SQLAgent:
             groups.setdefault(c.digest or "", []).append(c)
         best = max(groups.values(), key=len)  # ties keep the earliest group
         total, agreeing = len(candidates), len(best)
-        verified = total == 1 or (agreeing >= 2 and agreeing > total / 2)
+        verified = agreeing >= 2 and agreeing > total / 2
         result = best[0].result
         assert result is not None
         result = result.model_copy(
@@ -243,9 +255,15 @@ class NL2SQLAgent:
         if agreeing < total and verified:
             result.warnings.append(f"{count_summary(agreeing, total)}.")
         if not verified:
-            result.warnings.append(
-                f"Unverified: only {count_summary(agreeing, total)}. Treat this number with care."
-            )
+            if total == 1:
+                result.warnings.append(
+                    "Unverified: only one candidate query was generated, so there is no "
+                    "independent agreement to check. Treat this number with care."
+                )
+            else:
+                result.warnings.append(
+                    f"Unverified: only {count_summary(agreeing, total)}. Treat this number with care."
+                )
         hint = best[0].answer.chart_hint if best[0].answer else None
         return self._ok(result, hint)
 

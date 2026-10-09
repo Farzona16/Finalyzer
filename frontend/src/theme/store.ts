@@ -20,12 +20,21 @@ export function resolveTheme(preference: ThemePreference): ResolvedTheme {
   return preference
 }
 
+export function defaultThemePreference(): ThemePreference {
+  const coarse = typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches
+  const lowMem =
+    typeof navigator !== 'undefined' &&
+    typeof (navigator as Navigator & { deviceMemory?: number }).deviceMemory === 'number' &&
+    ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4
+  return coarse || lowMem ? 'light' : 'system'
+}
+
 function readStored(): ThemePreference {
   try {
     const value = localStorage.getItem(THEME_STORAGE_KEY)
-    return isThemePreference(value) ? value : 'system'
+    return isThemePreference(value) ? value : defaultThemePreference()
   } catch {
-    return 'system'
+    return defaultThemePreference()
   }
 }
 

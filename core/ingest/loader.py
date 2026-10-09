@@ -18,10 +18,18 @@ import pandas as pd
 
 from core.config import Settings, get_settings
 from core.errors import UserFacingError
+from core.runtime.profile import load_limits
+from core.runtime.sampling import maybe_sample_frame
+from core.runtime.watchdog import check_memory
 
 ENCODINGS = ("utf-8", "utf-8-sig", "cp1251", "latin-1")
 DELIMITERS = (",", ";", "\t", "|")
-SUPPORTED_SUFFIXES = (".csv", ".tsv", ".txt", ".xlsx", ".xlsm")
+CSV_SUFFIXES = (".csv", ".tsv", ".txt")
+EXCEL_SUFFIXES = (".xlsx", ".xlsm")
+XLS_SUFFIXES = (".xls",)
+PARQUET_SUFFIXES = (".parquet",)
+BLOCKED_IN_FREE = (".ods", ".zip")
+SUPPORTED_SUFFIXES = CSV_SUFFIXES + EXCEL_SUFFIXES + XLS_SUFFIXES + PARQUET_SUFFIXES
 # "base" and "data" are the names of the flat views, so no table may use them.
 PREVIEW_VIEW = "preview"  # used by the Data tab to inspect a join before it is built
 RESERVED_TABLE_NAMES = frozenset({"base", "data", PREVIEW_VIEW})
@@ -136,12 +144,74 @@ def read_excel_tables(data: bytes, stem: str) -> dict[str, pd.DataFrame]:
 
 
 def check_limits(tables: dict[str, pd.DataFrame], settings: Settings) -> None:
-    """Refuse tables larger than the configured row limit."""
+    """Refuse tables larger than the configured (and profile-capped) row limit."""
+    cap = min(settings.max_rows, load_limits().max_rows)
     for name, frame in tables.items():
-        if len(frame) > settings.max_rows:
+        if len(frame) > cap:
             raise UserFacingError(
-                f"Table '{name}' has {len(frame):,} rows; the limit is {settings.max_rows:,}."
+                f"Table '{name}' has {len(frame):,} rows; the limit is {cap:,}."
             )
+
+
+def read_xls_tables(data: bytes, stem: str) -> dict[str, pd.DataFrame]:
+    """Read every sheet of a legacy ``.xls`` workbook (xlrd, values only)."""
+    import xlrd
+
+    try:
+        book = xlrd.open_workbook(file_contents=data, formatting_info=False)
+    except xlrd.XLRDError as exc:
+        raise UserFacingError("The Excel file is corrupt or not a valid .xls file.") from exc
+    tables: dict[str, pd.DataFrame] = {}
+    for sheet in book.sheets():
+        if sheet.nrows < 1:
+            continue
+        header = [str(sheet.cell_value(0, c) or "") for c in range(sheet.ncols)]
+        body = [
+            [cell_to_text(sheet.cell_value(r, c)) for c in range(sheet.ncols)]
+            for r in range(1, sheet.nrows)
+        ]
+        name = stem if book.nsheets == 1 else sheet.name
+        tables[name] = pd.DataFrame(body, columns=header, dtype=object)
+    if not tables:
+        raise UserFacingError("The Excel file contains no data.")
+    return tables
+
+
+def read_parquet_table(data: bytes, stem: str) -> pd.DataFrame:
+    """Load a Parquet file through DuckDB."""
+    import tempfile
+
+    import duckdb
+
+    from core.runtime.profile import duckdb_pragmas
+
+    del stem
+    with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as handle:
+        handle.write(data)
+        path = handle.name
+    con = duckdb.connect(":memory:")
+    try:
+        for statement in duckdb_pragmas():
+            try:
+                con.execute(statement)
+            except Exception:  # noqa: BLE001
+                if "max_memory" not in statement:
+                    raise
+        con.execute(
+            "CREATE TABLE parquet_in AS SELECT * FROM read_parquet(?)",
+            [path],
+        )
+        frame = con.execute("SELECT * FROM parquet_in").df()
+    except UserFacingError:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        raise UserFacingError("The Parquet file could not be read.") from exc
+    finally:
+        con.close()
+        Path(path).unlink(missing_ok=True)
+    if frame.empty and list(frame.columns) == []:
+        raise UserFacingError("The Parquet file contains no data.")
+    return frame.astype(object)
 
 
 def load_file(
@@ -149,15 +219,27 @@ def load_file(
 ) -> dict[str, pd.DataFrame]:
     """Load one uploaded file. Returns table name -> raw text DataFrame."""
     settings = settings or get_settings()
-    if len(data) > settings.max_file_mb * 1024 * 1024:
-        raise UserFacingError(f"'{filename}' is larger than the {settings.max_file_mb} MB limit.")
+    limits = load_limits()
+    cap = min(settings.max_file_mb, limits.max_file_mb)
+    if len(data) > cap * 1024 * 1024:
+        raise UserFacingError(f"'{filename}' is larger than the {cap} MB limit.")
     path = Path(filename)
     suffix = path.suffix.lower()
+    if suffix in BLOCKED_IN_FREE and not (limits.allow_ods or limits.allow_zip):
+        raise UserFacingError(
+            f"'{filename}': .ods and .zip uploads are turned off on this plan."
+        )
     if suffix not in SUPPORTED_SUFFIXES:
-        raise UserFacingError(f"'{filename}': only CSV and XLSX files are supported.")
+        raise UserFacingError(
+            f"'{filename}': only CSV, TSV, Excel and Parquet files are supported."
+        )
     stem = snake_case(path.stem, fallback="table")
-    if suffix in (".xlsx", ".xlsm"):
+    if suffix in EXCEL_SUFFIXES:
         tables = {snake_case(k, "table"): v for k, v in read_excel_tables(data, stem).items()}
+    elif suffix in XLS_SUFFIXES:
+        tables = {snake_case(k, "table"): v for k, v in read_xls_tables(data, stem).items()}
+    elif suffix in PARQUET_SUFFIXES:
+        tables = {stem: read_parquet_table(data, stem)}
     else:
         tables = {stem: read_csv_text(data)}
     check_limits(tables, settings)
@@ -165,13 +247,42 @@ def load_file(
 
 
 def load_files(
-    files: list[tuple[str, bytes]], settings: Settings | None = None
+    files: list[tuple[str, bytes]],
+    settings: Settings | None = None,
+    warnings: list[str] | None = None,
 ) -> dict[str, pd.DataFrame]:
-    """Load several files into one table dictionary with unique table names."""
+    """Load several files. One corrupt file is skipped; an empty batch is an error."""
+    settings = settings or get_settings()
+    limits = load_limits()
+    if len(files) > limits.max_files:
+        raise UserFacingError(f"At most {limits.max_files} files can be loaded at once.")
+    total = sum(len(data) for _, data in files)
+    if total > limits.max_total_mb * 1024 * 1024:
+        raise UserFacingError(
+            f"The files together are larger than the {limits.max_total_mb} MB limit."
+        )
     result: dict[str, pd.DataFrame] = {}
+    skipped: list[str] = []
+    sample_fraction = 1.0
     for filename, data in files:
-        for name, frame in load_file(filename, data, settings).items():
-            result[unique_name(name, set(result) | RESERVED_TABLE_NAMES)] = frame
+        check_memory(limits)
+        try:
+            loaded = load_file(filename, data, settings)
+        except UserFacingError as exc:
+            skipped.append(f"{filename}: {exc.message}")
+            continue
+        for name, frame in loaded.items():
+            sampled, fraction = maybe_sample_frame(frame, limits)
+            sample_fraction = min(sample_fraction, fraction)
+            result[unique_name(name, set(result) | RESERVED_TABLE_NAMES)] = sampled
+    if warnings is not None:
+        warnings.extend(skipped)
+        if sample_fraction < 0.999:
+            warnings.append(f"sampled:{sample_fraction:.6f}")
+    if not result:
+        raise UserFacingError(
+            "None of the files could be read. " + (" ".join(skipped) if skipped else "")
+        )
     return result
 
 

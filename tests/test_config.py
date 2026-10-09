@@ -51,20 +51,55 @@ def test_local_mode_with_api_base_is_valid(monkeypatch: pytest.MonkeyPatch) -> N
 
 
 def test_offline_when_no_key(monkeypatch: pytest.MonkeyPatch) -> None:
-    settings = make_settings(monkeypatch, LLM_MODEL="provider/model")
+    settings = make_settings(monkeypatch, CLAUDE_MODEL_MAIN="claude-x")
+    assert settings.effective_llm_mode == "offline"
+
+
+def test_offline_when_key_but_no_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    settings = make_settings(monkeypatch, ANTHROPIC_API_KEY="secret")
     assert settings.effective_llm_mode == "offline"
 
 
 def test_live_with_key_and_model(monkeypatch: pytest.MonkeyPatch) -> None:
-    settings = make_settings(monkeypatch, LLM_MODEL="provider/model", LLM_API_KEY="secret")
+    settings = make_settings(monkeypatch, ANTHROPIC_API_KEY="secret", CLAUDE_MODEL_MAIN="m")
     assert settings.effective_llm_mode == "live"
+    assert settings.claude_models == {"fast": "m", "main": "m", "deep": "m"}
+
+
+def test_grok_link_needs_a_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert make_settings(monkeypatch, XAI_API_KEY="k").effective_llm_mode == "offline"
+    assert make_settings(monkeypatch, XAI_API_KEY="k", GROK_MODEL_MAIN="g").provider_configured(
+        "grok"
+    )
 
 
 def test_explicit_offline_wins(monkeypatch: pytest.MonkeyPatch) -> None:
     settings = make_settings(
-        monkeypatch, LLM_MODEL="provider/model", LLM_API_KEY="secret", LLM_MODE="offline"
+        monkeypatch, ANTHROPIC_API_KEY="secret", CLAUDE_MODEL_MAIN="m", LLM_MODE="offline"
     )
     assert settings.effective_llm_mode == "offline"
+    assert settings.chain == ["offline"]
+
+
+def test_chain_always_ends_offline(monkeypatch: pytest.MonkeyPatch) -> None:
+    settings = make_settings(monkeypatch, LLM_PROVIDER_CHAIN="offline,grok,anthropic")
+    assert settings.chain == ["grok", "anthropic", "offline"]
+    with pytest.raises(ValueError, match="unknown providers"):
+        make_settings(monkeypatch, LLM_PROVIDER_CHAIN="anthropic,openrouter")
+
+
+def test_clearance_defaults_to_synthetic_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    settings = make_settings(monkeypatch)
+    assert settings.clearance == {"anthropic": "synthetic_only", "grok": "synthetic_only"}
+    with pytest.raises(ValueError, match="PROVIDER_CLEARANCE"):
+        make_settings(monkeypatch, PROVIDER_CLEARANCE="anthropic:everything")
+
+
+def test_free_preset_budgets_are_conservative(monkeypatch: pytest.MonkeyPatch) -> None:
+    settings = make_settings(monkeypatch)
+    assert (settings.session_token_budget, settings.dataset_token_budget,
+            settings.daily_token_budget) == (30_000, 80_000, 200_000)
+    assert settings.hard_stop_on_budget and settings.privacy_level == "strict"
 
 
 def test_category_values_rules(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -72,11 +107,13 @@ def test_category_values_rules(monkeypatch: pytest.MonkeyPatch) -> None:
     assert not make_settings(monkeypatch, PRIVACY_MODE="cloud").category_values_allowed
     cloud_on = make_settings(monkeypatch, PRIVACY_MODE="cloud", SEND_CATEGORY_VALUES="true")
     assert not cloud_on.category_values_allowed
+    assert make_settings(monkeypatch, PRIVACY_LEVEL="balanced").category_values_allowed
 
 
 def test_result_rows_to_llm(monkeypatch: pytest.MonkeyPatch) -> None:
     assert make_settings(monkeypatch, PRIVACY_MODE="cloud").max_result_rows_to_llm == 0
-    assert make_settings(monkeypatch, PRIVACY_MODE="demo").max_result_rows_to_llm == 50
+    assert make_settings(monkeypatch, PRIVACY_MODE="demo").max_result_rows_to_llm == 0
+    assert make_settings(monkeypatch, PRIVACY_LEVEL="open").max_result_rows_to_llm == 50
 
 
 def test_unknown_exception_gets_reference_id() -> None:

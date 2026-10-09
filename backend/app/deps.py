@@ -26,6 +26,7 @@ PUBLIC_ROUTES: frozenset[tuple[str, str]] = frozenset(
     {
         ("GET", "/api/v1/healthz"),
         ("GET", "/api/v1/readyz"),
+        ("GET", "/api/v1/health/ready"),
         ("GET", "/api/v1/version"),
         ("GET", "/api/v1/auth/csrf"),
         ("POST", "/api/v1/auth/first-admin"),

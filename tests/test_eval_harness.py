@@ -80,7 +80,7 @@ def test_wrong_model_answer_fails_and_right_answer_passes(retail: DemoDataset) -
     right = FakeProvider([query_reply(question.expected_sql)])
     outcomes = {}
     for label, provider in (("wrong", wrong), ("right", right)):
-        settings = make_settings()
+        settings = make_settings(sql_candidates=3)
         gateway = LLMGateway(settings, AuditLog(), provider)
         outcomes[label] = evaluate_dataset(
             retail.con, retail.model, "retail", [question], gateway, settings

@@ -52,7 +52,7 @@ def render_mode_info(state: SessionState) -> None:
     if state.gateway.is_offline:
         st.caption(t("sidebar.ai_offline"))
     else:
-        st.caption(t("sidebar.ai_live", model=state.settings.llm_model or "local model"))
+        st.caption(t("sidebar.ai_live", model=state.gateway.primary_model))
 
 
 def render_sidebar(state: SessionState) -> FilterSpec:

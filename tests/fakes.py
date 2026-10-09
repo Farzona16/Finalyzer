@@ -9,7 +9,7 @@ from collections.abc import Callable
 from typing import Any
 
 from core.config import Settings
-from core.llm.providers import LLMResponse
+from core.llm.base import Capabilities, LLMResponse
 
 Reply = str | Exception | Callable[[list[dict[str, str]], float], str]
 
@@ -23,6 +23,10 @@ def make_settings(**overrides: Any) -> Settings:
         "llm_api_key": "test-key",
         "llm_max_retries": 0,
         "cache_identical_prompts": False,
+        "provider_clearance": "anthropic:synthetic_only,grok:synthetic_only,fake:strict_ok",
+        "session_token_budget": 200_000,
+        "dataset_token_budget": 400_000,
+        "daily_token_budget": 1_000_000,
     }
     values.update(overrides)
     return Settings(_env_file=None, **values)
@@ -62,20 +66,28 @@ class FakeProvider:
 
     external = True
     api_base = ""
+    capabilities = Capabilities()
 
-    def __init__(self, replies: list[Reply] | None = None, model: str = "fake-model") -> None:
+    def __init__(
+        self, replies: list[Reply] | None = None, model: str = "fake-model", name: str = "fake"
+    ) -> None:
         self.model = model
+        self.name = name
         self._replies = list(replies or [])
         self._lock = threading.Lock()
         self.calls: list[list[dict[str, str]]] = []
         self.temperatures: list[float] = []
+        self.kwargs: list[dict[str, Any]] = []
 
-    def complete(self, messages: list[dict[str, str]], temperature: float) -> LLMResponse:
+    def complete(
+        self, messages: list[dict[str, str]], temperature: float, **kwargs: Any
+    ) -> LLMResponse:
         """Record the call and return the next scripted reply."""
         with self._lock:
             index = len(self.calls)
             self.calls.append(copy.deepcopy(messages))
             self.temperatures.append(temperature)
+            self.kwargs.append(dict(kwargs))
             reply = self._replies[min(index, len(self._replies) - 1)] if self._replies else "{}"
         if isinstance(reply, Exception):
             raise reply

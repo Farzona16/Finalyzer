@@ -17,6 +17,8 @@ from core.models import ColumnInfo, Relationship
 MIN_CONTAINMENT = 0.95
 NAME_SIMILARITY = 0.6
 MIN_COVERAGE = 0.2  # a fact column must reach at least 20% of the dimension's keys
+APPROX_DISTINCT_CAP = 200_000  # spec WP5: approximate check above this; exact for top candidates
+TOP_EXACT = 3
 KEY_TYPES = ("integer", "text", "float")
 NUMERIC = frozenset({"integer", "float"})
 
@@ -46,14 +48,30 @@ def unique_columns(columns: list[ColumnInfo], row_count: int) -> list[ColumnInfo
 
 
 def overlap(
-    con: duckdb.DuckDBPyConnection, fact: str, fact_col: str, dim: str, dim_col: str
+    con: duckdb.DuckDBPyConnection,
+    fact: str,
+    fact_col: str,
+    dim: str,
+    dim_col: str,
+    *,
+    approx: bool = False,
 ) -> tuple[float, float]:
     """Return (containment, coverage) of a fact column in a dimension key column."""
     f, d = quote_identifier(fact_col), quote_identifier(dim_col)
+    if approx:
+        fact_values = (
+            f"SELECT {f} AS v, COUNT(*) AS n FROM ("
+            f"SELECT {f} FROM {quote_identifier(fact)} WHERE {f} IS NOT NULL "
+            f"USING SAMPLE 200000) s GROUP BY 1"
+        )
+    else:
+        fact_values = (
+            f"SELECT {f} AS v, COUNT(*) AS n FROM {quote_identifier(fact)} "
+            f"WHERE {f} IS NOT NULL GROUP BY {f}"
+        )
     row = con.execute(
         f"""
-        WITH fact_values AS (SELECT {f} AS v, COUNT(*) AS n FROM {quote_identifier(fact)}
-                             WHERE {f} IS NOT NULL GROUP BY {f})
+        WITH fact_values AS ({fact_values})
         SELECT COALESCE(SUM(n) FILTER (WHERE k.{d} IS NOT NULL), 0)::DOUBLE / NULLIF(SUM(n), 0),
                COUNT(k.{d})::DOUBLE / NULLIF((SELECT COUNT(*) FROM {quote_identifier(dim)}), 0)
         FROM fact_values LEFT JOIN {quote_identifier(dim)} k
@@ -61,6 +79,24 @@ def overlap(
         """
     ).fetchone()
     return float(row[0] or 0.0), float(row[1] or 0.0)
+
+
+def fan_out_ok(
+    con: duckdb.DuckDBPyConnection, fact: str, fact_col: str, dim: str, dim_col: str
+) -> bool:
+    """Exact ``COUNT(*)`` guard: a join must not multiply fact rows."""
+    f, d = quote_identifier(fact_col), quote_identifier(dim_col)
+    fact_n = int(con.execute(f"SELECT COUNT(*) FROM {quote_identifier(fact)}").fetchone()[0])
+    joined = int(
+        con.execute(
+            f"""
+            SELECT COUNT(*) FROM {quote_identifier(fact)} f
+            LEFT JOIN {quote_identifier(dim)} k
+              ON CAST(f.{f} AS VARCHAR) = CAST(k.{d} AS VARCHAR)
+            """
+        ).fetchone()[0]
+    )
+    return joined == fact_n
 
 
 def score_candidate(fact_col: str, dim_col: str, containment: float, coverage: float) -> float:
@@ -79,27 +115,45 @@ def best_for_dimension(
     fact_rows: int,
 ) -> Relationship | None:
     """Find the best (fact column, dimension key) pair for one dimension table."""
-    best: tuple[float, Relationship] | None = None
+    ranked: list[tuple[float, ColumnInfo, ColumnInfo, bool, float, float]] = []
     for key in dim_keys:
         for column in fact_columns:
             if column.is_pii or not types_compatible(
                 column.dtype, key.dtype, column.name, key.name
             ):
                 continue
-            containment, coverage = overlap(con, fact, column.name, dim, key.name)
+            approx = column.distinct > APPROX_DISTINCT_CAP
+            containment, coverage = overlap(
+                con, fact, column.name, dim, key.name, approx=approx
+            )
             if containment < MIN_CONTAINMENT or coverage < MIN_COVERAGE:
                 continue
             score = score_candidate(column.name, key.name, containment, coverage)
-            unique_fact = column.distinct == fact_rows and column.null_pct == 0
-            relationship = Relationship(
-                fact_col=column.name,
-                dim_table=dim,
-                dim_col=key.name,
-                containment=round(containment, 4),
-                cardinality="one_to_one" if unique_fact else "many_to_one",
+            ranked.append((score, column, key, approx, containment, coverage))
+    ranked.sort(key=lambda item: item[0], reverse=True)
+    best: tuple[float, Relationship] | None = None
+    for index, (score, column, key, approx, containment, coverage) in enumerate(ranked):
+        if approx:
+            if index >= TOP_EXACT:
+                continue
+            containment, coverage = overlap(
+                con, fact, column.name, dim, key.name, approx=False
             )
-            if best is None or score > best[0]:
-                best = (score, relationship)
+            if containment < MIN_CONTAINMENT or coverage < MIN_COVERAGE:
+                continue
+            score = score_candidate(column.name, key.name, containment, coverage)
+        if not fan_out_ok(con, fact, column.name, dim, key.name):
+            continue
+        unique_fact = column.distinct == fact_rows and column.null_pct == 0
+        relationship = Relationship(
+            fact_col=column.name,
+            dim_table=dim,
+            dim_col=key.name,
+            containment=round(containment, 4),
+            cardinality="one_to_one" if unique_fact else "many_to_one",
+        )
+        if best is None or score > best[0]:
+            best = (score, relationship)
     return best[1] if best else None
 
 

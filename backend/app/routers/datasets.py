@@ -25,6 +25,7 @@ from app.services import datasets as service
 from app.services.datasets import Services
 from app.services.uploads import display_name, validate_upload
 from core.ingest.demo import DEMO_DIR, DEMO_NAMES
+from core.runtime.sampling import sample_badge
 
 router = APIRouter(prefix="/datasets", tags=["datasets"])
 demo_router = APIRouter(prefix="/demo", tags=["demo"])
@@ -43,6 +44,8 @@ def dataset_out(dataset: Dataset) -> DatasetOut:
         tables=stored.row_counts,
         created_at=dataset.created_at,
         last_accessed_at=dataset.last_accessed_at,
+        sample_fraction=stored.sample_fraction,
+        sample_badge=sample_badge(stored.sample_fraction),
     )
 
 
@@ -91,16 +94,23 @@ async def upload_files(
 ) -> JobOut:
     """Validate the files (S9) and start the ingest job."""
     checked: list[tuple[str, bytes]] = []
+    blank_named = 0
     for upload in files:
         filename = (upload.filename or "").strip()
         data = await read_limited(upload, settings.max_upload_mb * 1024 * 1024)
-        if not filename or not data.strip():
+        if not filename:
             continue  # extra empty multipart parts from the browser
+        if not data.strip():
+            blank_named += 1
+            continue
         validate_upload(filename, data, settings)
         checked.append((filename, data))
+    if not checked and blank_named:
+        raise AppError("upload_invalid")
     if not checked or len(checked) > settings.max_upload_files:
         raise AppError("validation_failed", extra={"max_files": settings.max_upload_files})
     label = (name or "").strip() or display_name(checked[0][0])
+    total = sum(len(data) for _, data in checked)
     job = jobs.submit(
         user.workspace_id,
         user.id,
@@ -108,6 +118,7 @@ async def upload_files(
         service.make_upload_job(
             services, checked, workspace_id=user.workspace_id, user_id=user.id, name=label
         ),
+        flight_key=f"ingest:{user.workspace_id}:{label}:{len(checked)}:{total}",
     )
     return job_out(job, locale_of(request))
 
@@ -166,7 +177,13 @@ def build(
 ) -> JobOut:
     """Finish the dataset (the KPI autopilot joins this job in phase U5)."""
     function = service.start_build(services, dataset, db)
-    job = jobs.submit(user.workspace_id, user.id, "build", function)
+    job = jobs.submit(
+        user.workspace_id,
+        user.id,
+        "build",
+        function,
+        flight_key=f"build:{dataset.id}",
+    )
     return job_out(job, locale_of(request))
 
 
@@ -198,5 +215,6 @@ def load_demo(
         user.id,
         "ingest",
         service.make_demo_job(services, name, workspace_id=user.workspace_id, user_id=user.id),
+        flight_key=f"demo:{user.workspace_id}:{name}",
     )
     return job_out(job, locale_of(request))

@@ -39,7 +39,15 @@ interface Column {
 }
 
 interface Profile {
-  dataset: { id: string; name: string; domain: string | null; status: string; tables?: Record<string, number> }
+  dataset: {
+    id: string
+    name: string
+    domain: string | null
+    status: string
+    tables?: Record<string, number>
+    sample_fraction?: number
+    sample_badge?: string | null
+  }
   dropped_pii: string[]
   warnings: string[]
   fact_table: string
@@ -73,6 +81,11 @@ export function DatasetLayout() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold tracking-tight">{profile.data?.dataset.name ?? t('common.loading')}</h1>
+      {profile.data?.dataset.sample_fraction != null && profile.data.dataset.sample_fraction < 0.999 ? (
+        <p className="text-sm text-amber">
+          {t('dataset.sample', { pct: Math.max(1, Math.round(profile.data.dataset.sample_fraction * 100)) })}
+        </p>
+      ) : null}
       <nav className="flex flex-wrap gap-2">
         {tabs.map((tab, index) => {
           const Icon = TAB_ICONS[index]

@@ -28,6 +28,13 @@ class TileQueryIn(StrictModel):
     filters: FilterIn = Field(default_factory=FilterIn)
 
 
+class TileBatchIn(StrictModel):
+    """Ask for several tiles in one request (deduped, cached, two workers)."""
+
+    tile_ids: list[str] = Field(min_length=1, max_length=40)
+    filters: FilterIn = Field(default_factory=FilterIn)
+
+
 class TileSpecOut(BaseModel):
     """One box on the grid, without its query result (that comes from POST /tiles/query)."""
 

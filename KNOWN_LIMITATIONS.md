@@ -3,6 +3,31 @@
 This list is meant to be honest. Numbers come from files in `reports/` or from the commands
 shown; nothing here is an estimate unless it says so.
 
+## v3.1-Z (Render Free / Haiku)
+
+- A Render Free service sleeps after 15 minutes without inbound traffic; the first request
+  then takes about a minute (https://render.com/docs/free, checked 2026-10-09).
+- The disk is temporary: data can be lost on sleep, restart or redeploy. Durable storage
+  needs an optional external `DATABASE_URL`.
+- Because CPU and RAM are limited, large files are processed from a sample and the UI shows
+  **Based on a sample (X%)**. No exact totals are claimed for sampled data.
+- Free credits can run out; the system then runs in template mode and no AI text appears.
+- A Haiku-class model may write more plainly than Sonnet or Opus; the guarantee lives in the
+  checkers (claim validator, SQL validator, parity), not in style.
+- In the free profile, LLM-path answers carry the Unverified badge because there is no
+  second candidate. Router-path answers stay Verified.
+- Free-credit and promotional terms can change; no privacy or retention guarantee is written
+  anywhere in the docs. `PROVIDER_CLEARANCE` stays `synthetic_only` until the owner confirms
+  terms in writing.
+- Tile queries on one DuckDB connection cannot truly run in parallel (the connection is not
+  thread-safe). The batch endpoint uses two workers that share the handle lock, plus an LRU
+  cache and query dedupe.
+- `pandas` is still imported at ingest/dashboard time (deviation from “dev/test only”).
+  Measured 2026-10-09 inside `docker run --memory=512m` with `RESOURCE_PROFILE=free`,
+  offline: idle **175 MiB** (`docker stats`); after retail demo + build + insights **379 MiB**.
+  No OOM. Process RSS via `psutil` at idle was 282 MB. The 400 MB free-profile cap held
+  for this path. 1M-row loads are not claimed on the free plan.
+
 ## Product scope
 
 - English only (interface, questions, insights).

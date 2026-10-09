@@ -12,6 +12,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.deps import get_db, require
+from app.jobs.runner import JobRunner
 from app.errors import AppError, locale_of
 from app.i18n import translate
 from app.models import Job, User
@@ -20,8 +21,9 @@ from app.security.permissions import Permission
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 POLL_SECONDS = 0.25
+HEARTBEAT_SECONDS = 15
 STREAM_LIMIT_SECONDS = 15 * 60
-FINAL_STATES = ("done", "failed")
+FINAL_STATES = ("done", "failed", "interrupted")
 
 
 def job_out(job: Job, locale: str) -> JobOut:
@@ -72,6 +74,24 @@ def get_job(
     return job_out(find_job(db, user, job_id), locale_of(request))
 
 
+@router.post("/{job_id}/restart", response_model=JobOut, status_code=202)
+def restart_job(
+    job_id: str,
+    request: Request,
+    user: User = Depends(require(Permission.READ)),
+    db: Session = Depends(get_db),
+) -> JobOut:
+    """Re-run an interrupted job. After a process restart the work must be started again."""
+    job = find_job(db, user, job_id)
+    if job.status != "interrupted":
+        raise AppError("bad_request")
+    runner: JobRunner = request.app.state.jobs
+    restarted = runner.restart(job.id)
+    if restarted is None:
+        raise AppError("not_found")
+    return job_out(restarted, locale_of(request))
+
+
 def _snapshot(request: Request, workspace_id: str, job_id: str) -> Job | None:
     """Read the job with a short-lived session (the request session is not used in the loop)."""
     with request.app.state.session_factory() as db:
@@ -97,6 +117,7 @@ async def job_events(
     async def stream() -> AsyncIterator[str]:
         last: tuple[str, int, str] | None = None
         waited = 0.0
+        since_beat = 0.0
         while waited < STREAM_LIMIT_SECONDS:
             job = await run_in_threadpool(_snapshot, request, workspace_id, job_id)
             if job is None:
@@ -107,10 +128,15 @@ async def job_events(
                 event = job.status if job.status in FINAL_STATES else "progress"
                 body = job_out(job, locale).model_dump_json()
                 yield f"event: {event}\ndata: {body}\n\n"
+                since_beat = 0.0
             if job.status in FINAL_STATES:
                 return
             await asyncio.sleep(POLL_SECONDS)
             waited += POLL_SECONDS
+            since_beat += POLL_SECONDS
+            if since_beat >= HEARTBEAT_SECONDS:
+                yield ": heartbeat\n\n"
+                since_beat = 0.0
 
     return StreamingResponse(
         stream(),

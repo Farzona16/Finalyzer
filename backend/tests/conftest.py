@@ -15,6 +15,15 @@ from fastapi.testclient import TestClient
 from app.main import create_app
 
 SECRET = "test-secret-key-0123456789-abcdefghijklmnopqrstuvwxyz"
+
+
+@pytest.fixture(autouse=True)
+def _isolate_resource_profile(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A leaked ``RESOURCE_PROFILE`` from the developer shell must not change API tests."""
+    monkeypatch.delenv("RESOURCE_PROFILE", raising=False)
+    from core.runtime.profile import clear_limits
+
+    clear_limits()
 STRONG_PASSWORD = "Quiet-River-Stone-42"
 ADMIN_EMAIL = "admin@example.com"
 

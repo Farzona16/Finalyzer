@@ -57,23 +57,24 @@ function TileCard({
   tile,
   filters,
   onSelect,
+  data,
+  pending,
+  failed,
+  onRetry,
 }: {
   datasetId: string
   tile: Dash['tiles'][0]
   filters: Filters
   onSelect: (column: string, value: string) => void
+  data: TileData | undefined
+  pending: boolean
+  failed: boolean
+  onRetry: () => void
 }) {
   const { t } = useTranslation()
   const [asTable, setAsTable] = useState(false)
-  const query = useQuery({
-    queryKey: ['tile', datasetId, tile.id, filters],
-    queryFn: () =>
-      post<TileData>(`/datasets/${datasetId}/tiles/query`, {
-        tile_id: tile.id,
-        filters,
-      }),
-  })
-  const data = query.data
+  void datasetId
+  void filters
   return (
     <Card
       className="space-y-2"
@@ -105,10 +106,10 @@ function TileCard({
           </Button>
         </div>
       </div>
-      {query.isPending && <Skeleton className="h-40" />}
-      {query.isError && (
+      {pending && <Skeleton className="h-40" />}
+      {failed && (
         <EmptyWithAction title={t('errors.generic')}>
-          <Button variant="ghost" size="sm" onClick={() => void query.refetch()}>
+          <Button variant="ghost" size="sm" onClick={onRetry}>
             {t('common.retry')}
           </Button>
         </EmptyWithAction>
@@ -163,6 +164,21 @@ export function DashboardPage() {
       ),
   })
   const tiles = dash.data?.tiles ?? []
+  const chartTiles = tiles.filter((tile) => tile.type !== 'kpi_row')
+  const batch = useQuery({
+    queryKey: ['tiles-batch', id, filters, chartTiles.map((tile) => tile.id)],
+    enabled: Boolean(id) && chartTiles.length > 0,
+    queryFn: () =>
+      post<TileData[]>(`/datasets/${id}/tiles/query-batch`, {
+        tile_ids: chartTiles.map((tile) => tile.id),
+        filters,
+      }),
+  })
+  const byId = useMemo(() => {
+    const map = new Map<string, TileData>()
+    for (const row of batch.data ?? []) map.set(row.tile_id, row)
+    return map
+  }, [batch.data])
   const kpiTiles = kpis.data?.items.filter((i) => i.is_tile) ?? []
   const locale = currentLocale()
   const period = dash.data?.period
@@ -214,14 +230,16 @@ export function DashboardPage() {
         })}
       </div>
       <div className="grid grid-cols-12 gap-3">
-        {tiles
-          .filter((tile) => tile.type !== 'kpi_row')
-          .map((tile) => (
+        {chartTiles.map((tile) => (
             <div key={tile.id} className="col-span-12 md:col-span-6">
               <TileCard
                 datasetId={id}
                 tile={tile}
                 filters={filters}
+                data={byId.get(tile.id)}
+                pending={batch.isPending}
+                failed={batch.isError}
+                onRetry={() => void batch.refetch()}
                 onSelect={(column, value) =>
                   setFilters((prev) =>
                     prev.extra_column === column && prev.extra_value === value

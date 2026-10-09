@@ -1,4 +1,4 @@
-"""Ask v2 in the backend: router first, then the v2 LLM path, stages for SSE."""
+﻿"""Ask v2 in the backend: router first, then the v2 LLM path, stages for SSE."""
 
 from __future__ import annotations
 
@@ -8,8 +8,7 @@ from collections.abc import Iterator
 from app.errors import AppError
 from app.models import Dataset
 from app.services.datasets import Services, stored_model
-from app.services.engine import core_settings, domain_pack
-from core.llm.gateway import LLMGateway
+from app.services.engine import core_settings, domain_pack, make_gateway
 from core.metrics.registry import load_pack
 from core.nlu.ask import AskAgent
 from core.nlu.plain_answer import PlainAnswer
@@ -37,7 +36,7 @@ def answer(
     if stored.built is None:
         raise AppError("not_found")
     settings = core_settings(services.settings)
-    gateway = LLMGateway(settings, services.audit)
+    gateway = make_gateway(services, row, stored, settings)
     with services.handles.use(row.id, row.storage_name, stored) as handle:
         agent = AskAgent(
             handle.workspace.con,
@@ -64,7 +63,7 @@ def stages(
     if stored.built is None:
         raise AppError("not_found")
     settings = core_settings(services.settings)
-    gateway = LLMGateway(settings, services.audit)
+    gateway = make_gateway(services, row, stored, settings)
     with services.handles.use(row.id, row.storage_name, stored) as handle:
         agent = AskAgent(
             handle.workspace.con,

@@ -56,4 +56,4 @@ def test_an_llm_wrap_keeps_sql_and_reasoning() -> None:
     wrapped = from_nl(Answer(status="ok", text="N: 1.", result=result), "en", "simple")
     assert wrapped.explanation == "N: 1."
     assert wrapped.sql == "SELECT 1"
-    assert "generated" in wrapped.details.lower()
+    assert "model wrote" in wrapped.details.lower()

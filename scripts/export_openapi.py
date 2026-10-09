@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 
 from app.config import BackendSettings  # noqa: E402
+
 from app.main import create_app  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent

@@ -15,6 +15,14 @@ class PrivacySummaryOut(BaseModel):
     tokens_used: int
     event_count: int
     mode: str
+    privacy_level: str = "strict"
+    template_mode: bool = True
+    kill_switch: bool = False
+    # Per scope: {"used", "limit", "remaining"} (session, daily). Tokens only, no prices.
+    budgets: dict[str, dict[str, int]] = Field(default_factory=dict)
+    # Per chain link: name, model, state (ok, circuit_open, credits_exhausted, ...).
+    providers: list[dict[str, object]] = Field(default_factory=list)
+    ephemeral: bool = True
 
 
 class PrivacyEventsOut(BaseModel):

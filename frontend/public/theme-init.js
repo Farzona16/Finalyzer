@@ -4,7 +4,11 @@
   try {
     var root = document.documentElement
     var theme = localStorage.getItem('fz_theme')
-    if (theme !== 'light' && theme !== 'dark' && theme !== 'system') theme = 'system'
+    if (theme !== 'light' && theme !== 'dark' && theme !== 'system') {
+      var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches
+      var lowMem = navigator.deviceMemory && navigator.deviceMemory <= 4
+      theme = coarse || lowMem ? 'light' : 'system'
+    }
     var dark =
       theme === 'dark' ||
       (theme === 'system' && !(window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches))

@@ -7,7 +7,7 @@ What to look for: natural wording, the letters `oʻ` and `gʻ` (U+02BB), the apo
 * Frames: 78
 * Glossary entries: 189
 * Backend messages: 63
-* Frontend messages: 99
+* Frontend messages: 114
 
 ## Message frames
 
@@ -364,6 +364,11 @@ File: `frontend/src/i18n/uz.json`
 |---|---|
 | `app.name` | Finalyzer |
 | `app.tagline` | Ma'lumotlaringizni oddiy tilda tushuning |
+| `app.ephemeral` | Ma'lumotlar vaqtincha saqlanadi |
+| `app.waking` | Server uygʻonmoqda… |
+| `app.waking_hint` | Bepul xizmat uxlab qolgan edi. Bir daqiqagacha qayta uriniladi. |
+| `app.template_mode` | AI vaqtincha oʻchiq, shablon rejimi |
+| `app.credits_exhausted` | Kredit tugagan |
 | `nav.home` | Bosh sahifa |
 | `nav.menu` | Asosiy menyu |
 | `nav.datasets` | Ma'lumotlar |
@@ -417,6 +422,8 @@ File: `frontend/src/i18n/uz.json`
 | `jobs.autopilot` | Koʻrsatkichlar tanlanmoqda |
 | `jobs.done` | Tayyor |
 | `jobs.failed` | Xatolik |
+| `jobs.interrupted` | Toʻxtatilgan |
+| `jobs.restart` | Qayta boshlash |
 | `jobs.progress` | Jarayon: {label} ({n}%) |
 | `dataset.summary` | Xulosa |
 | `dataset.dashboard` | Panel |
@@ -430,6 +437,7 @@ File: `frontend/src/i18n/uz.json`
 | `dataset.advanced` | Kengaytirilgan |
 | `dataset.tables_found` | Jadvallar |
 | `dataset.n_rows` | {n} qator |
+| `dataset.sample` | Tanlanma asosida ({pct}%) |
 | `dataset.fact` | Asosiy jadval |
 | `dataset.joins` | Bogʻlanishlar |
 | `dataset.join_on` | {fact_col} → {dim_table}.{dim_col} |
@@ -449,6 +457,10 @@ File: `frontend/src/i18n/uz.json`
 | `insights.status_open` | Yangi |
 | `privacy.title` | Maxfiylik |
 | `privacy.bytes` | Tashqariga yuborilgan baytlar: {n} |
+| `privacy.tokens` | Tokenlar: {used} · sessiyada qolgani: {remaining} |
+| `privacy.daily` | Bugun: {used} / {limit} |
+| `privacy.template` | Shablon rejimi (AI matni yoʻq) |
+| `privacy.kill_switch` | Oʻchirish tugmasi yoqilgan |
 | `admin.title` | Foydalanuvchilar |
 | `admin.create` | Foydalanuvchi qoʻshish |
 | `admin.role` | Rol |
@@ -461,6 +473,9 @@ File: `frontend/src/i18n/uz.json`
 | `filters.active` | Faol filtrlar |
 | `kpis.enabled` | Yoqilgan |
 | `kpis.disabled` | Oʻchirilgan |
+| `kpis.empty` | Koʻrsatkichlarni hisoblash uchun panelni yigʻing. |
+| `kpis.tiles` | Panelda |
+| `kpis.all` | Barcha koʻrsatkichlar |
 
 ## KPI packs, labels and dashboards
 
